@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_purchase_order_form_inherit_inuka" model="ir.ui.view">
+        <field name="name">purchase.order.form.inherit.inuka</field>
+        <field name="model">purchase.order</field>
+        <field name="inherit_id" ref="purchase.purchase_order_form"/>
+        <field name="arch" type="xml">
+            <field name="company_id" position="after">
+                <field name="purchase_type" required="1"/>
+            </field>
+            <field name="partner_ref" position="after">
+                <field name="payment_reference"/>
+            </field>
+            <field name="incoterm_id" position="after">
+                <field name="sent_for_approval"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="view_purchase_order_line_tree_inuka" model="ir.ui.view">
+        <field name="name">purchase.order.line.tree.inuka</field>
+        <field name="model">purchase.order.line</field>
+        <field name="arch" type="xml">
+            <tree string="Purchase Lines" create="false" delete="false">
+                <field name="order_id" string="Reference" readonly="1"/>
+                <field name="create_date" string="Order Date" readonly="1"/>
+                <field name="date_planned" readonly="1"/>
+                <field name="product_id" readonly="1"/>
+                <field name="product_qty" readonly="1"/>
+                <field name="price_unit" readonly="1"/>
+                <field name="price_subtotal" string="Total" readonly="1"/>
+                <field name="qty_received" readonly="1"/>
+                <field name="qty_invoiced" readonly="1"/>
+            </tree>
+        </field>
+    </record>
+
+      <record id="view_purchase_order_line_search_inuka" model="ir.ui.view">
+        <field name="name">purchase.order.line.search.inuka</field>
+        <field name="model">purchase.order.line</field>
+        <field name="arch" type="xml">
+            <search string="Search Purchase Order Lines">
+                <field name="order_id"/>
+                <field name="product_id"/>
+                <field name="partner_id" string="Vendor" filter_domain="[('partner_id', 'child_of', self)]"/>
+                <field name="create_date" string="Order Date"/>
+                <field name="date_planned"/>
+                <field name="product_qty"/>
+                <field name="price_unit"/>
+                <field name="price_subtotal" string="Total"/>
+                <field name="qty_received"/>
+                <field name="qty_invoiced"/>
+                <filter name="hide_cancelled" string="Hide cancelled lines" domain="[('state', '!=', 'cancel')]"/>
+                <group expand="0" string="Group By">
+                    <filter name="groupby_supplier" string="Vendor" domain="[]" context="{'group_by' : 'partner_id'}" />
+                    <filter name="groupby_product" string="Product" domain="[]" context="{'group_by' : 'product_id'}" />
+                    <filter string="Order Reference" domain="[]" context="{'group_by' :'order_id'}"/>
+                    <filter string="Status" domain="[]" context="{'group_by' : 'state'}" />
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_purchase_order_line_tree_inuka" model="ir.actions.act_window">
+        <field name="name">Purchase Lines</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">purchase.order.line</field>
+        <field name="view_mode">tree,search</field>
+        <field name="view_id" ref="view_purchase_order_line_tree_inuka"/>
+        <field name="search_view_id" ref="view_purchase_order_line_search_inuka"/>
+    </record>
+
+    <menuitem id="purchase.purchase_report" name="Reporting" parent="purchase.menu_purchase_root" sequence="99"
+        groups="purchase.group_purchase_manager"/>
+    <menuitem id="purchase_analysis_report" name="Purchase Analysis" parent="purchase.purchase_report" sequence="1"
+        groups="purchase.group_purchase_manager" action="purchase.action_purchase_order_report_all"/>
+
+    <menuitem id="purchase_line_report" name="Purchase Lines" parent="purchase.purchase_report" sequence="2"
+        groups="purchase.group_purchase_manager" action="action_purchase_order_line_tree_inuka"/>
+
+</odoo>

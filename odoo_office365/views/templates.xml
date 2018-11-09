@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record model="ir.ui.view" id="partner_sharepoint_form_view">
+            <field name="name">partner.sharepoint</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_form"/>
+
+            <field name="arch" type="xml">
+                <notebook position="inside">
+                    <page name= "sharepoint" string="SharePoint">
+
+                        <group string="SharePoint Account" name="account">
+
+                            <field name="user_name_sharepoint" domain = "['|',('create_uid','=',uid),('create_uid','=',False)]"/>
+
+                        </group>
+
+                        <group string="Upload" name="documents">
+
+                            <field name="upload_file_data_sharepoint" filename="my_file_fname" widget="many2many_binary"/>
+                            <button name="upload_doc_sharepoint" type="object" string="Upload" class="oe_highlight" />
+
+                        </group>
+
+                        <group string="Downloaded Documents" name="downloaded_documents">
+
+                            <field name="downloaded_file_data_sharepoint" filename="my_file_fname" widget="many2many_binary"/>
+
+                        </group>
+
+                        <!--<group string="Download" name="download">-->
+                        <button name="download_docs_links_sharepoint" type="object" string="Sync Documents Links" class="oe_highlight" />
+
+                        <field name="order_line" mode="tree,kanban">
+                                <form string="Sales Order Lines">
+                                    <group>
+                                        <group>
+                                            <field name="customer_name"/>
+                                            <field name="name"/>
+                                            <field name="document_link"/>
+                                        </group>
+                                    </group>
+
+                                </form>
+                                <!--<tree string="Sales Order Lines" editable="bottom" decoration-info="invoice_status=='to invoice'">-->
+                                <!--<tree string="Sales Order Lines" editable="bottom">-->
+                                <tree string="Sales Order Lines" create="false">
+                                    <!--<field name="customer_name"/>-->
+                                    <field name="name"/>
+                                    <field name="status"/>
+                                    <!--<field name="document_link"/>-->
+                                    <!--<button name="download_file_form_doc_link_sharepoint" type="object" string="Download Document" class="oe_highlight" />-->
+									<button name="download_file_form_doc_link_sharepoint" type="object" string="Download" class="btn-primary" />
+
+                                </tree>
+
+                        </field>
+                        <!--</group>-->
+                    </page>
+                </notebook>
+            </field>
+
+        </record>
+
+
+        <record model="ir.actions.act_window" id="sp_setting_action">
+            <field name="name">SharePoint Settings</field>
+            <field name="res_model">sharepoint.credentials</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">['|',('create_uid','=',uid),('create_uid','=',False)]</field>
+
+        </record>
+
+        <record model="ir.ui.view" id="sp_settings_form_view">
+
+            <field name="name">sharepointcredentials.form</field>
+            <field name="model">sharepoint.credentials</field>
+            <field name="arch" type="xml">
+                <form string="SharePoint Credentials">
+                    <sheet>
+                        <group>
+                            <field name="name"/>
+                            <field name="url" placeholder="https://example.sharepoint.com"/>
+                            <field name="email"/>
+                            <field name="pass_word" password="True" />
+                            <!--<field name="site_name" placeholder="Your Sharepoint Site Name"/>-->
+                            <field name="document_name" placeholder="Your Sharepoint Document Library Name"/>
+                            <button name="test_connection" type="object" string="Test Connection" class="oe_highlight" />
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+
+        <record model="ir.ui.view" id="sp_settings_tree_view">
+
+            <field name="name">sharepointcredentials.tree</field>
+            <field name="model">sharepoint.credentials</field>
+            <field name="arch" type="xml">
+                <tree string="SharePoint Users">
+                            <field name="name"/>
+                            <field name="url"/>
+                            <field name="site_name"/>
+                </tree>
+            </field>
+        </record>
+
+
+
+        <menuitem id="main_spodoo_menu" name="SharePoint"/>
+
+        <menuitem id="spodoo_configuration" name="SharePoint"
+                  parent="main_spodoo_menu"/>
+
+        <menuitem id="spodoo_setting_menu" name="Settings" parent="spodoo_configuration"
+                  action="sp_setting_action"/>
+
+
+
+    </data>
+</odoo>
+
+

@@ -1,0 +1,584 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_account_invoice_form_inherit_inuka" model="ir.ui.view">
+        <field name="name">account.invoice.form.inherit.inuka</field>
+        <field name="model">account.invoice</field>
+        <field name="inherit_id" ref="account.invoice_supplier_form"/>
+        <field name="arch" type="xml">
+            <button name="action_invoice_open" position="before">
+                <button name="action_approve_bill" type="object" string="Approve for Payment" class="oe_highlight"
+                    attrs="{'invisible': ['|',('approved_for_payment', '==', True), ('state', '!=', 'draft')]}"/>
+            </button>
+            <xpath expr="//button[@name='%(account.action_account_invoice_refund)d']" position="attributes">
+                <attribute name="groups">inuka.credit_notes_group</attribute>
+            </xpath>
+            <field name="currency_id" position="after">
+                <field name="purchase_type" required="1"/>
+                <field name="approved_for_payment"/>
+                <field name="reason_id" options="{'no_create':True,'no_edit':True}"
+                       attrs="{'invisible': [('type', 'not in', ('out_refund', 'in_refund'))],
+                               'required': [('type', 'in', ('out_refund', 'in_refund'))],
+                               'readonly': [('state', '!=', 'draft')]}"/>
+            </field>
+            <field name="reference" position="after">
+                <field name="payment_reference"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="view_invoice_form_inherit_inuka" model="ir.ui.view">
+        <field name="name">invoice.form.inherit.inuka</field>
+        <field name="model">account.invoice</field>
+        <field name="inherit_id" ref="account.invoice_form"/>
+        <field name="arch" type="xml">
+            
+            <xpath expr="//button[@name='%(account.action_account_invoice_refund)d']" position="attributes">
+                <attribute name="groups">inuka.credit_notes_group</attribute>
+            </xpath>
+            <field name="partner_shipping_id" position="after">
+                <field name="member_status" readonly="1"/>
+            </field>
+            <field name="team_id" position="attributes">
+                <attribute name="string">Sales Team</attribute>
+            </field>
+            <field name="team_id" position="after">
+                <field name="sale_date"/>
+                <field name="reason_id" options="{'no_create':True,'no_edit':True}"
+                       attrs="{'invisible': [('type', 'not in', ('out_refund', 'in_refund'))],
+                               'required': [('type', 'in', ('out_refund', 'in_refund'))],
+                               'readonly': [('state', '!=', 'draft')]}"/>
+            </field>
+            <xpath expr="//notebook/page[1]/field[@name='invoice_line_ids']/tree/field[@name='price_unit']" position="after">
+                <field name="price_unit_custom" invisible="context.get('group_change_unit_prices',False)"
+                       readonly="not context.get('group_change_unit_prices',False)"/>
+            </xpath>
+            <xpath expr="//notebook/page[1]/field[@name='invoice_line_ids']/tree/field[@name='price_unit']" position="attributes">
+                <attribute name="invisible">not context.get('group_change_unit_prices',False)</attribute>
+            </xpath>
+            <xpath expr="//notebook/page[1]/field[@name='invoice_line_ids']/tree/field[@name='quantity']" position="after">
+                <field name="unit_pv" string="Unit PV" readonly="1" force_save="1"/>
+                <field name="pv" string="PV's" readonly="1" force_save="1"/>
+            </xpath>
+            <xpath expr="//field[@name='amount_total']" position="after">
+                <label for="total_pv" string="Total PV's" style="color: red;"/>
+                <div>
+                    <field name="total_pv" style="color: red;"/>
+                </div>
+            </xpath>
+            <field name="incoterms_id" position="after">
+                <field name="channel"/>
+                <field name="kit_order"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="view_bank_statement_form_inherit_inuka" model="ir.ui.view">
+        <field name="name">bank.statement.form.inherit.inuka</field>
+        <field name="model">account.bank.statement</field>
+        <field name="inherit_id" ref="account.view_bank_statement_form"/>
+        <field name="arch" type="xml">
+            <button name="check_confirm_bank" position="before">
+                <button name="auto_match_partner" string="Match Partner" type="object" class="oe_highlight" states="open"/>
+            </button>
+            <xpath expr="//notebook/page[@name='statement_line_ids']/field[@name='line_ids']/tree/field[@name='ref']" position="after">
+                <field name="fitid"/>
+                <field name="branch" string="Payment Type"/>
+                <field name="master_bank_stmt_line_id" readonly="1" string="Statement Line"/>
+                <field name="statement_reconciled" reaadonly="1"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_master_bank_statement_tree" model="ir.ui.view">
+        <field name="name">master.account.bank.statement.tree</field>
+        <field name="model">master.account.bank.statement</field>
+        <field name="arch" type="xml">
+            <tree decoration-danger="not is_difference_zero and state=='open'" decoration-info="state=='open' and is_difference_zero" string="Master Statements">
+                <field name="name"/>
+                <field name="date"/>
+                <field name="journal_id"/>
+                <field name="balance_start"/>
+                <field name="balance_end_real"/>
+                <field name="balance_end" invisible="1"/>
+                <field name="currency_id" invisible="1"/>
+                <field name="state"/>
+                <field name="is_difference_zero" invisible="1"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_master_bank_statement_search" model="ir.ui.view">
+        <field name="name">master.account.bank.statement.search</field>
+        <field name="model">master.account.bank.statement</field>
+        <field name="arch" type="xml">
+            <search string="Search Master Bank Statements">
+                <field name="name" string="Bank Statement"/>
+                <field name="date"/>
+                <filter string="Draft" domain="[('state','=','open')]"/>
+                <filter string="Confirmed" domain="[('state','=','confirm')]"/>
+                <field name="journal_id" domain="[('type', '=', 'bank')]" />
+                <group expand="0" string="Group By">
+                    <filter string="Journal" context="{'group_by': 'journal_id'}"/>
+                    <filter string="Status" context="{'group_by': 'state'}"/>
+                    <filter string="Date" context="{'group_by': 'date'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_master_bank_statement_form" model="ir.ui.view">
+        <field name="name">master.account.bank.statement.form</field>
+        <field name="model">master.account.bank.statement</field>
+        <field name="priority">1</field>
+        <field name="arch" type="xml">
+            <form string="Bank Statement">
+            <header>
+                <field name="all_lines_reconciled" invisible="1" />
+                <!--
+                <button name="%(account.action_bank_reconcile_bank_statements)d" string="Reconcile" type="action" class="oe_highlight" attrs="{'invisible':['|','|',('all_lines_reconciled','=',True),('line_ids','=',[]),('state', '!=', 'open')]}"/>
+                <button name="check_confirm_bank" string="Validate" type="object" class="oe_highlight" attrs="{'invisible':['|','|',('all_lines_reconciled','=',False),('line_ids','=',[]),('state', '!=', 'open')]}"/>
+                -->
+                <button name="reconcile_master_statement" string="Auto Match" type="object" class="oe_highlight"/>
+                <field name="state" widget="statusbar" statusbar_visible="open,confirm"/>
+            </header>
+            <sheet>
+                <div class="oe_button_box" name="button_box">
+                    <button class="oe_stat_button" name="button_journal_entries"
+                            string="Journal Entries" type="object"
+                            attrs="{'invisible':[('move_line_count','=', 0)]}" icon="fa-bars" />
+                    <field name="move_line_count" invisible="1"/>
+
+                </div>
+                <div class="oe_title oe_inline">
+                    <label for="name" class="oe_edit_only"/>
+                    <h1><field name="name"/></h1>
+                </div>
+                <group>
+                    <group>
+                        <field name="journal_type" invisible="1"/>
+                        <field name="cashbox_start_id" invisible="1"/>
+                        <field name="cashbox_end_id" invisible="1"/>
+                        <field name="journal_id" domain="[('type', '=', journal_type)]" attrs="{'readonly': [('move_line_count','!=', 0)]}" widget="selection"/>
+                        <field name="date"/>
+                        <field name='company_id' options="{'no_create': True}" groups="base.group_multi_company" />
+                        <field name="currency_id" invisible="1"/>
+                    </group><group>
+                        <label for="balance_start"/>
+                        <div>
+                            <field class="oe_inline" name="balance_start"/>
+                            <button class="oe_inline oe_link oe_edit_only" name="%(account.action_view_account_bnk_stmt_cashbox)d"
+                            string="&#8594; Count" type="action"
+                            attrs="{'invisible':['|','|',('state','!=','open'),('journal_type','!=','cash'),('cashbox_start_id','!=',False)]}" context="{'balance':'start'}"/>
+                            <button name="open_cashbox_id" attrs="{'invisible': ['|','|',('state','!=','open'),('journal_type','!=','cash'),('cashbox_start_id', '=', False)]}" string="&#8594; Count" type="object" class="oe_edit_only oe_link oe_inline" context="{'balance':'start', 'cashbox_id': cashbox_start_id}"/>
+                        </div>
+                        <label for="balance_end_real"/>
+                        <div>
+                            <field class="oe_inline" name="balance_end_real"/>
+                            <button class="oe_inline oe_link oe_edit_only" name="%(account.action_view_account_bnk_stmt_cashbox)d"
+                            string="&#8594; Count" type="action"
+                            attrs="{'invisible':['|','|',('state','!=','open'),('journal_type','!=','cash'),('cashbox_end_id','!=',False)]}" context="{'balance':'close'}"/>
+                            <button name="open_cashbox_id" attrs="{'invisible': ['|','|',('state','!=','open'),('journal_type','!=','cash'),('cashbox_end_id', '=', False)]}" string="&#8594; Count" type="object" class="oe_edit_only oe_link oe_inline" context="{'balance':'close', 'cashbox_id': cashbox_end_id}"/>
+                        </div>
+                    </group>
+                </group>
+
+                <notebook>
+                    <page string="Transactions" name="statement_line_ids">
+                        <field name="line_ids" context="{'date':date}">
+                            <tree editable="bottom" string="Statement lines" decoration-muted="journal_entry_ids">
+                                <field name="sequence"  widget="handle"/>
+                                <field name="journal_entry_ids" invisible="1"/>
+                                <field name="date" attrs="{'readonly' : [('journal_entry_ids', '!=', [])] }"/>
+                                <field name="name" attrs="{'readonly' : [('journal_entry_ids', '!=', [])] }"/>
+                                <field name="partner_id" domain="['|',('parent_id','=',False),('is_company','=',True)]"
+                                     context="{'default_supplier': 1}"
+                                     attrs="{'readonly' : [('journal_entry_ids', '!=', [])] }"/>
+                                <field name="ref" attrs="{'readonly' : [('journal_entry_ids', '!=', [])] }" groups="base.group_no_one"/>
+                                <field name="fitid"/>
+                                <field name="branch" string="Payment Type"/>
+                                <field name="bank_stmt_line_id" readonly="1" string="Transaction Line"/>
+                                <field name="statement_reconciled" reaadonly="1"/>
+                                <field name="amount" attrs="{'readonly' : [('journal_entry_ids', '!=', [])] }"/>
+                                <field name="journal_currency_id" invisible="1"/>
+                                <field name="amount_currency" invisible="1" attrs="{'readonly' : [('journal_entry_ids', '!=', [])] }"/>
+                                <field name="currency_id" options="{'no_create': True}" invisible="1" attrs="{'readonly' : [('journal_entry_ids', '!=', [])] }"/>
+                                <field name="bank_account_id" invisible="1" attrs="{'readonly' : [('journal_entry_ids', '!=', [])] }"
+                                    domain="['|', ('partner_id', '=', partner_id), ('partner_id', '=', False)]"/>
+                            </tree>
+                        </field>
+                    </page>
+                </notebook>
+                <group class="oe_subtotal_footer oe_right" colspan="2" name="sale_total">
+                    <div class="oe_subtotal_footer_separator oe_inline">
+                        <label for="balance_end" />
+                    </div>
+                    <field name="balance_end" nolabel="1" class="oe_subtotal_footer_separator"/>
+                </group>
+                <div class="oe_clear"/>
+            </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_master_bank_statement_tree" model="ir.actions.act_window">
+        <field name="name">Bank Statements</field>
+        <field name="res_model">master.account.bank.statement</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form,pivot,graph</field>
+        <field name="domain">[('journal_id.type', '=', 'bank')]</field>
+        <field name="context">{'journal_type':'bank'}</field>
+        <field name="search_view_id" ref="view_master_bank_statement_search"/>
+        <field name="help" type="html">
+          <p class="oe_view_nocontent_create">
+            Click to register a bank statement.
+          </p><p>
+            A bank statement is a summary of all financial transactions
+            occurring over a given period of time on a bank account. You
+            should receive this periodicaly from your bank.
+          </p><p>
+            Odoo allows you to reconcile a statement line directly with
+            the related sale or purchase invoices.
+          </p>
+        </field>
+    </record>
+    <record model="ir.actions.act_window.view" id="action_master_bank_statement_tree_bank">
+        <field name="sequence" eval="1"/>
+        <field name="view_mode">tree</field>
+        <field name="view_id" ref="view_master_bank_statement_tree"/>
+        <field name="act_window_id" ref="action_master_bank_statement_tree"/>
+    </record>
+    <record model="ir.actions.act_window.view" id="action_master_bank_statement_form_bank">
+        <field name="sequence" eval="2"/>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="view_master_bank_statement_form"/>
+        <field name="act_window_id" ref="action_master_bank_statement_tree"/>
+    </record>
+
+    <record id="view_master_bank_statement_line_search" model="ir.ui.view">
+        <field name="name">master.account.bank.statement.line.search</field>
+        <field name="model">master.account.bank.statement.line</field>
+        <field name="arch" type="xml">
+            <search string="Search Master Bank Statements Line">
+                <field name="name"/>
+                <field name="statement_id"/>
+                <field name="partner_id"/>
+                <field name="date"/>
+                <field name="journal_id" domain="[('type', 'in', ('bank', 'cash'))]" />
+                <filter string="Unreconciled" domain="[('statement_reconciled', '=', False)]"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_bank_statement_line_tree_inherit_inuka" model="ir.ui.view">
+        <field name="name">account.bank.statement.line.tree.inherit.inuka</field>
+        <field name="model">account.bank.statement.line</field>
+        <field name="inherit_id" ref="account.view_bank_statement_line_tree"/>
+        <field name="arch" type="xml">
+            <field name="partner_id" position="after">
+                <field name="master_bank_stmt_line_id" string="Bank Statement Lines" invisible="1"/>
+                <field name="note" invisible="1"/>
+                <field name="custom_note" />
+                <field name="statement_reconciled" invisible="0"/>
+            </field>
+            <field name="amount" position="after">
+                
+                <button name="show_note" type="object" icon="fa-info-circle" attrs="{'invisible':[('note', '=', False)]}"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="view_bank_statement_line_search_inherit_inuka" model="ir.ui.view">
+        <field name="name">account.bank.statement.line.search.inherit.inuka</field>
+        <field name="model">account.bank.statement.line</field>
+        <field name="inherit_id" ref="account.view_bank_statement_line_search"/>
+        <field name="arch" type="xml">
+            <field name="date" position="after">
+                <filter string="Unreconciled" domain="[('statement_reconciled', '=', False)]"/>
+                <filter string="Unmatched" domain="[('partner_id', '=', False)]"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="auto_allocate_action_server" model="ir.actions.server">
+        <field name="name">Auto Allocate</field>
+        <field name="type">ir.actions.server</field>
+        <field name="model_id" ref="model_account_bank_statement_line"/>
+        <field name="binding_model_id" ref="model_account_bank_statement_line"/>
+        <field name="state">code</field>
+        <field name="code">
+    if records:
+    action = records.auto_allocate()
+        </field>
+    </record>
+
+    <record id="view_master_bank_statement_line_form" model="ir.ui.view">
+        <field name="name">master.bank.statement.line.form</field>
+        <field name="model">master.account.bank.statement.line</field>
+        <field name="priority">8</field>
+        <field name="arch" type="xml">
+        <form string="Master Statement Line" create="false">
+            <group col="4">
+                <field name="statement_id"/>
+                <field name="date"/>
+                <field name="name"/>
+                <field name="ref"/>
+                <field name="partner_id"/>
+                <field name="amount"/>
+                <field name="journal_currency_id" invisible="1"/>
+                <field name="sequence"/>
+                <field name="note"/>
+            </group>
+        </form>
+        </field>
+    </record>
+
+    <record id="view_master_bank_statement_line_tree" model="ir.ui.view">
+        <field name="name">master.account.bank.statement.line.tree</field>
+        <field name="model">master.account.bank.statement.line</field>
+        <field name="priority">8</field>
+        <field name="arch" type="xml">
+            <tree string="Master Statement Lines" create="false" editable="top">
+                <field name="sequence" readonly="1" invisible="1"/>
+                <field name="statement_id" />
+                <field name="journal_id" invisible="1" />
+                <field name="date"/>
+                <field name="name"/>
+                <field name="ref"/>
+                <field name="partner_id"/>
+                <field name="bank_stmt_line_id" domain="[('statement_reconciled', '=', False)]"/>
+                <field name="statement_reconciled"/>
+                <field name="amount"/>
+                <field name="journal_currency_id" invisible="1"/>
+                <field name="move_id" readonly="1"/>
+                <button name="manual_reconcile" string="Reconcile" type="object" class="oe_highlight" attrs="{'invisible': [('statement_reconciled', '=', True)]}"/>
+                <button name="manual_unreconcile" string="Unreconcile" type="object" class="oe_highlight" attrs="{'invisible': [('statement_reconciled', '=', False)]}"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="action_master_bank_statement_line" model="ir.actions.act_window">
+        <field name="name">Bank Statement Lines</field>
+        <field name="res_model">master.account.bank.statement.line</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[]</field>
+        <field name="context">{}</field>
+        <field name="search_view_id" ref="view_master_bank_statement_line_search"/>
+        <field name="help" type="html">
+          <p>
+            A bank statement line is a financial transaction on a bank account.
+          </p><p>
+            Odoo allows you to reconcile a statement line directly with
+            the related sale or puchase invoice(s).
+          </p>
+        </field>
+    </record>
+
+    <record id="view_account_journal_form_inherit_inuka" model="ir.ui.view">
+        <field name="name">account.journal.form.inherit.inuka</field>
+        <field name="model">account.journal</field>
+        <field name="inherit_id" ref="account.view_account_journal_form"/>
+        <field name="arch" type="xml">
+            <field name="default_credit_account_id" position="after">
+                <field name="default_statement_account_id"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="sale.account_invoice_groupby_inherit" model="ir.ui.view">
+        <field name="name">account.invoice.groupby</field>
+        <field name="model">account.invoice</field>
+        <field name="inherit_id" ref="account.view_account_invoice_filter"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='user_id']" position="after">
+                <field name="team_id"/>
+            </xpath>
+            <xpath expr="//group/filter[@name='status']" position="after">
+                <filter string="Sales Team" domain="[]" context="{'group_by':'team_id'}"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_account_invoice_report_search_inherit" model="ir.ui.view">
+        <field name="name">account.invoice.report.search.inherit</field>
+        <field name="model">account.invoice.report</field>
+        <field name="inherit_id" ref="account.view_account_invoice_report_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group/filter[@name='user']" position="after">
+                <filter string="Sales Team" domain="[]" context="{'group_by':'team_id'}"/>
+            </xpath>
+            <xpath expr="//filter[@name='thisyear']" position="after">
+                <separator/>
+                <filter string="Today" name="today"
+                            domain="[('sale_date', '=', context_today().strftime('%Y-%m-%d'))]"/>
+                <filter string="Last 7 Days" name="last_7_days"
+                        domain="['&amp;', ('sale_date', '&lt;=', context_today().strftime('%Y-%m-%d')),
+                                 ('sale_date', '&gt;=', (context_today()+datetime.timedelta(days=-7)).strftime('%Y-%m-%d'))]"/>
+                <filter string="Last Inuka Month" name="last_month"
+                        domain="['&amp;', 
+                                ('sale_date', '&gt;=', (context_today() - relativedelta(months=1)).strftime('%%Y-%%m-07')), 
+                                ('sale_date', '&lt;=', context_today().strftime('%%Y-%%m-06'))]"/>
+                <filter string="Last Inuka Month" name="last_month_1_7"
+                        domain="['&amp;', 
+                                ('sale_date', '&gt;=', (context_today() - relativedelta(months=2)).strftime('%%Y-%%m-07')), 
+                                ('sale_date', '&lt;=', (context_today() - relativedelta(months=1)).strftime('%%Y-%%m-06'))]"/>
+                <filter string="Inuka Month" name="inuka_month" 
+                        domain="['&amp;',
+                                ('sale_date', '&gt;=', context_today().strftime('%%Y-%%m-07')),
+                                ('sale_date', '&lt;=', (context_today() + relativedelta(months=1)).strftime('%%Y-%%m-06'))]"/>
+                <filter string="Inuka Month" name="inuka_month_1_7" 
+                        domain="['&amp;',
+                                ('sale_date', '&gt;=', (context_today() - relativedelta(months=1)).strftime('%%Y-%%m-07')),
+                                ('sale_date', '&lt;=', (context_today()).strftime('%%Y-%%m-06'))]"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="account_invoice_refund_reason_tree_view" model="ir.ui.view">
+        <field name="name">account.invoice.refund.reason.tree</field>
+        <field name="model">account.invoice.refund.reason</field>
+        <field name="arch" type="xml">
+            <tree editable="bottom">
+                <field name="name"/>
+                <field name="active"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="action_account_invoice_refund_reason_view" model="ir.actions.act_window">
+        <field name="name">Account Invoice Refund Reason</field>
+        <field name="res_model">account.invoice.refund.reason</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree</field>
+        <field name="view_id" ref="inuka.account_invoice_refund_reason_tree_view"/>
+    </record>
+
+    <menuitem id="invoice_refund_reason_menu"
+            name="Invoice Refund Reason"
+            parent="account.menu_finance_configuration"
+            action="action_account_invoice_refund_reason_view"
+            groups="base.group_erp_manager"
+            sequence="1"/>
+            
+    <record id="member_balance_tree_id_1" model="ir.ui.view">
+        <field name="name">res.partner</field>
+        <field name="model">res.partner</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name" />
+                <field name="ref" string='Member ID'/>
+                <field name="available_bal"/>
+                <field name="available_fund"/>
+                <button name="open_customer_ledger" string="view ledger" type="object" class="oe_highlight"/>
+            </tree>
+        </field>
+    </record>
+    <record id="view_member_balace_filter" model="ir.ui.view">
+            <field name="name">Member Balance</field>
+            <field name="model">res.partner</field>
+            <field name="arch" type="xml">
+                <search string="Search Partner">
+                    <field name="name"/>
+                    <field name="mobile"/>
+                    <separator/>
+                    <filter string="Balance" name="is_available" domain="[('is_available', '=', True)]"/>
+                    <filter string="Customers" name="customer" domain="[('customer','=',1),('type','=','contact')]"/>
+               </search>
+            </field>
+        </record>
+    <record id="action_member_balance_id_1" model="ir.actions.act_window">
+        <field name="name">Member Balance</field>
+        <field name="res_model">res.partner</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="inuka.member_balance_tree_id_1"/>
+        <field name="domain">[('customer','=',1),('type', '=', 'contact')]</field>
+        <field name="context">{"search_default_is_available":1}</field>
+    </record>
+<!--     <record id="action_menu_get_partner_for_balance" model="ir.actions.server"> -->
+<!--         <field name="name">Member Balance</field> -->
+<!--         <field name="model_id" ref="inuka.model_member_balance"/> -->
+<!--         <field name="state">code</field> -->
+<!--         <field name="code">action = model.get_customer_data()</field> -->
+<!--         <field eval="True" name="condition"/> -->
+<!--     </record> -->
+    <menuitem id="member_balance_menu"
+            name="Member Balances"
+            parent="account.menu_finance_receivables_documents"
+            action="action_member_balance_id_1" 
+            sequence="3"
+            groups="inuka.group_cash_specialist"/>
+            
+    <record id="view_account_invoice_refund_inherited" model="ir.ui.view">
+        <field name="name">account.invoice.refund.form</field>
+        <field name="model">account.invoice.refund</field>
+        <field name="inherit_id" ref="account.view_account_invoice_refund"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='description']" position="attributes">
+                <attribute name="invisible">True</attribute>
+            </xpath>
+            <xpath expr="//field[@name='description']" position="after">
+                <field name="reason_id" options="{'no_create_edit': True}"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_account_invoice_filter_inuka" model="ir.ui.view">
+        <field name="name">account.invoice.search.inuka</field>
+        <field name="model">account.invoice</field>
+        <field name="inherit_id" ref="account.view_account_invoice_filter"/>
+        <field name="arch" type="xml">
+            <xpath expr='//field[@name="date"]' position="after">
+                <separator/>
+                <filter string="Today" name="today"
+                            domain="[('sale_date', '=', context_today().strftime('%Y-%m-%d'))]"/>
+                <filter string="Last 7 Days" name="last_7_days"
+                        domain="['&amp;', ('sale_date', '&lt;=', context_today().strftime('%Y-%m-%d')),
+                                 ('sale_date', '&gt;=', (context_today()+datetime.timedelta(days=-7)).strftime('%Y-%m-%d'))]"/>
+                <!-- <filter string="Last Month" name="last_month" 
+                        domain="['&amp;', 
+		                        ('sale_date', '&gt;=', (context_today() - relativedelta(months=1)).strftime('%%Y-%%m-06')), 
+		                        ('sale_date', '&lt;=', context_today().strftime('%%Y-%%m-07'))]"/>
+                <filter string="Inuka Month" name="inuka_month" 
+                        domain="['&amp;',
+                                ('sale_date', '&gt;=', context_today().strftime('%%Y-%%m-07')),
+                                ('sale_date', '&lt;=', (context_today() + relativedelta(months=1)).strftime('%%Y-%%m-06'))]"/> -->
+                <filter string="Last Inuka Month" name="last_month"
+                        domain="['&amp;', 
+                                ('sale_date', '&gt;=', (context_today() - relativedelta(months=1)).strftime('%%Y-%%m-07')), 
+                                ('sale_date', '&lt;=', context_today().strftime('%%Y-%%m-06'))]"/>
+                <filter string="Last Inuka Month" name="last_month_1_7"
+                        domain="['&amp;', 
+                                ('sale_date', '&gt;=', (context_today() - relativedelta(months=2)).strftime('%%Y-%%m-07')), 
+                                ('sale_date', '&lt;=', (context_today() - relativedelta(months=1)).strftime('%%Y-%%m-06'))]"/>
+                <filter string="Inuka Month" name="inuka_month" 
+                        domain="['&amp;',
+                                ('sale_date', '&gt;=', context_today().strftime('%%Y-%%m-07')),
+                                ('sale_date', '&lt;=', (context_today() + relativedelta(months=1)).strftime('%%Y-%%m-06'))]"/>
+                <filter string="Inuka Month" name="inuka_month_1_7" 
+                        domain="['&amp;',
+                                ('sale_date', '&gt;=', (context_today() - relativedelta(months=1)).strftime('%%Y-%%m-07')),
+                                ('sale_date', '&lt;=', (context_today()).strftime('%%Y-%%m-06'))]"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="invoice_tree_inuka" model="ir.ui.view">
+        <field name="name">account.invoice.tree.inuka</field>
+        <field name="model">account.invoice</field>
+        <field name="inherit_id" ref="account.invoice_tree"/>
+        <field name="arch" type="xml">
+            <field name="date_invoice" position="after">
+                <field name="sale_date"/>
+            </field>
+        </field>
+    </record>
+
+    <menuitem id="menu_finance_transactions_inuka"
+        action="account.action_bank_statement_line"
+        name="Transactions"
+        parent="account.menu_finance_receivables_documents"
+        sequence="20" groups="inuka.group_cash_specialist"/>
+
+</odoo>

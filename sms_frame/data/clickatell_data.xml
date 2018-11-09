@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="sms_account_inuka_international" model="sms.account">
+        <field name="name">INUKA International</field>
+        <field name="account_gateway_id" ref="sms_clickatell"/>
+        <field name="clicKatell_username">inukaclick</field>
+        <field name="clicKatell_password">click2inuka@2015</field>
+        <field name="clicKatell_api">3536578</field>
+    </record>
+
+    <record id="sms_number_inuka_international" model="sms.number">
+        <field name="name">INUKA International</field>
+        <field name="account_id" ref="sms_account_inuka_international"/>
+        <field name="mobile_number">41798073057</field>
+    </record>
+
+    <record id="sms_template_inuka_international" model="sms.template">
+        <field name="name">Send SMS to Customer</field>
+        <field name="model_id" search="[('model', '=', 'res.partner')]"/>
+        <field name="from_mobile_verified_id" ref="sms_number_inuka_international"/>
+        <field name="from_mobile">41798073057</field>
+        <field name="template_body">INUKA Welcomes YOU^Thank you for your Registration^ ${object.name},your MemberID ${object.ref} will be active once Kit payment is receipted^More info 27219499850</field>
+    </record>
+
+    <record id="sms_template_inuka_international_referrer" model="sms.template">
+        <field name="name">Send SMS to Referrer</field>
+        <field name="model_id" search="[('model', '=', 'res.partner')]"/>
+        <field name="from_mobile_verified_id" ref="sms_number_inuka_international"/>
+        <field name="from_mobile">41798073057</field>
+        <field name="template_body">INUKA New Registration received^WELL DONE, ${object.upline.name}^New MemberID ${object.ref} for ${object.name} activated once kit is receipted^Info 27219499850</field>
+    </record>
+
+    <record id="sms_template_reset_password" model="sms.template">
+        <field name="name">Portal Password Reset</field>
+        <field name="model_id" search="[('model', '=', 'res.users')]"/>
+        <field name="from_mobile_verified_id" ref="sms_number_inuka_international"/>
+        <field name="from_mobile">41798073057</field>
+        <field name="template_body">Dear ${object.name}, A password reset was requested for your Inuka Portal/Mobile App. Change your password by following this link which is valid for 24 hrs:
+${object.partner_id.signup_url}</field>
+    </record>
+
+</odoo>

@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<odoo>
+
+    <template id="report_saleorder_document_inherited_for_pv" inherit_id="sale.report_saleorder_document">
+        <xpath expr="//t/table//th[5]" position="before">
+            <th class="text-right">Unit PV</th>
+            <th class="text-right">PV's</th>
+        </xpath>
+
+        <xpath expr="//t/table/tbody/t/t[2]/tr/td[5]" position="before">
+            <td class="text-right"><span t-field="l.unit_pv"/></td>
+            <td class="text-right"><span t-field="l.pv"/></td>
+        </xpath>
+
+        <xpath expr="//div[@name='total']/div/table/tr[2]" position="after">
+            <tr class="border-black">
+                <td><strong>Total PV's</strong></td>
+                <td class="text-right">
+                    <span t-field="doc.total_pv"/>
+                </td>
+            </tr>
+        </xpath>
+    </template>
+
+</odoo>

@@ -1,0 +1,136 @@
+<?xml version="1.0" ?>
+<odoo>
+
+    <record id="fund_transfer_view_search" model="ir.ui.view">
+        <field name="name">Funds Transfer</field>
+        <field name="model">fund.transfer</field>
+        <field name="arch" type="xml">
+            <search string="Funds Transfer Search">
+                <field name="partner_id"/>
+                <field name="move_id"/>
+                <group expand="0" string="Group By">
+                    <filter string="Partner" name="parnter_group_by" context="{'group_by':'partner_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="fund_transfer_form_view" model="ir.ui.view">
+        <field name="name">Funds Transfer</field>
+        <field name="model">fund.transfer</field>
+        <field name="priority">1</field>
+        <field name="arch" type="xml">
+            <form string="Fund Transfer">
+                <header>
+                    <button name="transfer_fund" string="Transfer" type="object" class="oe_highlight"
+                            attrs="{'invisible': ['|', ('state', '!=', 'draft'), ('move_id', '!=', False)]}"
+                            invisible="context.get('from_partner',False)"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button class="oe_stat_button" type="object" string="Journal Entry"
+                                attrs="{'invisible': [('move_id', '=', False)]}"
+                                name="action_move_journal_line_custom"
+                                icon="fa-pencil-square-o"/>
+                        <button class="oe_stat_button" type="object" string="Ticket"
+                                attrs="{'invisible': [('ticket_id', '=', False)]}"
+                                name="action_ticket_form_custom"
+                                icon="fa fa-fw fa-ticket o_button_icon"/>
+                    </div>
+                    <group string="Transfer Funds From" col="4">
+                        <field name="partner_id" readonly="context.get('from_partner',False)"
+                               attrs="{'readonly': [('state', '=', 'post')]}"/>
+                        <field name="balance_available"/>
+                        <field name="move_id" invisible="1"/>
+                        <field name="ticket_id" invisible="1"/>
+                        <!-- <field name="move_id"
+                                                    attrs="{'invisible': [('move_id', '=', False)]}"
+                                                    invisible="context.get('from_partner',False)" readonly="1"/> -->
+                    </group>
+                    <group>
+                        <field name="transfer_to_ids" nolabel="1" attrs="{'readonly': [('state', '=', 'post')]}">
+                            <tree editable="bottom">
+                                <field name="partner_to_id" required="1" domain="[('type', '=', 'contact')]"/>
+                                <field name="amount" sum="Total" required="1"/>
+                            </tree>
+                        </field>
+                    </group>
+                    <footer invisible="not context.get('from_partner',False)">
+                        <button name="transfer_fund" string="Transfer" type="object"
+                                class="btn-primary"/>
+                        <button string="Cancel" class="btn-default" special="cancel"/>
+                    </footer>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="fund_transfer_tree_view_custom" model="ir.ui.view">
+        <field name="name">Funds Transfer</field>
+        <field name="model">fund.transfer</field>
+        <field name="priority">1</field>
+        <field name="arch" type="xml">
+            <tree string="Member Transfers">
+                <field name="partner_id"/>
+                <field name="balance_available"/>
+                <field name="amount_to_transfer"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="action_fund_transfer_form_view" model="ir.actions.act_window">
+        <field name="name">Funds Transfer</field>
+        <field name="res_model">fund.transfer</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="view_id" ref="fund_transfer_form_view"/>
+    </record>
+
+
+    <record id="action_fund_transfer_from_menu" model="ir.actions.act_window">
+        <field name="name">Funds Transfer</field>
+        <field name="res_model">fund.transfer</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{'search_default_parnter_group_by': True}</field>
+    </record>
+
+    <menuitem id="menu_funds_transfer" parent="account.menu_finance_receivables_documents"
+              string="Member Transfers" action="action_fund_transfer_from_menu"
+              groups="inuka.group_cash_specialist"/>
+
+    <record id="fund_transfer_successful_form_view" model="ir.ui.view">
+        <field name="name">Fund Transfer Details.</field>
+        <field name="model">fund.transfer.successful</field>
+        <field name="priority">1</field>
+        <field name="arch" type="xml">
+            <form string="Fund Transfer">
+                <group>
+                    <div class="oe_inline">
+                        <b>
+                            <span style="color: green;" readonly="1"
+                                  class="oe_inline my_customize_policy_red2">Funds Transferred Successfully!
+                            </span>
+                        </b>
+                    </div>
+                </group>
+                <footer>
+                    <button name="transfer_fund_succesfull" string="Ok" type="object"
+                            class="btn-primary"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_fund_transfer_successful_form_view" model="ir.actions.act_window">
+        <field name="name">Funds Transferred.</field>
+        <field name="res_model">fund.transfer.successful</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="view_id" ref="fund_transfer_successful_form_view"/>
+    </record>
+
+</odoo>

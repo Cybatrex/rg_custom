@@ -1,0 +1,61 @@
+<odoo>
+
+    <data>
+        <record id="office365_cron_do_calendar_import" model="ir.cron">
+            <field name="name">Auto office365 calendar import</field>
+            <field name="model_id" ref="model_res_users"/>
+            <field name="state">code</field>
+            <field name="code">model.auto_import_calendar()</field>
+            <field name='interval_number'>4</field>
+            <field name='interval_type'>minutes</field>
+            <field name="numbercall">-1</field>
+        </record>
+        <record id="office365_cron_do_calendar_export" model="ir.cron">
+            <field name="name">Auto office365 calendar export</field>
+            <field name="model_id" ref="model_res_users"/>
+            <field name="state">code</field>
+            <field name="code">model.auto_export_calendar()</field>
+            <field name='interval_number'>4</field>
+            <field name='interval_type'>minutes</field>
+            <field name="numbercall">-1</field>
+        </record>
+        <record id="office365_cron_do_tasts_import" model="ir.cron">
+            <field name="name">Auto Office365 tasks import</field>
+            <field name="model_id" ref="model_res_users"/>
+            <field name="state">code</field>
+            <field name="code">model.auto_import_tasks()</field>
+            <field name='interval_number'>4</field>
+            <field name='interval_type'>minutes</field>
+            <field name="numbercall">-1</field>
+        </record>
+        <record id="office365_cron_do_tasts_export" model="ir.cron">
+            <field name="name">Auto office365 tasks export</field>
+            <field name="model_id" ref="model_res_users"/>
+            <field name="state">code</field>
+            <field name="code">model.auto_export_tasks()</field>
+            <field name='interval_number'>4</field>
+            <field name='interval_type'>minutes</field>
+            <field name="numbercall">-1</field>
+        </record>
+        <record id="office365_cron_do_mails" model="ir.cron">
+            <field name="name">Sync Office365 Users Mail</field>
+            <field name="model_id" ref="model_res_users"/>
+            <field name="state">code</field>
+            <field name="code">model.sync_mail_scheduler()</field>
+            <field name='interval_number'>4</field>
+            <field name='interval_type'>minutes</field>
+            <field name="numbercall">-1</field>
+        </record>
+        <record id="office365_cron_do_customer_mails" model="ir.cron">
+            <field name="name">Sync Office365 Customers Mail</field>
+            <field name="model_id" ref="model_res_users"/>
+            <field name="state">code</field>
+            <field name="active">0</field>
+            <field name="code">model.sync_customer_mail_scheduler()</field>
+            <field name='interval_number'>4</field>
+            <field name='interval_type'>minutes</field>
+            <field name="numbercall">-1</field>
+        </record>
+
+    </data>
+</odoo>

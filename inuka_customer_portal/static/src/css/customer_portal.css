@@ -1,0 +1,461 @@
+#portal-menu {
+    padding: 0;
+    margin-bottom: 10px;
+    float: left;
+    display: block;
+}
+
+#portal-menu .row {
+    margin: 0;
+    padding: 15px;
+    width: 100%;
+    float: left;
+    border-bottom: 1px solid gainsboro;
+}
+
+#portal-menu .row:hover {
+    background: gainsboro;
+    cursor: pointer;
+}
+
+#portal-menu .row a {
+    width: 100% !important;
+    float: left;
+    text-decoration: none;
+}
+
+#portal-menu .row.active {
+    background: gainsboro;
+}
+
+#o_mobile_menu_toggle {
+    padding: 10px;
+    margin: 5px;
+    border: 1px solid darkgray;
+    color: darkgray;
+    border-radius: 3px;
+    cursor: pointer;
+    display: none;
+}
+
+#portal-menu-content {
+    float: left;
+}
+
+.col-md-4.dashboard-box {
+    text-align: center;
+    border: 1px solid gainsboro;
+    border-radius: 5px;
+    width: 31%;
+    padding: 0;
+    margin-right: 15px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    background: black;
+    color: white;
+    float: left;
+}
+
+.col-md-4.dashboard-box h3 {
+    margin: 0px;
+}
+
+.col-md-4.dashboard-box h4 {
+    font-size: 13px;
+}
+
+.downline_class {
+    padding-bottom: 35px !important;
+    padding-top: 35px !important;
+}
+
+.list_of_member {
+    height: 37px;
+    float: left;
+    line-height: 37px;
+    width: 80%;
+    border: 1px solid #a67f49;
+    margin-left: 20px;
+    border-radius: 50px;
+    background: #a67f49;
+    color: white;
+    font-size: 15px;
+}
+
+.list_of_member:hover {
+    text-decoration: none;
+    color: white;
+}
+
+#portal-menu-content .panel.panel-default {
+    width: 100%;
+    float: left;
+    text-align: left;
+}
+
+.container.mt16.o_portal {
+    display: none;
+}
+
+.container.mt16.customer_o_portal {
+    display: block;
+}
+
+.o_portal_wrap .container.mb64 {
+    width: 100%;
+    margin-bottom: 0px !important;
+}
+
+#wrap {
+    box-shadow: unset !important;
+}
+
+.row.member_details .col-md-6 {
+    margin-bottom: 10px;
+}
+
+.avatar-upload {
+    position: relative;
+    max-width: 205px;
+    margin: 50px auto;
+}
+
+.avatar-upload .avatar-edit {
+    position: absolute;
+    right: 12px;
+    z-index: 1;
+    top: 10px;
+}
+
+.avatar-upload .avatar-edit input {
+    display: none;
+}
+
+.avatar-upload .avatar-edit input + label {
+    display: inline-block;
+    width: 34px;
+    height: 34px;
+    margin-bottom: 0;
+    border-radius: 100%;
+    background: #FFFFFF;
+    border: 1px solid transparent;
+    box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.12);
+    cursor: pointer;
+    font-weight: normal;
+    transition: all 0.2s ease-in-out;
+}
+
+.avatar-upload .avatar-edit input + label:hover {
+    background: #f1f1f1;
+    border-color: #d6d6d6;
+}
+
+.avatar-upload .avatar-edit input + label:after {
+    content: "\f040";
+    font-family: 'FontAwesome';
+    color: #757575;
+    position: absolute;
+    top: 10px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    margin: auto;
+}
+
+.avatar-upload .avatar-preview {
+    width: 192px;
+    height: 192px;
+    position: relative;
+    border-radius: 100%;
+    border: 6px solid #F8F8F8;
+    box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.1);
+}
+
+.avatar-upload .avatar-preview > div {
+    width: 100%;
+    height: 100%;
+    border-radius: 100%;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.o_portal_my_doc_mobile_table tbody, .o_portal_my_doc_mobile_table tr {
+    float: left;
+    width: 100%;
+}
+
+.o_portal_my_doc_mobile_table tr td:first-child {
+    width: 85%;
+    float: left;
+    white-space: normal !important;
+}
+
+.o_portal_my_doc_mobile_table tr td:last-child {
+    float: left;
+}
+
+.o_portal_my_member_mobile_table tbody, .o_portal_my_member_mobile_table tr {
+    float: left;
+    width: 100%;
+}
+
+.o_portal_my_member_mobile_table tr td:first-child {
+    width: 75%;
+    float: left;
+    white-space: normal !important;
+}
+
+.o_portal_my_member_mobile_table tr td:last-child {
+    width: 25%;
+    float: left;
+    line-height: 90px;
+    text-align: right;
+}
+
+.o_portal_my_ticket_mobile_table tbody, .o_portal_my_ticket_mobile_table tr {
+    float: left;
+    width: 100%;
+}
+
+.o_portal_my_ticket_mobile_table tr td:first-child {
+    width: 70%;
+    float: left;
+    white-space: normal !important;
+}
+
+.o_portal_my_ticket_mobile_table tr td:last-child {
+    width: 30%;
+    float: left;
+    line-height: 90px;
+    text-align: right;
+}
+
+.o_portal_my_order_mobile_table tbody, .o_portal_my_order_mobile_table tr {
+    float: left;
+    width: 100%;
+}
+
+.o_portal_my_order_mobile_table tr td:first-child {
+    width: 65%;
+    float: left;
+    white-space: normal !important;
+}
+
+.o_portal_my_order_mobile_table tr td:last-child {
+    width: 35%;
+    float: left;
+    text-align: right;
+}
+
+.o_portal_my_doc_mobile_table, .o_portal_my_member_mobile_table, .o_portal_my_ticket_mobile_table, .o_portal_my_order_mobile_table {
+    display: none;
+}
+
+.search_icon {
+    display: none;
+}
+
+.order_line_mobile_table {
+    display: none;
+}
+
+.oe_product.oe_grid.oe-height-2 form section {
+    padding-bottom: 0px !important;
+}
+
+.oe_product.oe_grid.oe-height-2 form section h5 {
+    width: 100% !important;
+    float: left !important;
+    margin: 0px;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.oe_product.oe_grid.oe-height-2 form section .product_price {
+    position: relative !important;
+    width: 100% !important;
+    float: left !important;
+    height: 30px;
+    padding-right: 10px;
+}
+
+.oe_product.oe_grid.oe-height-2 form section .product_price b {
+    float: left !important;
+    margin-right: 5px;
+}
+
+.oe_product.oe_grid.oe-height-2 form section .product_price .css_quantity.input-group.oe_website_spinner {
+    float: left !important;
+    max-width: 70px !important;
+    max-height: 20px !important;
+    margin: 0px;
+}
+
+.oe_product.oe_grid.oe-height-2 form section .product_price .css_quantity.input-group.oe_website_spinner .input-group-addon:first-child {
+    height: 22px !important;
+    float: left !important;
+    padding: 5px !important;
+    width: 22px !important;
+    margin: 0 !important;
+    line-height: 0 !important;
+}
+
+.oe_product.oe_grid.oe-height-2 form section .product_price .css_quantity.input-group.oe_website_spinner .input-group-addon:last-child {
+    float: left;
+    height: 22px;
+    width: 22px;
+    padding: 3px;
+}
+
+.oe_product.oe_grid.oe-height-2 form section {
+    padding: 0px;
+}
+
+.oe_website_sale .oe_product section .product_price .btn-default {
+    padding: 5px !important;
+}
+
+a.btn.btn-default.btn-xs.o_add_wishlist {
+    width: 24px;
+}
+
+.oe_product.oe_grid.oe-height-2 form section .product_price .css_quantity.input-group.oe_website_spinner .form-control.quantity {
+    height: 23px;
+    border-radius: unset;
+    width:25px;
+}
+
+.oe_product.oe_grid.oe-height-2 form section .product_price .css_quantity.input-group.oe_website_spinner .form-group {
+    float: left;
+    width: 25px;
+    margin: 0;
+    height: 22px;
+}
+
+.oe_product.oe_grid.oe-height-2 form section .product_price b {
+    float: left !important;
+    margin-right: 5px;
+    width: 40%;
+    text-align: left;
+}
+
+.oe_product.oe_grid.oe-height-2 form section .product_price {
+    position: relative !important;
+    width: 100% !important;
+    float: left !important;
+    height: 30px;
+    padding-right: 10px;
+    padding-left: 10px;
+    line-height: 27px;
+}
+
+#products_grid.col-md-9 .oe-height-2 {
+    height: 250px;
+}
+
+#products_grid .oe_product_cart form {
+    height: 100%;
+    width: 100%;
+}
+
+#products_grid .oe_product_cart form > div {
+    height: 100%;
+    width: 100%;
+}
+
+#products_grid .oe_product .oe_product_image {
+    position: relative !important;
+    text-align: center;
+    height: 65%;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.oe_website_sale .oe_product section .product_price .btn-default {
+    top: 0px !important;
+}
+
+.product_price a.btn.btn-default.btn-xs {
+    padding: 0px !important;
+}
+
+.product_price a.btn.btn-default.btn-xs.o_add_wishlist {
+    padding: 5px !important;
+}
+
+.product_price a.btn.btn-default.btn-xs .fa-shopping-cart {
+    padding: 5px;
+}
+
+@media (max-width: 800px) {
+    .search_icon {
+        display: block;
+        float: right;
+        font-size: 20px;
+        border: 1px solid lightgray;
+        padding: 6px;
+        border-radius: 5px;
+    }
+
+    .inuka_customer_portal #portal-menu-content .panel-body .row.mt32.mb32 .col-xs-2 {
+        width: 100%;
+    }
+
+    .inuka_customer_portal #portal-menu-content #total {
+        float: left;
+    }
+
+    #inuka_mobile_invoice_table tr th:nth-child(4), #inuka_mobile_invoice_table tr th:nth-child(5), #inuka_mobile_invoice_table tr th:nth-child(8), #inuka_mobile_invoice_table tr th:nth-child(7) {
+        display: none;
+    }
+
+    #inuka_mobile_invoice_table tr td:nth-child(4), #inuka_mobile_invoice_table tr td:nth-child(5), #inuka_mobile_invoice_table tr td:nth-child(8), #inuka_mobile_invoice_table tr td:nth-child(7) {
+        display: none;
+    }
+
+    .o_portal_my_doc_mobile_table, .o_portal_my_member_mobile_table, .o_portal_my_ticket_mobile_table, .o_portal_my_order_mobile_table {
+        display: block;
+    }
+
+    .o_portal_my_doc_table {
+        display: none;
+    }
+
+    .order_line_mobile_table {
+        display: block;
+    }
+
+    .customer_o_portal {
+        width: 84%;
+        float: right;
+        margin-top: 5px !important;
+        padding: 0;
+    }
+
+    #o_mobile_menu_toggle {
+        display: inline-block;
+    }
+
+    #portal-menu {
+        display: none;
+        width: 100% !important;
+    }
+
+    #portal-menu-content {
+        float: left;
+        width: 100%;
+        padding: 0px;
+    }
+
+    .col-md-4.dashboard-box {
+        width: 100%;
+        margin: 0px;
+    }
+}
+
+
+
+

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_stock_picking_tree_inherit_inuka" model="ir.ui.view">
+        <field name="name">stock.picking.tree.inherit.inuka</field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="stock.vpicktree"/>
+        <field name="arch" type="xml">
+            <field name="origin" position="after">
+                <field name="bulk_master_id"/>
+                <field name="team_id"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="view_stock_picking_form_inherit_inuka" model="ir.ui.view">
+        <field name="name">stock.picking.form.inherit.inuka</field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="stock.view_picking_form"/>
+        <field name="arch" type="xml">
+            <field name="backorder_id" position="after">
+                <field name="picking_type_code" invisible="1"/>
+                <field name="bulk_master_id" attrs="{'invisible': [('picking_type_code', '!=', 'outgoing')]}"/>
+                <field name="team_id" attrs="{'invisible': [('picking_type_code', '!=', 'outgoing')]}"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="view_stock_picking_form_inherit_carrier_inuka" model="ir.ui.view">
+        <field name="name">stock.picking.form.inherit.carrier.inuka</field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="delivery.view_picking_withcarrier_out_form"/>
+        <field name="arch" type="xml">
+        	<xpath expr="//div[@name='tracking']" position="replace"/>
+        	<xpath expr="//label[@for='carrier_tracking_ref']" position="replace"/>
+       		<xpath expr="//form/sheet/group/group[2]" position="inside">
+       			<label for="carrier_tracking_ref" string="Waybill"/>
+       			<div name="tracking">
+	                <field name="carrier_tracking_ref" class="oe_inline" attrs="{'readonly': [('state', '=', 'done')]}"/>
+	                <button type="object" class="fa fa-arrow-right oe_link" name="cancel_shipment" string="Cancel" attrs="{'invisible':['|','|','|',('carrier_tracking_ref','=',False),('delivery_type','in', ['fixed', 'base_on_rule']),('delivery_type','=',False),('state','not in',('done'))]}"/>
+	            </div>
+       		</xpath>
+        </field>
+    </record>
+
+    <record id="view_delivery_carrier_form_inherit_inuka" model="ir.ui.view">
+        <field name="name">delivery.carrier.form.inherit.inuka</field>
+        <field name="model">delivery.carrier</field>
+        <field name="inherit_id" ref="delivery.view_delivery_carrier_form"/>
+        <field name="arch" type="xml">
+            <field name="integration_level" position="after">
+                <field name="blocked_for_delivery"/>
+            </field>
+            <field name="amount" position="after">
+                <div class="o_row o_td_label">
+                    <field name="free_over_pv"/>
+                    <label for="free_over_pv"/>
+                </div>
+                <field nolabel="1" name="amount_pv" attrs="{'required':[('free_over_pv','!=', False)], 'invisible':[('free_over_pv','=', False)]}"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="view_stock_inventory_form_inherit_inuka" model="ir.ui.view">
+        <field name="name">stock.inventory.form.inherit.inuka</field>
+        <field name="model">stock.inventory</field>
+        <field name="inherit_id" ref="stock.view_inventory_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group" position="after">
+                <label for="description" string="Notes"/>
+                <div>
+                    <field name="description" placeholder="Notes ..." required="1"/>
+                </div>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

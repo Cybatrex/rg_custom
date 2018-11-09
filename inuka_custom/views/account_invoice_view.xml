@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record model="ir.ui.view" id="inuka_account_invoice_view_inherit2">
+        <field name="name">inuka.invoice.view2</field>
+        <field name="model">account.invoice</field>
+        <field name="inherit_id" ref="account.invoice_form"/>
+        <field name="arch" type="xml">
+          <xpath expr="//notebook[@colspan='4']//field[@name='account_id']" position="replace">
+             <field name="account_id"
+                    groups="account.group_account_user"
+                    domain="[('company_id', '=', parent.company_id), ('internal_type', '=', 'other'), ('deprecated', '=', False)]"
+                    invisible="1"/>
+          </xpath>
+          <xpath expr="//notebook[@colspan='4']//field[@name='product_id']" position="replace">
+             <field name="product_id"
+                    domain="[('sale_ok','=',True)]"
+                    options="{'no_quick_create':True, 'no_create_edit':True, 'no_create': True}"/>
+          </xpath>
+          <xpath expr="//notebook[@colspan='4']//field[@name='discount']" position="replace">
+              <field name="discount" groups="sale.group_discount_per_so_line" options="{'fold_field': 'fold'}" clickable="True"/>
+          </xpath>
+          <xpath expr="//page[@name='other_info']//field[@name='account_id']" position="replace">
+          </xpath>
+          <xpath expr="//field[@name='user_id']" position="replace">
+             <field name="user_id"
+                    groups="base.group_user"
+                    options="{'no_quick_create':True, 'no_create_edit':True, 'no_create': True}"/>
+          </xpath>
+          <xpath expr="//field[@name='partner_id']" position="replace">
+              <field string="Customer"
+                     name="partner_id"
+                     context="{'search_default_customer':1, 'show_address': 1, 'default_company_type': 'company'}"
+                     options="{&quot;always_reload&quot;: True}"
+                     domain="[('customer', '=', True), ('parent_id', '=', False)]"/>
+          </xpath>
+          <xpath expr="//field[@name='payment_term_id']" position="replace">
+             <field name="payment_term_id"
+                    options="{'no_quick_create':True, 'no_create_edit':True, 'no_create': True}"/>
+          </xpath>
+          <xpath expr="//notebook[@colspan='4']//field[@name='account_analytic_id']" position="replace">
+            <field name="account_analytic_id"
+                   groups="analytic.group_analytic_accounting"
+                   domain="[('company_id', '=', parent.company_id)]"
+                   context="{'default_partner_id': parent.partner_id}"
+                   invisible="1"/>
+          </xpath>
+          <xpath expr="//notebook[@colspan='4']//field[@name='analytic_tag_ids']" position="replace">
+            <field name="analytic_tag_ids"
+                   groups="analytic.group_analytic_accounting"
+                   widget="many2many_tags"
+                   options="{'color_field': 'color'}"
+                   invisible="1"/>
+          </xpath>
+          <xpath expr="//notebook[@colspan='4']//field[@name='name']" position="replace">
+            <field name="name"
+                   invisible="1"/>
+          </xpath>
+          <field name="payment_term_id" position="after">
+              <field name="pricelist_id"
+                     required="1"
+                     attrs="{'readonly':[('state', 'not in', 'draft')]}"
+                     options="{'no_quick_create':True, 'no_create_edit':True, 'no_create': True}"/>
+              <field domain="[('company_id', '=', company_id),('internal_type','=', 'receivable'), ('deprecated', '=', False)]"
+                     name="account_id"
+                     groups="account.group_account_user"
+                     options="{'no_quick_create':True, 'no_create_edit':True, 'no_create': True}"/>
+            </field>
+        </field>
+    </record>
+    
+    <record model="ir.ui.view" id="inuka_account_invoice_view_inherit3">
+        <field name="name">inuka.invoice.view3</field>
+        <field name="model">account.invoice</field>
+        <field name="inherit_id" ref="inuka.view_invoice_form_inherit_inuka"/>
+        <field name="arch" type="xml">
+          <xpath expr="//field[@name='team_id']" position="replace">
+              <field name="team_id"
+                     string="Sales Floor"
+                     options="{'no_quick_create':True, 'no_create_edit':True, 'no_create': True}"/>
+          </xpath>
+          <xpath expr="//field[@name='sale_date']" position="after">
+              <field name="region"/>
+          </xpath>
+        </field>
+    </record>
+    <record model="ir.ui.view" id="inuka_asaleinvoice_form_inherit_sale">
+        <field name="name">inuka.sale.invoice_form_inherit_sale</field>
+        <field name="model">account.invoice</field>
+        <field name="inherit_id" ref="sale.invoice_form_inherit_sale"/>
+        <field name="arch" type="xml">
+          <xpath expr="//field[@name='price_total']" position="replace">
+              <field name="price_total" string="Total"/>
+          </xpath>
+        </field>
+    </record>
+    <record model="ir.ui.view" id="inuka_account_invoice_view_inherit4">
+        <field name="name">inuka.invoice.view4</field>
+        <field name="model">account.invoice</field>
+        <field name="inherit_id" ref="account.invoice_supplier_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='invoice_line_ids']//field[@name='account_analytic_id']" position="replace">
+              <field name="account_analytic_id"
+                     groups="analytic.group_analytic_accounting"
+                     domain="[('company_id', '=', parent.company_id)]"
+                     context="{'default_partner_id': parent.partner_id}"
+                     invisible="1"/>
+            </xpath>
+            <xpath expr="//field[@name='invoice_line_ids']//field[@name='analytic_tag_ids']" position="replace">
+              <field name="analytic_tag_ids"
+                     groups="analytic.group_analytic_accounting"
+                     widget="many2many_tags"
+                     options="{'color_field': 'color'}"
+                     invisible="1"/>
+            </xpath>
+            <xpath expr="//field[@name='product_id']" position="replace">
+              <field name="product_id"
+                     context="{'partner_id': parent.partner_id}"
+                     domain="[('purchase_ok','=',True)]"
+                     options="{'no_quick_create':True, 'no_create_edit':True, 'no_create': True}"/>
+            </xpath>
+            <xpath expr="//field[@name='invoice_line_ids']//field[@name='account_id']" position="replace">
+              <field name="account_id"
+                     groups="account.group_account_user"
+                     domain="[('company_id', '=', parent.company_id), ('internal_type', '=', 'other'), ('deprecated', '=', False)]"
+                     options="{'no_quick_create':True, 'no_create_edit':True, 'no_create': True}"/>
+            </xpath>
+            <xpath expr="//field[@name='user_id']" position="replace">
+               <field name="user_id" string="Responsible"
+                      options="{'no_quick_create':True, 'no_create_edit':True, 'no_create': True}"/>
+            </xpath>
+            <xpath expr="//field[@name='tax_line_ids']//field[@name='account_id']" position="replace">
+              <field name="account_id"
+                     groups="account.group_account_user"
+                     options="{'no_quick_create':True, 'no_create_edit':True, 'no_create': True}"/>
+            </xpath>
+            <xpath expr="//field[@name='tax_line_ids']//field[@name='account_analytic_id']" position="replace">
+              <field name="account_analytic_id"
+                     domain="[('company_id', '=', parent.company_id)]"
+                     groups="analytic.group_analytic_accounting"
+                     options="{'no_quick_create':True, 'no_create_edit':True, 'no_create': True}"/>
+            </xpath>
+            <xpath expr="//field[@name='partner_id']" position="replace">
+               <field string="Vendor"
+                      name="partner_id"
+                      context="{'default_customer': 0, 'search_default_supplier': 1, 'default_supplier': 1, 'default_company_type': 'company'}"
+                      domain="[('supplier', '=', True)]"/>
+            </xpath>
+        </field>
+    </record>
+    <record model="ir.ui.view" id="inuka_account_invoice_view_inherit5">
+        <field name="name">inuka.invoice.view5</field>
+        <field name="model">account.invoice</field>
+        <field name="inherit_id" ref="sale.account_invoice_form"/>
+        <field name="arch" type="xml">
+          <xpath expr="//field[@name='partner_shipping_id']" position="replace">
+              <field name="partner_shipping_id"
+                     groups="sale.group_delivery_invoice_address"
+                     options="{'no_quick_create':True, 'no_create_edit':True, 'no_create': True}"/>
+          </xpath>
+        </field>
+    </record>
+    <record model="ir.ui.view" id="inuka_account_invoice_asset_category">
+        <field name="name">inuka.invoice.view.asset.category</field>
+        <field name="model">account.invoice</field>
+        <field name="inherit_id" ref="account_asset.view_invoice_asset_category"/>
+        <field name="arch" type="xml">
+          <xpath expr="//field[@name='asset_category_id']" position="replace">
+              <field string="Asset Category"
+                     name="asset_category_id"
+                     domain="[('type','=','purchase')]"
+                     context="{'default_type':'purchase'}"
+                     options="{'no_quick_create':True, 'no_create_edit':True, 'no_create': True}"/>
+          </xpath>
+        </field>
+    </record>
+
+</odoo>

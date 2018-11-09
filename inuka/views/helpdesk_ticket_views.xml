@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_helpdesk_ticket_form_inherit_inuka" model="ir.ui.view">
+        <field name="name">helpdesk.ticket.form.inherit.inuka</field>
+        <field name="model">helpdesk.ticket</field>
+        <field name="inherit_id" ref="helpdesk.helpdesk_ticket_view_form"/>
+        <field name="arch" type="xml">
+            <button name="assign_ticket_to_self" position="after">
+                <button name="create_sale_order" string="Create Sales Order" type="object" class="oe_highlight" attrs="{'invisible': [('is_close', '=', True)]}"/>
+                <button name="sms_action" string="Send SMS" type="object" class="oe_highlight"/>
+                <button name="import_bank_statement" string="Import Statement" type="object" class="oe_highlight"/>
+                <button name="fund_transfer" type="object" string="FUNDS TRANSFER" class="btn-primary"
+                        groups="inuka.group_cash_specialist"
+                        attrs="{'invisible': ['|', ('fund_transfer_visible', '=', False), ('partner_id', '=', False)]}"/>
+            </button>
+            <button name="open_customer_tickets" position="after">
+                <button class="oe_stat_button" type="object" name="view_sms_message"
+                    icon="fa-random">
+                    <field string="SMS's" name="sms_count" widget="statinfo"/>
+                </button>
+                <button class="oe_stat_button" type="object" name="view_sale_orders"
+                    icon="fa-usd">
+                    <field string="Sales" name="sale_order_count" widget="statinfo"/>
+                </button>
+            </button>
+            <field name="partner_id" position="after">
+                <field name="mobile"/>
+                <field name="is_close" invisible="1"/>
+                <field name="fund_transfer_visible" invisible="1"/>
+            </field>
+            <field name="description" position="after">
+                <notebook>
+                    <page string="Products">
+                        <field name="product_ids">
+                            <tree string="Products">
+                                <field name="default_code"/>
+                                <field name="name"/>
+                                <field name="lst_price"/>
+                                <field name="qty_available"/>
+                                <field name="virtual_available"/>
+                                <field name="barcode"/>
+                            </tree>
+                        </field>
+                    </page>
+                </notebook>
+            </field>
+        </field>
+    </record>
+
+    <record id="view_helpdesk_ticket_tree_inherit_inuka" model="ir.ui.view">
+        <field name="name">helpdesk.ticket.tree.inherit.inuka</field>
+        <field name="model">helpdesk.ticket</field>
+        <field name="inherit_id" ref="helpdesk.helpdesk_tickets_view_tree"/>
+        <field name="arch" type="xml">
+            <field name="name" position="before">
+                <field name="id" string="Ticket #"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="view_helpdesk_ticket_search_inherit_inuka" model="ir.ui.view">
+        <field name="name">helpdesk.ticket.search.inherit.inuka</field>
+        <field name="model">helpdesk.ticket</field>
+        <field name="inherit_id" ref="helpdesk.helpdesk_tickets_view_search"/>
+        <field name="arch" type="xml">
+            <field name="id" position="replace">
+                <field name="id" string="Ticket #"/>
+            </field>
+        </field>
+    </record>
+
+</odoo>

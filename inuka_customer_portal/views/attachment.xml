@@ -1,0 +1,50 @@
+<odoo>
+    <record model="ir.ui.view" id="inuka_view_attachment_form">
+        <field name="name">ir.attachment</field>
+        <field name="model">ir.attachment</field>
+        <field name="inherit_id" ref="base.view_attachment_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='url']" position="after">
+                <field name="is_portal_visible"/>
+                <field name="folder_id" attrs="{'required':[('is_portal_visible','=',True)]}"
+                       options="{'no_quick_create':True, 'no_create_edit':True, 'no_create': True}"/>
+            </xpath>
+        </field>
+    </record>
+
+
+    <record model="ir.ui.view" id="inuka_document_folder_tree_view">
+        <field name="name">document.folder</field>
+        <field name="model">document.folder</field>
+        <field name="arch" type="xml">
+            <tree editable="bottom">
+                <field name="name"/>
+            </tree>
+        </field>
+    </record>
+
+    <record model="ir.actions.act_window" id="inuka_document_folder_action">
+        <field name="name">Document Folder</field>
+        <field name="res_model">document.folder</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+
+    <record model="ir.actions.act_window" id="inuka_ir_attachment_action">
+        <field name="name">Portal Document</field>
+        <field name="res_model">ir.attachment</field>
+        <field name="view_mode">kanban,tree,form</field>
+        <field name="domain">[('public','=',True),('is_portal_visible','=',True)]</field>
+        <field name="context">{'default_is_portal_visible':True,'default_public':True}</field>
+    </record>
+
+    <menuitem id="inuka_portal_document_menu" action="inuka_ir_attachment_action"
+              parent="crm.crm_menu_root"
+              sequence="7"/>
+
+
+    <menuitem id="inuka_document_folder_menu" action="inuka_document_folder_action" groups="base.group_system"
+              parent="crm.crm_menu_config"
+              sequence="7"/>
+
+</odoo>

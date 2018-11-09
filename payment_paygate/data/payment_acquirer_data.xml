@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="payment_acquirer_paygate" model="payment.acquirer">
+        <field name="name">paygate</field>
+        <field name="image" type="base64" file="payment_mygate/static/src/img/paygate_icon.png"/>
+        <field name="provider">paygate</field>
+        <field name="company_id" ref="base.main_company"/>
+        <field name="view_template_id" ref="paygate_form"/>
+        <field name="environment">test</field>
+        <field name="pre_msg"><![CDATA[
+            <p>You will be redirected to the mygate website after clicking on the payment button.</p>]]>
+        </field>
+        <field name="mygate_merchant_id">dummy</field>
+        <field name="mygate_application_id">dummy</field>
+    </record>
+</odoo>

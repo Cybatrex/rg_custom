@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<odoo>
+
+    <template id="report_invoice_document_inherited_for_pv" inherit_id="account.report_invoice_document">
+        <xpath expr="//table/thead/tr/th[5]" position="before">
+            <th class="text-right">Unit PV</th>
+            <th class="text-right">PV's</th>
+        </xpath>
+
+        <xpath expr="//table/tbody/tr/td[5]" position="before">
+            <td class="text-right"><span t-field="l.unit_pv"/></td>
+            <td class="text-right"><span t-field="l.pv"/></td>
+        </xpath>
+
+        <xpath expr="//div[@id='total']/div/table/tr[2]" position="after">
+            <tr class="border-black">
+                <td><strong>Total PV's</strong></td>
+                <td class="text-right">
+                    <span t-field="o.total_pv"/>
+                </td>
+            </tr>
+        </xpath>
+
+        <tr t-foreach="range(max(5-len(o.invoice_line_ids),0))" position="inside">
+            <td/>
+        </tr>
+    </template>
+    
+    <template id="inuka.report_invoice_document_with_payments" inherit_id="account.report_invoice_document_with_payments">
+    </template>
+
+
+</odoo>

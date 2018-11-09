@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record model="ir.ui.view" id="inuka_purchase_order_form_view">
+        <field name="name">inuka.view.purchase.order.form</field>
+        <field name="model">purchase.order</field>
+        <field name="inherit_id" ref="purchase.purchase_order_form"/>
+        <field name="arch" type="xml">
+          <xpath expr="//field[@name='partner_id']" position="replace">
+              <field name="partner_id"
+                     context="{'search_default_supplier':1, 'default_supplier':1, 'default_customer':0}"
+                     domain="[('supplier','=',True)]"/>
+          </xpath>
+          <xpath expr="//field[@name='incoterm_id']" position="replace">
+              <field name="incoterm_id"
+                     options="{'no_quick_create':True, 'no_create_edit':True, 'no_create': True}"/>
+          </xpath>
+          <xpath expr="//field[@name='order_line']//field[@name='product_id']" position="replace">
+              <field name="product_id"
+                     attrs="{'readonly': [('state', 'in', ('purchase', 'to approve','done', 'cancel'))]}"
+                     context="{'partner_id':parent.partner_id, 'quantity':product_qty,'uom':product_uom, 'company_id': parent.company_id}"
+                     force_save="1"
+                     options="{'no_quick_create':True, 'no_create_edit':True, 'no_create': True}"/>
+          </xpath>
+        </field>
+    </record>
+    <record model="ir.ui.view" id="inuka_purchase_order_form_inherit">
+        <field name="name">inuka.view.purchase.requisition.form</field>
+        <field name="model">purchase.order</field>
+        <field name="inherit_id" ref="purchase_requisition.purchase_order_form_inherit"/>
+        <field name="arch" type="xml">
+          <xpath expr="//field[@name='requisition_id']" position="replace">
+            <field name="requisition_id"
+                   domain="[('state', 'in', ('in_progress', 'open')), ('vendor_id', 'in', (partner_id, False))]"
+                   options="{'no_quick_create':True, 'no_create_edit':True, 'no_create': True}"/>
+          </xpath>
+        </field>
+    </record>
+</odoo>

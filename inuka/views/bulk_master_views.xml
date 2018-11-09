@@ -1,0 +1,398 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_bulk_master_form" model="ir.ui.view">
+        <field name="name">bulk.master.form</field>
+        <field name="model">bulk.master</field>
+        <field name="arch" type="xml">
+            <form string="Bulk Master" class="o_sale_order">
+            <header>
+                <button name="button_confirm" string="Confirm" type="object" states="draft" class="btn-primary"/>
+                <button name="button_print" string="Print" type="object" states="confirmed,ready,done" class="btn-primary"/>
+                <button name="button_bulk_lock" string="Bulk Lock" type="object"
+                    groups="inuka.processors,inuka.bulk_group"
+                    attrs="{'invisible': ['|', ('state', 'not in', ['confirmed']), ('bulk_lock', '=', True)]}" class="btn-primary"/>
+                <button name="button_pack_lock" string="Pack Lock" type="object"
+                    groups="inuka.processors,inuka.bulk_group"
+                    attrs="{'invisible': ['|', '|', ('state', 'not in', ['confirmed']), ('bulk_lock', '=', False), ('pack_lock', '=', True)]}" class="btn-primary"/>
+                <button name="button_bulk_unlock" string="Bulk Unlock" type="object"
+                    groups="inuka.dispatch_group,inuka.bulk_group"
+                    attrs="{'invisible': ['|', '|', ('state', 'not in', ['confirmed']), ('bulk_lock', '=', False), ('pack_lock', '=', True)]}" class="btn-primary"/>
+                <button name="button_pack_unlock" string="Pack Unlock" type="object"
+                    groups="inuka.dispatch_group"
+                    attrs="{'invisible': ['|', '|', ('state', 'not in', ['ready']), ('bulk_lock', '=', False), ('pack_lock', '=', False)]}" class="btn-primary"/>
+                <button name="button_validate" string="Validate" type="object" class="btn-primary"
+                    attrs="{'invisible': ['|', ('state', 'not in', ['ready']), ('is_dispatch_group', '=', False)]}"/>
+                <button name="button_approve" string="Approve for Free Shipping" type="object"
+                    attrs="{'invisible': ['|', ('state', 'not in', ['ready', 'confirmed']), ('free_shipping', '=', True)]}" class="btn-primary"/>
+                <button name="button_cancel" string="Cancel" type="object" states="confirmed,ready"/>
+                <button name="button_reset" string="Reset" type="object" states="cancelled" class="btn-primary"/>
+                <field name="state" widget="statusbar" statusbar_visible="draft,confirmed,ready,done"/>
+            </header>
+            <sheet>
+                <div class="oe_button_box" name="button_box">
+                    <button class="oe_stat_button" type="object" name="view_sale_orders"
+                        icon="fa-usd">
+                        <field string="Sales" name="sale_order_count" widget="statinfo"/>
+                    </button>
+                    <button
+                        name="view_delivery_orders"
+                        type="object"
+                        class="oe_stat_button"
+                        icon="fa-truck">
+                        <field name="delivery_count" widget="statinfo" string="Delivery"/>
+                    </button>
+                </div>
+                <div class="oe_title">
+                    <h1>
+                        <field name="name" readonly="1"/>
+                    </h1>
+                </div>
+                <group>
+                    <group>
+                        <field name="user_id"/>
+                        <field name="partner_id" domain="[('customer','=',True)]" context="{'search_default_customer':1, 'show_address': 1}" options='{"always_reload": True}'/>
+                        <field name="partner_shipping_id"
+                               domain="['|', ('id', '=', partner_id), ('parent_id', '=', partner_id)]"
+                               context="{'default_type':'delivery'}"
+                               options='{"always_reload": True}'
+                               required="1"/>
+                    </group>
+                    <group>
+                        <field name="bulk_type"/>
+                        <field name="member_id"/>
+                        <field name="carrier_id"/>
+                        <field name="waybill"/>
+                        <field name="team_id" required="1"/>
+                        <field name="is_dispatch_group" invisible="1"/>
+                    </group>
+                </group>
+                <group>
+                    <group>
+                        <field name="date"/>
+                    </group>
+                    <group>
+                        <field name="schedule_date"/>
+                    </group>
+                </group>
+                <group>
+                    <group>
+                        <field name="product_total"/>
+                        <field name="unpaid_total"/>
+                    </group>
+                    <group>
+                        <field name="shipping_total"/>
+                        <field name="pv_total"/>
+                        <field name="unpaid_pv"/>
+                    </group>
+                </group>
+                <group>
+                    <group>
+                        <label for="bulk_lock" string="Bulk Lock" style="font-style:bold"/>
+                        <div>
+                           <field name="bulk_lock"/><span style="color: #008784;">(Disable  additions/removals.)</span>
+                       </div>
+                       <field name="free_shipping"/>
+                    </group>
+                    <group>
+                        <label for="pack_lock" string="Pack Lock" style="font-style:bold"/>
+                        <div>
+                           <field name="pack_lock"/><span style="color: #008784;">(Order is finalised and ready to pack.)</span>
+                       </div>
+                    </group>
+                </group>
+                <label for="description" string="Notes"/>
+                <div>
+                    <field name="description" placeholder="Notes ..."/>
+                </div>
+                <notebook>
+                    <page string="Orders">
+                        <field name="sale_orders">
+                            <tree string="Orders">
+                                <field name="name" string="Order Number"/>
+                                <field name="date_order"/>
+                                <field name="partner_id"/>
+                                <field name="total_pv"/>
+                                <field name="shipping_cost"/>
+                                <field name="paid"/>
+                                <field name="user_id"/>
+                                <field name="amount_total"/>
+                                <field name="invoice_status"/>
+                                <field name="state" invisible="1"/>
+                            </tree>
+                        </field>
+                    </page>
+                </notebook>
+            </sheet>
+            <div class="oe_chatter">
+                <field name="message_follower_ids" widget="mail_followers"/>
+                <field name="activity_ids" widget="mail_activity"/>
+                <field name="message_ids" widget="mail_thread"/>
+            </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_bulk_master_tree" model="ir.ui.view">
+        <field name="name">bulk.master.tree</field>
+        <field name="model">bulk.master</field>
+        <field name="arch" type="xml">
+            <tree string="Bulk Master" decoration-info="not schedule_date or (state in ['draft', 'confirmed', 'ready'] and (schedule_date and schedule_date &gt; current_date)) " decoration-danger="state in ['draft', 'confirmed', 'ready'] and (schedule_date and schedule_date &lt; current_date)" decoration-muted="state == 'cancel'" decoration-success="state == 'done'">
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="bulk_type"/>
+                <field name="schedule_date"/>
+                <field name="pv_total"/>
+                <field name="shipping_total"/>
+                <field name="waybill"/>
+                <field name="state"/>
+                <field name="bulk_lock"/>
+                <field name="pack_lock"/>
+                <field name="team_id"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_bulk_master_kanban" model="ir.ui.view">
+        <field name="name">bulk.master.kanban</field>
+        <field name="model">bulk.master</field>
+        <field name="arch" type="xml">
+            <kanban class="o_kanban_mobile">
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="state"/>
+                <field name="date"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div t-attf-class="oe_kanban_card oe_kanban_global_click">
+                            <div class="o_kanban_record_top mb8">
+                                <div class="o_kanban_record_headings">
+                                    <strong class="o_kanban_record_title"><span><t t-esc="record.name.value"/></span></strong>
+                                </div>
+                                <strong>
+                                        <field name="state" widget="label_selection" options="{'classes': {'draft': 'default', 'cancelled': 'default', 'none': 'danger', 'confirmed': 'warning', 'done': 'success'}}"/>
+                                </strong>
+                            </div>
+                            <div class="o_kanban_record_bottom">
+                                <div class="oe_kanban_bottom_left">
+                                    <t t-esc="record.partner_id.value"/>
+                                </div>
+                                <div class="oe_kanban_bottom_right">
+                                    <t t-esc="record.date.value and record.date.value.split(' ')[0] or False"/>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="view_bulk_master_calendar" model="ir.ui.view">
+        <field name="name">bulk.master.calendar</field>
+        <field name="model">bulk.master</field>
+        <field name="arch" type="xml">
+            <calendar string="Bulk Master" date_start="schedule_date" color="partner_id">
+                <field name="name"/>
+                <field name="partner_id"/>
+            </calendar>
+        </field>
+    </record>
+
+    <record id="view_bulk_master_search" model="ir.ui.view">
+        <field name="name">bulk.master.search</field>
+        <field name="model">bulk.master</field>
+        <field name="arch" type="xml">
+            <search string="Bulk Master Search">
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="user_id"/>
+                <field name="carrier_id"/>
+                <field name="team_id"/>
+                <group expand="0" string="Group By">
+                    <filter string="Sales Team" name="team" context="{'group_by':'team_id'}"/>
+                    <filter string="Ticket Type" name="bulk_type_id" context="{'group_by':'bulk_type'}"/>
+                    <filter string="Stage" name="stage" context="{'group_by':'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_bulk_master_form" model="ir.actions.act_window">
+        <field name="name">Bulks</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">bulk.master</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,kanban,form,calendar</field>
+        <field name="help" type="html">
+          <p class="oe_view_nocontent_create">
+            Click to add Bulk Master.
+          </p>
+        </field>
+    </record>
+
+    <menuitem id="menu_bulk_master" name="Bulks" action="action_bulk_master_form" parent="stock.menu_stock_warehouse_mgmt" sequence="7"/>
+
+    <record id="stock.stock_picking_type_kanban" model="ir.ui.view">
+        <field name="name">stock.picking.type.kanban</field>
+        <field name="model">stock.picking.type</field>
+        <field name="arch" type="xml">
+            <kanban class="oe_background_grey o_kanban_dashboard o_emphasize_colors o_stock_kanban" create="0">
+                <field name="color"/>
+                <field name="code"/>
+                <field name="count_picking_ready"/>
+                <field name="count_picking_draft"/>
+                <field name="count_picking_waiting"/>
+                <field name="count_picking_late"/>
+                <field name="count_picking_backorders"/>
+                <field name="count_bulk_waiting"/>
+                <field name="count_bulk_ready"/>
+                <field name="count_bulk_late"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div t-if="['incoming', 'outgoing', 'internal'].indexOf(record.code.raw_value) > -1" t-attf-class="#{kanban_color(record.color.raw_value)}" name="stock_picking">
+                            <div>
+                                <div t-attf-class="o_kanban_card_header">
+                                    <div class="o_kanban_card_header_title">
+                                        <div class="o_primary">
+                                            <a type="object" name="get_stock_picking_action_picking_type">
+                                                <field name="name"/>
+                                            </a>
+                                        </div>
+                                        <div class="o_secondary"><field class="o_secondary"  name="warehouse_id"/></div>
+                                    </div>
+                                    <div class="o_kanban_manage_button_section">
+                                        <a class="o_kanban_manage_toggle_button" href="#"><i class="fa fa-ellipsis-v" /></a>
+                                    </div>
+                                </div>
+                                <div class="container o_kanban_card_content">
+                                    <h2 t-if="record.code.raw_value =='outgoing'">Singles</h2>
+                                    <div class="row">
+                                        <div class="col-xs-6 o_kanban_primary_left">
+                                            <button class="btn btn-primary" name="get_action_picking_tree_ready" type="object">
+                                                <span t-if="record.code.raw_value =='incoming'"><t t-esc="record.count_picking_ready.value"/> To Receive</span>
+                                                <span t-if="record.code.raw_value =='outgoing'"><t t-esc="record.count_picking_ready.value"/> To Do</span>
+                                                <span t-if="record.code.raw_value =='internal'"><t t-esc="record.count_picking_ready.value"/> Transfers</span>
+                                            </button>
+                                        </div>
+                                        <div class="col-xs-6 o_kanban_primary_right">
+                                            <div t-if="record.count_picking_ready.raw_value > 0" class="row">
+                                            </div>
+
+                                            <div t-if="record.count_picking_waiting.raw_value > 0" class="row">
+                                                <div class="col-xs-9">
+                                                    <a name="get_action_picking_tree_waiting" type="object">
+                                                        Waiting
+                                                    </a>
+                                                </div>
+                                                <div class="col-xs-3">
+                                                    <field name="count_picking_waiting"/>
+                                                </div>
+                                            </div>
+
+                                            <div t-if="record.count_picking_late.raw_value > 0" class="row">
+                                                <div class="col-xs-9">
+                                                    <a class="oe_kanban_stock_picking_type_list" name="get_action_picking_tree_late" type="object">
+                                                        Late
+                                                    </a>
+                                                </div>
+                                                <div class="col-xs-3">
+                                                    <field name="count_picking_late"/>
+                                                </div>
+                                            </div>
+
+                                            <div t-if="record.count_picking_backorders.raw_value > 0" class="row">
+                                                <div class="col-xs-9">
+                                                    <a class="oe_kanban_stock_picking_type_list" name="get_action_picking_tree_backorder" type="object">
+                                                        Back Orders
+                                                    </a>
+                                                </div>
+                                                <div class="col-xs-3">
+                                                    <field name="count_picking_backorders"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <h2 t-if="record.code.raw_value =='outgoing'">Bulks</h2>
+                                    <div class="row" t-if="record.code.raw_value =='outgoing'">
+                                        <div class="col-xs-6 o_kanban_primary_left">
+                                            <button class="btn btn-primary" name="view_bulk_ready" type="object">
+                                                <span t-if="record.code.raw_value =='outgoing'"><t t-esc="record.count_bulk_ready.value"/> To Do</span>
+                                            </button>
+                                        </div>
+                                        <div class="col-xs-6 o_kanban_primary_right">
+                                            <div t-if="record.count_bulk_ready.raw_value > 0" class="row">
+                                            </div>
+
+                                            <div t-if="record.count_bulk_waiting.raw_value > 0" class="row">
+                                                <div class="col-xs-9">
+                                                    <a name="view_bulk_waiting" type="object">
+                                                        Waiting
+                                                    </a>
+                                                </div>
+                                                <div class="col-xs-3">
+                                                    <field name="count_bulk_waiting"/>
+                                                </div>
+                                            </div>
+
+                                            <div t-if="record.count_bulk_late.raw_value > 0" class="row">
+                                                <div class="col-xs-9">
+                                                    <a class="oe_kanban_stock_picking_type_list" name="view_bulk_late" type="object">
+                                                        Late
+                                                    </a>
+                                                </div>
+                                                <div class="col-xs-3">
+                                                    <field name="count_bulk_late"/>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div><div class="container o_kanban_card_manage_pane">
+                                    <div class="row">
+                                        <div class="col-xs-6 o_kanban_card_manage_section o_kanban_manage_view">
+                                            <div class="o_kanban_card_manage_title">
+                                                <span>View</span>
+                                            </div>
+                                            <div>
+                                                <a name="get_stock_picking_action_picking_type" type="object">All</a>
+                                            </div>
+                                            <div>
+                                                <a name="%(stock.action_picking_tree_ready)d" type="action">Ready</a>
+                                            </div>
+                                            <div>
+                                                <a name="get_action_picking_tree_waiting" type="object">Waiting</a>
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-6 o_kanban_card_manage_section o_kanban_manage_new">
+                                            <div class="o_kanban_card_manage_title">
+                                                <span>New</span>
+                                            </div>
+                                            <div>
+                                                <a name="%(stock.action_picking_form)d" type="action">Immediate Transfer</a>
+                                            </div>
+                                            <div>
+                                                <a name="%(stock.action_picking_form)d" type="action" context="{'planned_picking': True}">Planned Transfer</a>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div t-if="widget.editable" class="o_kanban_card_manage_settings row">
+                                        <div class="col-xs-8">
+                                            <ul class="oe_kanban_colorpicker" data-field="color"/>
+                                        </div>
+                                        <div class="col-xs-4 text-right">
+                                            <a type="edit">Settings</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+</odoo>

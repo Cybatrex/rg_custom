@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Cron that process the mass sms queue -->
+    <record id="ir_cron_mass_sms_queue" model="ir.cron">
+        <field name="name">Mass SMS: Process Queue</field>
+        <field name="model_id" ref="model_mass_sms"/>
+        <field name="state">code</field>
+        <field name="code">model._process_mass_sms_queue()</field>
+        <field name="user_id" ref="base.user_root"/>
+        <field name="interval_number">60</field>
+        <field name="interval_type">minutes</field>
+        <field name="numbercall">-1</field>
+        <field eval="False" name="doall" />
+    </record>
+
+    <record id="ir_cron_sms_sync_participants" model="ir.cron">
+        <field name="name">Mass SMS: Sync Participants</field>
+        <field name="model_id" ref="model_mass_sms"/>
+        <field name="state">code</field>
+        <field name="code">model.search([('state', '=', 'queue')]).generate_participants()</field>
+        <field name="interval_number">30</field>
+        <field name="interval_type">minutes</field>
+        <field name="numbercall">1</field>
+    </record>
+
+    <record id="rule_send_sms_reply" model="base.automation">
+        <field name="name">SMS Keyword Reply</field>
+        <field name="model_id" ref="sms_frame.model_sms_message"/>
+        <field name="state">code</field>
+        <field name="trigger">on_create</field>
+        <field name="active" eval="True"/>
+        <field name="filter_domain">[('keyword', '!=', False)]</field>
+        <field name="code">
+records.send_sms_reply()
+        </field>
+    </record>
+
+</odoo>

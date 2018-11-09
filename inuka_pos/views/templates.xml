@@ -1,0 +1,11 @@
+<odoo>
+<data>
+    <template id="assets" inherit_id="point_of_sale.assets">
+        <xpath expr="." position="inside">
+            <link rel="stylesheet" href="/inuka_pos/static/src/css/pos.css" />
+
+            <script type="text/javascript" src="/inuka_pos/static/src/js/screens.js" />
+        </xpath>
+    </template>
+</data>
+</odoo>

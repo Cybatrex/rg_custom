@@ -1,0 +1,1788 @@
+<odoo>
+    <template id="assets_frontend_inuka_customer_portal" inherit_id="website.assets_frontend">
+        <xpath expr="." position="inside">
+            <link href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/11.0.9/css/intlTelInput.css"
+                  rel="stylesheet" media="screen"/>
+            <link rel='stylesheet' href="/inuka_customer_portal/static/src/css/material-dashboard.css"/>
+            <link rel='stylesheet' href="/inuka_customer_portal/static/src/css/customer_portal.css"/>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/11.0.9/js/intlTelInput.js"/>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/11.0.9/js/intlTelInput.min.js"/>
+            <script type="text/javascript" src="/inuka_customer_portal/static/src/js/material.min.js"/>
+            <script type="text/javascript" src="/inuka_customer_portal/static/src/js/material-dashboard.js"/>
+            <script type="text/javascript" src="/inuka_customer_portal/static/src/js/customer_portal.js"/>
+        </xpath>
+    </template>
+    <template name="Inuka Customer Portal Menu" id="inuka_customer_portal_menu">
+        <t t-call="portal.portal_layout">
+            <div id="wrap" class="inuka_customer_portal">
+                <div class="container-fluid">
+                    <div class="oe_structure">
+                        <div class="container mt16 customer_o_portal">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <ol class="breadcrumb o_portal_submenu">
+                                        <li>
+                                            <a href="/my/home">
+                                                <i class="fa fa-home"/>
+                                            </a>
+                                        </li>
+                                        <li t-att-class="'active' if not child_page_display_name else False">
+                                            <t t-esc="page_display_name"/>
+                                        </li>
+                                        <li t-if="child_page_display_name" class="active">
+                                            <t t-esc="child_page_display_name"/>
+                                        </li>
+                                    </ol>
+                                </div>
+                            </div>
+                        </div>
+                        <i class="fa fa-bars" id="o_mobile_menu_toggle"/>
+                        <div class="col-md-2 portal_menu" id="portal-menu">
+                            <div t-att-class="'row active' if page_name == 'dashboard' else 'row'">
+                                <a href="/my/home">Dashboard</a>
+                            </div>
+                            <div t-att-class="'row active' if page_name == 'performance' else 'row'">
+                                <a href="/my/performance">Performance</a>
+                            </div>
+                            <div t-att-class="'row active' if page_name == 'downline' else 'row'">
+                                <a href="/my/downline">Downline
+                                    <span class="pull-right badge">
+                                        <t t-esc="request.env['res.partner'].sudo().search_count([('upline', '=', request.env.user.partner_id.id)])"/>
+                                    </span>
+                                </a>
+                            </div>
+                            <div t-att-class="'row active' if page_name == 'register_member' else 'row'">
+                                <a href="/my/registermember">Register Member</a>
+                            </div>
+                            <div t-att-class="'row active' if page_name == 'sale_order' else 'row'">
+                                <a href="/my/orders">Sales Orders
+                                    <span class="pull-right badge">
+                                        <t t-esc="request.env['sale.order'].sudo().search_count([('message_partner_ids', 'child_of', [request.env.user.partner_id.commercial_partner_id.id]),('state', 'in', ['sale', 'done'])])"/>
+                                    </span>
+                                </a>
+                            </div>
+                            <div t-att-class="'row active' if page_name == 'invoice' else 'row'">
+                                <a href="/my/invoices">Invoices
+                                    <span class="pull-right badge">
+                                        <t t-esc="request.env['account.invoice'].sudo().search_count([('partner_id','=',request.env.user.partner_id.id)])"/>
+                                    </span>
+                                </a>
+                            </div>
+                            <div t-att-class="'row active' if page_name == 'tickets' else 'row'">
+                                <a href="/my/tickets">Tickets
+                                    <span class="pull-right badge">
+                                        <t t-esc="request.env['helpdesk.ticket'].sudo().search_count([('partner_id','=',request.env.user.partner_id.id)])"/>
+                                    </span>
+                                </a>
+                            </div>
+                            <div t-att-class="'row active' if page_name == 'sms_log' else 'row'">
+                                <a href="/my/smslog">SMS Log</a>
+                            </div>
+                            <div t-att-class="'row active' if page_name == 'download' else 'row'">
+                                <a href="/my/downloads">Downloads</a>
+                            </div>
+                            <div t-att-class="'row active' if page_name == 'profile' else 'row'">
+                                <a href="/my/account">Profile</a>
+                            </div>
+                            <div t-att-class="'row active' if page_name == 'payment' else 'row'">
+                                <a href="/my/payment">Payment</a>
+                            </div>
+                            <div t-att-class="'row active' if page_name == 'feature' else 'row'">
+                                <a href="/my/feature">Suggest a Feature</a>
+                            </div>
+                        </div>
+                        <div class="col-md-10 portal_menu_content" id="portal-menu-content">
+                            <t t-raw="0"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+    <template id="inuka_customer_portal.dashboard">
+        <t t-call="inuka_customer_portal.inuka_customer_portal_menu">
+            <div class="container">
+                <div class="row col-md-9">
+                    <div class="col-md-4 dashboard-box">
+                        <img src="/inuka_customer_portal/static/src/image/wallet.png" height="50"/>
+                        <h4>My Account Balance (Wallet)</h4>
+                        <h3>
+                            <t t-esc="abs(partner.credit)"
+                               t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>
+                        </h3>
+                    </div>
+                    <div class="col-md-4 dashboard-box">
+                        <img src="/inuka_customer_portal/static/src/image/personal_point.png" height="50"/>
+                        <h4>Personal PV (PPV)</h4>
+                        <h3>
+                            <t t-esc='"{0:,.2f}".format(partner.personal_pv or 0)'/>
+                        </h3>
+                    </div>
+                    <div class="col-md-4 dashboard-box">
+                        <img src="/inuka_customer_portal/static/src/image/group_point.png" height="50"/>
+                        <h4>Group PV (GPV)</h4>
+                        <h3>
+                            <t t-esc='"{0:,.2f}".format(partner.pv_tot_group or 0)'/>
+                        </h3>
+                    </div>
+                    <div class="col-md-4 dashboard-box">
+                        <img src="/inuka_customer_portal/static/src/image/balance.png" height="50"/>
+                        <h4>Available Balance</h4>
+                        <h3>
+                            <t t-esc="abs(reserve)"
+                               t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>
+                        </h3>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="o_portal_my_details">
+                        <h3 class="page-header" style="margin: 0;">Your Details
+                            <a href="/my/account" class="btn btn-default btn-xs">Change</a>
+                        </h3>
+                        <div t-field="user_id.partner_id"
+                             t-options='{"widget": "contact", "fields": ["email", "mobile", "address", "name","status"]}'/>
+                        <hr/>
+                        <h3 class="page-header" style="margin: 0;">Introducer Details
+                        </h3>
+                        <div t-field="user_id.partner_id.upline"
+                             t-options='{"widget": "contact", "fields": ["email", "mobile", "address", "name","status"]}'/>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+    <template id="inuka_customer_portal.performance">
+        <t t-call="inuka_customer_portal.inuka_customer_portal_menu">
+            <div class="container">
+                <div class="row col-md-9">
+                    <div class="col-md-4 dashboard-box">
+                        <img src="/inuka_customer_portal/static/src/image/personal_point.png" height="50"/>
+                        <h4>Personal PV (PPV)</h4>
+                        <h3>
+                            <t t-esc='"{0:,.2f}".format(partner.personal_pv or 0)'/>
+                        </h3>
+                    </div>
+                    <div class="col-md-4 dashboard-box">
+                        <img src="/inuka_customer_portal/static/src/image/group_point.png" height="50"/>
+                        <h4>Group PV (GPV)</h4>
+                        <h3>
+                            <t t-esc='"{0:,.2f}".format(partner.pv_tot_group or 0)'/>
+                        </h3>
+                    </div>
+                    <div class="col-md-4 dashboard-box downline_class">
+                        <h4>Downline 1</h4>
+                        <h3>
+                            <t t-esc='int(partner.pv_downline_1 or 0)'/>
+                        </h3>
+                    </div>
+                    <div class="col-md-4 dashboard-box downline_class">
+                        <h4>Downline 2</h4>
+                        <h3>
+                            <t t-esc='int(partner.pv_downline_2 or 0)'/>
+                        </h3>
+                    </div>
+                    <div class="col-md-4 dashboard-box downline_class">
+                        <h4>Downline 3</h4>
+                        <h3>
+                            <t t-esc='int(partner.pv_downline_3 or 0)'/>
+                        </h3>
+                    </div>
+                    <div class="col-md-4 dashboard-box downline_class">
+                        <h4>Downline 4</h4>
+                        <h3>
+                            <t t-esc='int(partner.pv_downline_4 or 0)'/>
+                        </h3>
+                    </div>
+                    <div class="col-md-4 dashboard-box">
+                        <h4>Active members :
+                            <t t-esc="partner.personal_members"/>
+                        </h4>
+                    </div>
+                    <div class="col-md-4 dashboard-box">
+                        <h4>New Recruits :
+                            <t t-esc="partner.new_members"/>
+                        </h4>
+                    </div>
+                    <div class="col-md-4 dashboard-box">
+                        <a href="/my/downline" class="list_of_member">
+                            List of Members
+                        </a>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="o_portal_my_details">
+                        <h3 class="page-header" style="margin: 0;">Your Details
+                            <a href="/my/account" class="btn btn-default btn-xs">Change</a>
+                        </h3>
+                        <div t-field="user_id.partner_id"
+                             t-options='{"widget": "contact", "fields": ["email", "mobile", "address", "name","status"]}'/>
+                        <hr/>
+                        <h3 class="page-header" style="margin: 0;">Introducer Details
+                        </h3>
+                        <div t-field="user_id.partner_id.upline"
+                             t-options='{"widget": "contact", "fields": ["email", "mobile", "address", "name","status"]}'/>
+                    </div>
+                </div>
+                <p></p>
+                <div class="col-md-12">
+                    <div class="row">
+                        <h3>Your recent performance</h3>
+                        <p>Below please find records of your processed orders as at
+                            <t
+                                    t-esc="time.strftime('%b %d,%Y', time.strptime(str(datetime.datetime.now().replace(microsecond=0)),'%Y-%m-%d %H:%M:%S'))"/>
+                            .
+                            Kindly take note that
+                            during high sales volumes it could take longer to see an accurate reflection of your sales
+                            performance.
+                        </p>
+                    </div>
+                    <div class="row">
+                        <table class="table table-responsive">
+                            <thead>
+                                <th>Sales Month</th>
+                                <th>PPV</th>
+                                <th>GPV</th>
+                                <th>PV Downline 1</th>
+                                <th>PV Downline 2</th>
+                                <th>PV Downline 3</th>
+                                <th>PV Downline 4</th>
+                                <th>Active Members</th>
+                                <th>New Members</th>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="recent_history" t-as="history_id">
+                                    <td>
+                                        <t t-esc="recent_history[history_id].get('sale_month')"/>
+                                    </td>
+                                    <td>
+                                        <t t-esc='"{0:,.2f}".format(recent_history[history_id].get("ppv") or 0)'/>
+                                    </td>
+                                    <td>
+                                        <t t-esc='"{0:,.2f}".format(recent_history[history_id].get("gpv") or 0)'/>
+                                    </td>
+                                    <td>
+                                        <t t-esc='"{0:,.2f}".format(recent_history[history_id].get("pv_downline_1") or 0)'/>
+                                    </td>
+                                    <td>
+                                        <t t-esc='"{0:,.2f}".format(recent_history[history_id].get("pv_downline_2") or 0)'/>
+                                    </td>
+                                    <td>
+                                        <t t-esc='"{0:,.2f}".format(recent_history[history_id].get("pv_downline_3") or 0)'/>
+                                    </td>
+                                    <td>
+                                        <t t-esc='"{0:,.2f}".format(recent_history[history_id].get("pv_downline_4") or 0)'/>
+                                    </td>
+                                    <td>
+                                        <t t-esc="recent_history[history_id].get('active_member')"/>
+                                    </td>
+                                    <td>
+                                        <t t-esc="recent_history[history_id].get('new_member')"/>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <hr style="width:100%;float:left;"/>
+                <br/>
+                <div class="col-md-12">
+                    <div class="row">
+                        <strong>Inuka year to date:</strong>
+                        <span>PPV =
+                            <t t-esc='"{0:,.2f}".format(history.get("ppv") or 0)'/>
+                        </span>
+                        ,
+                        <span>GPV =
+                            <t t-esc='"{0:,.2f}".format(history.get("gpv") or 0)'/>
+                        </span>
+                        <p>
+                            <t t-esc="history.get('date')"/>
+                        </p>
+                    </div>
+                    <div class="row">
+                        <table class="table table-responsive">
+                            <thead>
+                                <th>Sales Quarter</th>
+                                <th>PPV</th>
+                                <th>GPV</th>
+                                <th>Active Members</th>
+                                <th>New Members</th>
+                            </thead>
+                            <tbody>
+                                <tr t-if="history.get('q1')">
+                                    <td>
+                                        <t t-esc="history.get('q1').get('sales_quater')"/>
+                                    </td>
+                                    <td>
+                                        <t t-esc='"{0:,.2f}".format(history.get("q1").get("ppv") or 0)'/>
+                                    </td>
+                                    <td>
+                                        <t t-esc='"{0:,.2f}".format(history.get("q1").get("gpv") or 0)'/>
+                                    </td>
+                                    <td>
+                                        <t t-esc="history.get('q1').get('active_member')"/>
+                                    </td>
+                                    <td>
+                                        <t t-esc="history.get('q1').get('new_member')"/>
+                                    </td>
+                                </tr>
+                                <tr t-if="history.get('q2')">
+                                    <td>
+                                        <t t-esc="history.get('q2').get('sales_quater')"/>
+                                    </td>
+                                    <td>
+                                        <t t-esc='"{0:,.2f}".format(history.get("q2").get("gpv") or 0)'/>
+                                    </td>
+                                    <td>
+                                        <t t-esc='"{0:,.2f}".format(history.get("q2").get("gpv") or 0)'/>
+                                    </td>
+                                    <td>
+                                        <t t-esc="history.get('q2').get('active_member')"/>
+                                    </td>
+                                    <td>
+                                        <t t-esc="history.get('q2').get('new_member')"/>
+                                    </td>
+                                </tr>
+                                <tr t-if="history.get('q3')">
+                                    <td>
+                                        <t t-esc="history.get('q3').get('sales_quater')"/>
+                                    </td>
+                                    <td>
+                                        <t t-esc='"{0:,.2f}".format(history.get("q3").get("ppv") or 0)'/>
+                                    </td>
+                                    <td>
+                                        <t t-esc='"{0:,.2f}".format(history.get("q3").get("gpv") or 0)'/>
+                                    </td>
+                                    <td>
+                                        <t t-esc="history.get('q3').get('active_member')"/>
+                                    </td>
+                                    <td>
+                                        <t t-esc="history.get('q3').get('new_member')"/>
+                                    </td>
+                                </tr>
+                                <tr t-if="history.get('q4')">
+                                    <td>
+                                        <t t-esc="history.get('q4').get('sales_quater')"/>
+                                    </td>
+                                    <td>
+                                        <t t-esc='"{0:,.2f}".format(history.get("q4").get("ppv") or 0)'/>
+                                    </td>
+                                    <td>
+                                        <t t-esc='"{0:,.2f}".format(history.get("q4").get("gpv") or 0)'/>
+                                    </td>
+                                    <td>
+                                        <t t-esc="history.get('q4').get('active_member')"/>
+                                    </td>
+                                    <td>
+                                        <t t-esc="history.get('q4').get('new_member')"/>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+    <template id="inuka_customer_portal.my_orders_inherit" inherit_id="sale.portal_my_orders">
+        <xpath expr="//t[@t-call='portal.portal_layout']" position="attributes">
+            <attribute name="t-call">inuka_customer_portal.inuka_customer_portal_menu</attribute>
+        </xpath>
+        <xpath expr="//thead/tr/th[4]" position="after">
+            <th>PV's</th>
+        </xpath>
+        <xpath expr="//t/tr/td[4]" position="after">
+            <td>
+                <span t-esc='"{0:,.2f}".format(order.pv or 0)'/>
+            </td>
+        </xpath>
+        <xpath expr="//table" position="after">
+            <table class="table table-hover o_portal_my_order_mobile_table">
+                <tbody>
+                    <t t-foreach="orders" t-as="order">
+                        <tr>
+                            <td>
+                                <a t-attf-href="/my/orders/#{order.id}">
+                                    <strong style="color:black">
+                                        <t t-esc="time.strftime('%b %d,%Y', time.strptime(order.create_date,'%Y-%m-%d %H:%M:%S'))"/>
+                                    </strong>
+                                    <p style="color:black">Order #:
+                                        <t t-esc="order.name"/>
+                                    </p>
+                                    <strong style="color:#957985">Total PV's:
+                                        <t t-esc='"{0:,.2f}".format(order.pv or 0)'/>
+                                    </strong>
+                                </a>
+                            </td>
+                            <td>
+                                <strong t-field="order.amount_total" style="color:#957985"
+                                        t-options='{"widget": "monetary", "display_currency": order.pricelist_id.currency_id}'/>
+                                <p style="color:#e09c34"
+                                   t-esc="{'to_deliver': 'To Deliver', 'partially': 'Partially Delivered', 'fully': 'Fully Delivered'}[order.delivery_status]"/>
+                            </td>
+                        </tr>
+                    </t>
+                </tbody>
+            </table>
+        </xpath>
+    </template>
+    <template id="inuka_customer_portal.order_page_inherit" inherit_id="sale.portal_order_page">
+        <xpath expr="//t[@t-call='portal.portal_layout']" position="attributes">
+            <attribute name="t-call">inuka_customer_portal.inuka_customer_portal_menu</attribute>
+        </xpath>
+        <xpath expr="//div[hasclass('row')]/div[hasclass('col-md-9','col-xs-8','text-right')]" position="after">
+            <div class="col-md-9 col-xs-8 text-right">
+                <strong style="color:#df699c">Total PV's</strong>
+            </div>
+            <div class="col-md-3 col-xs-4 text-right">
+                <strong style="color:#df699c">
+                    <span t-esc='"{0:,.2f}".format(order.pv or 0)'/>
+                </strong>
+            </div>
+        </xpath>
+        <xpath expr="//div[hasclass('panel-body')]/div[hasclass('row')][2]"
+               position="replace">
+            <p style="color:#e09c34"
+               t-esc="{'to_deliver': 'To Deliver', 'partially': 'Partially Delivered', 'fully': 'Fully Delivered'}[order.delivery_status]"/>
+            <div class="row">
+                <div class="col-md-5">
+                    <strong>Product</strong>
+                </div>
+                <div class="hidden-sm hidden-xs col-md-2 text-right">
+                    <strong>Unit Price</strong>
+                </div>
+                <div class="hidden-sm hidden-xs col-md-1 text-right">
+                    <strong>Unit PV</strong>
+                </div>
+                <div class="hidden-sm hidden-xs col-md-1 text-right">
+                    <strong>PV's</strong>
+                </div>
+                <div class="hidden-sm hidden-xs col-md-1 text-right">
+                    <strong>Quantity</strong>
+                </div>
+                <div class="hidden-sm hidden-xs col-md-2 text-right">
+                    <strong>Subtotal</strong>
+                </div>
+            </div>
+        </xpath>
+        <xpath expr="//div[hasclass('orders_vertical_align')]"
+               position="replace">
+            <div class="row orders_vertical_align">
+                <div class="col-md-5">
+                    <div class="visible-lg col-lg-2 text-center" style="padding:0px">
+                        <span t-field="ol.product_image"
+                              t-options="{'widget': 'image', 'class': 'img-rounded', 'style':'width: 48px;height:48px'}"/>
+                    </div>
+                    <div id='product_name' class="col-lg-10 col-sm-6 col-xs-3" style="margin-top:10px;">
+                        <span t-esc="ol.product_id.name"/>
+                    </div>
+                </div>
+                <div class="col-md-2 text-right">
+                    <span t-field="ol.price_unit"
+                          t-options='{"widget": "monetary", "display_currency": order.pricelist_id.currency_id}'/>
+                </div>
+                <div class="hidden-sm hidden-xs col-md-1 text-right">
+                    <span t-esc='"{0:,.2f}".format(ol.unit_pv or 0)'/>
+                </div>
+                <div class="hidden-sm hidden-xs col-md-1 text-right">
+                    <span t-esc='"{0:,.2f}".format(ol.pv or 0)'/>
+                </div>
+                <div class="col-md-1 text-right">
+                    <t t-if="ol._name == 'sale.order.line'">
+                        <span t-esc="ol.product_uom_qty"/>
+                    </t>
+                    <t t-if="ol._name == 'account.invoice.line'">
+                        <span t-esc="ol.quantity"/>
+                    </t>
+                </div>
+                <div class="col-md-2 text-right">
+                    <span t-field="ol.price_subtotal"
+                          t-options='{"widget": "monetary", "display_currency": order.pricelist_id.currency_id}'/>
+                </div>
+            </div>
+        </xpath>
+        <xpath expr="//div[hasclass('panel-body')]/hr[2]"
+               position="before">
+            <table class="table table-condensed order_line_mobile_table">
+                <thead>
+                    <tr>
+                        <th>Description</th>
+                        <th>Quantity</th>
+                        <th>PV's</th>
+                        <th>Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <t t-foreach="order.order_line" t-as="ol">
+                        <tr>
+                            <td>
+                                <t t-esc="order.product_id.display_name"/>
+                            </td>
+                            <td>
+                                <t t-if="ol._name == 'sale.order.line'">
+                                    <span t-esc="ol.product_uom_qty"/>
+                                </t>
+                                <t t-if="ol._name == 'account.invoice.line'">
+                                    <span t-esc='"{0:,.2f}".format(ol.pv or 0)'/>
+                                </t>
+                            </td>
+                            <td>
+                                <span t-esc='"{0:,.2f}".format(ol.pv or 0)'/>
+                            </td>
+                            <td>
+                                <span t-field="ol.price_subtotal"
+                                      t-options='{"widget": "monetary", "display_currency": order.pricelist_id.currency_id}'/>
+                            </td>
+                        </tr>
+                    </t>
+                </tbody>
+            </table>
+        </xpath>
+    </template>
+    <template id="inuka_customer_portal.invoices_inherit" inherit_id="account.portal_my_invoices">
+        <xpath expr="//t[@t-call='portal.portal_layout']" position="attributes">
+            <attribute name="t-call">inuka_customer_portal.inuka_customer_portal_menu</attribute>
+        </xpath>
+        <xpath expr="//thead/tr/th[last()]" position="after">
+            <th>Total PV's</th>
+        </xpath>
+        <xpath expr="//t/tr/td[last()]" position="after">
+            <td>
+                <span t-esc='"{0:,.2f}".format(invoice.total_pv or 0)'/>
+            </td>
+        </xpath>
+
+        <xpath expr="//table" position="after">
+            <table class="table table-hover o_portal_my_order_mobile_table">
+                <tbody>
+                    <t t-foreach="invoices" t-as="invoice">
+                        <tr>
+                            <td>
+                                <a t-attf-href="/my/invoices/#{invoice.id}">
+                                    <strong style="color:black">
+                                        <t t-esc="time.strftime('%b %d,%Y', time.strptime(invoice.create_date,'%Y-%m-%d %H:%M:%S'))"/>
+                                    </strong>
+                                    <p style="color:black">Nnvoice #:
+                                        <t t-esc="invoice.number"/>
+                                    </p>
+                                    <strong style="color:#957985">Total PV's:
+                                        <t t-esc='"{0:,.2f}".format(invoice.total_pv or 0)'/>
+                                    </strong>
+                                </a>
+                            </td>
+                            <td>
+                                <strong t-field="invoice.amount_total" style="color:#957985"
+                                        t-options='{"widget": "monetary", "display_currency": invoice.pricelist_id.currency_id}'/>
+                                <p style="color:#00ba63"
+                                   t-esc="{'draft': 'Draft', 'open': 'Open', 'paid': 'Paid', 'cancel': 'Cancelled'}[invoice.state]"/>
+                            </td>
+                        </tr>
+                    </t>
+                </tbody>
+            </table>
+        </xpath>
+    </template>
+    <template id="inuka_customer_portal.invoice_page_inherit" inherit_id="account.portal_invoice_page">
+        <xpath expr="//t[@t-call='portal.portal_layout']" position="attributes">
+            <attribute name="t-call">inuka_customer_portal.inuka_customer_portal_menu</attribute>
+        </xpath>
+    </template>
+    <template id="inuka_customer_portal.invoice_report_page_inherit" inherit_id="account.portal_invoice_report">
+        <xpath expr="//div[@id='total']/div/table/tr[last()]" position="after">
+            <tr class="border-black">
+                <td>
+                    <strong style="color:#df699c">Total PV's</strong>
+                </td>
+                <td class="text-right">
+                    <span style="color:#df699c" t-esc='"{0:,.2f}".format(invoice.total_pv or 0)'/>
+                </td>
+            </tr>
+        </xpath>
+        <xpath expr="//table[hasclass('table-condensed')]" position="before">
+            <p style="color:#00ba63"
+               t-esc="{'draft': 'Draft', 'open': 'Open', 'paid': 'Paid', 'cancel': 'Cancelled'}[invoice.state]"/>
+        </xpath>
+        <xpath expr="//table[hasclass('table-condensed')]/thead/tr/th[4]" position="after">
+            <th class="text-right">Unit PV</th>
+            <th class="text-right">PV's</th>
+        </xpath>
+        <xpath expr="//table[hasclass('table-condensed')]/tbody/tr/td[4]" position="after">
+            <td class="text-right">
+                <span t-esc='"{0:,.2f}".format(l.unit_pv or 0)'/>
+            </td>
+            <td class="text-right">
+                <span t-esc='"{0:,.2f}".format(l.pv or 0)'/>
+            </td>
+        </xpath>
+        <xpath expr="//table" position="attributes">
+            <attribute name="id">inuka_mobile_invoice_table</attribute>
+        </xpath>
+    </template>
+    <template id="inuka_customer_portal.helpdesk_inherit" inherit_id="helpdesk.portal_helpdesk_ticket">
+        <xpath expr="//t[@t-call='portal.portal_layout']" position="attributes">
+            <attribute name="t-call">inuka_customer_portal.inuka_customer_portal_menu</attribute>
+        </xpath>
+        <xpath expr="//t[@t-call='portal.portal_searchbar']" position="before">
+            <i class="fa fa-search search_icon"/>
+        </xpath>
+        <xpath expr="//table" position="after">
+            <table class="table table-hover o_portal_my_ticket_mobile_table">
+                <tbody>
+                    <t t-foreach="tickets" t-as="ticket">
+                        <tr>
+                            <td>
+                                <a t-attf-href="/helpdesk/ticket/#{ticket.id}" style="color:black">
+                                    <strong>Ticket ID :
+                                        <t t-esc="ticket.id"/>
+                                    </strong>
+                                    <p>Title :
+                                        <t t-esc="ticket.name"/>
+                                    </p>
+                                    <p t-if="ticket.description">Message :
+                                        <t t-esc="ticket.description"/>
+                                    </p>
+                                    <p>Status :
+                                        <t t-esc="ticket.stage_id.name"/>
+                                    </p>
+                                </a>
+                            </td>
+                            <td>
+                                <span t-esc="time.strftime('%b %d,%Y', time.strptime(ticket.create_date,'%Y-%m-%d %H:%M:%S'))"/>
+                            </td>
+                        </tr>
+                    </t>
+                </tbody>
+            </table>
+        </xpath>
+    </template>
+    <template id="inuka_customer_portal.tickets_followup_inherit" inherit_id="helpdesk.tickets_followup">
+        <xpath expr="//t[@t-call='portal.portal_layout']" position="attributes">
+            <attribute name="t-call">inuka_customer_portal.inuka_customer_portal_menu</attribute>
+        </xpath>
+    </template>
+    <template id="inuka_customer_portal.members_page">
+        <t t-call="inuka_customer_portal.inuka_customer_portal_menu">
+            <div class="container">
+                <h3>Members
+                    <i class="fa fa-search search_icon"/>
+                    <t t-call="portal.portal_searchbar"/>
+                </h3>
+                <t t-if="not members">
+                    <p>There are currently no members.</p>
+                </t>
+                <div t-if="members" class="panel panel-default">
+                    <div class="table-responsive">
+                        <table class="table table-hover o_portal_my_doc_table">
+                            <thead>
+                                <tr class="active">
+                                    <th>Member ID</th>
+                                    <th>Name</th>
+                                    <th>Status</th>
+                                    <th>Join Date</th>
+                                    <th>Personal PV (MDT)</th>
+                                    <th>Group PV (MDT)</th>
+                                </tr>
+                            </thead>
+                            <t t-foreach="members" t-as="member">
+                                <tr>
+                                    <td>
+                                        <a t-attf-href="/my/downline/#{member.id}">
+                                            <t t-esc="member.ref"/>
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <t t-esc="member.name"/>
+                                    </td>
+                                    <td>
+                                        <t t-esc="{'candidate': 'Candidate', 'new': 'New', 'junior': 'Junior','senior':'Senior','pearl':'Pearl','ruby':'Ruby','emerald':'Emerald','sapphire':'Sapphire','diamond':'Diamond','double_diamond':'Double Diamond','triple_diamond':'Triple Diamond','exective_diamond':'Exective Diamond','presidential':'Presidential',}[member.status]"/>
+                                    </td>
+                                    <td>
+                                        <t t-esc="member.join_date"/>
+                                    </td>
+                                    <td>
+                                        <t t-esc="member.personal_pv"/>
+                                    </td>
+                                    <td>
+                                        <t t-esc="member.pv_tot_group"/>
+                                    </td>
+                                </tr>
+                            </t>
+                        </table>
+                        <table class="table table-hover o_portal_my_member_mobile_table">
+                            <t t-foreach="members" t-as="member">
+                                <tr>
+                                    <td>
+                                        <a t-attf-href="/my/downline/#{member.id}">
+                                            <div class="col-md-12" style="padding:0;color:black">
+                                                <strong>
+                                                    <t t-esc="member.first_name"/>
+                                                    <t t-esc="member.last_name"/>
+                                                </strong>
+                                                <p>Member Id:
+                                                    <t t-esc="member.ref"/>
+                                                </p>
+                                                <p>Date Joined:
+                                                    <t t-esc="member.join_date"/>
+                                                </p>
+                                                <p>PPV:
+                                                    <t t-esc="member.personal_pv"/>
+                                                    GPV:
+                                                    <t t-esc="member.pv_tot_group"/>
+                                                </p>
+                                            </div>
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <t t-esc="{'candidate': 'Candidate', 'new': 'New', 'junior': 'Junior','senior':'Senior','pearl':'Pearl','ruby':'Ruby','emerald':'Emerald','sapphire':'Sapphire','diamond':'Diamond','double_diamond':'Double Diamond','triple_diamond':'Triple Diamond','exective_diamond':'Exective Diamond','presidential':'Presidential',}[member.status]"/>
+                                    </td>
+                                </tr>
+                            </t>
+                        </table>
+                    </div>
+                    <div t-if="pager" class="o_portal_pager text-center">
+                        <t t-call="portal.pager"/>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+    <template id="inuka_customer_portal.member_detail">
+        <t t-call="inuka_customer_portal.inuka_customer_portal_menu">
+            <div class="container">
+                <h2>Membership Details</h2>
+                <p>Here are the details for your downline member.</p>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <div class="row">
+                            <div class="col-md-6 col-xs-9 col-sm-9">
+                                <h4>
+                                    <t t-call='portal.record_pager'/>
+                                    <span t-esc="member.name"/>
+                                </h4>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-body">
+                        <p>Please <a href="#">Let us know</a> if any of this information should be updated:
+                        </p>
+                        <hr/>
+                        <div class="row member_details">
+                            <div class="col-md-6">
+                                <strong>Name</strong>
+                            </div>
+                            <div class="col-md-6">
+                                <t t-esc="member.name"/>
+                            </div>
+                            <div class="col-md-6">
+                                <strong>Member Code</strong>
+                            </div>
+                            <div class="col-md-6">
+                                <t t-esc="member.ref"/>
+                            </div>
+                            <div class="col-md-6">
+                                <strong>Joined</strong>
+                            </div>
+                            <div class="col-md-6">
+                                <t t-esc="member.join_date"/>
+                            </div>
+                            <div class="col-md-6">
+                                <strong>Status</strong>
+                            </div>
+                            <div class="col-md-6">
+                                <t t-esc="member.status"/>
+                            </div>
+                            <hr/>
+                            <div class="col-md-12">
+                                <strong>Sales Performance</strong>
+                            </div>
+                            <hr/>
+                            <div class="col-md-6">
+                                <strong>Personal PV</strong>
+                            </div>
+                            <div class="col-md-6">
+                                <t t-esc='"{0:,.2f}".format(member.personal_pv or 0)'/>
+                            </div>
+                            <div class="col-md-6">
+                                <strong>PV to group</strong>
+                            </div>
+                            <div class="col-md-6">
+                                <t t-esc='"{0:,.2f}".format(member.pv_tot_group or 0)'/>
+                            </div>
+                            <div class="col-md-6">
+                                <strong>Active Members</strong>
+                            </div>
+                            <div class="col-md-6">
+                                <t t-esc="member.personal_members"/>
+                            </div>
+                            <hr/>
+                            <div class="col-md-6">
+                                <strong>New Recruits</strong>
+                            </div>
+                            <div class="col-md-6">
+                                <t t-esc="member.new_members"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+    <template id="inuka_customer_portal.download">
+        <t t-call="inuka_customer_portal.inuka_customer_portal_menu">
+            <div class="container">
+                <h3>Downloads
+                    <t t-call="portal.portal_searchbar"/>
+                </h3>
+                <div class="col-md-12" style="text-align:right;">
+                    <form>
+                        <select class="form-control" name="filter_id" id="filter_folder"
+                                style="width: 20%;float: right;margin-bottom: 10px;">
+                            <option value="" t-att-selected="'selected' if not filter_id == 0 else False">All</option>
+                            <t t-foreach="folder_data" t-as="folder">
+                                <option t-att-value="folder.get('id')"
+                                        t-att-selected="'selected' if int(folder.get('id')) == int(filter_id or 0) else False">
+                                    <t t-esc="folder.get('name')"/>
+                                </option>
+                            </t>
+                        </select>
+                        <button type="submit" class="btn btn-primary hidden">Apply Filter</button>
+                    </form>
+                </div>
+                <t t-if="not attachments">
+                    <p>There are currently no attachments.</p>
+                </t>
+                <div t-if="attachments" class="panel panel-default">
+                    <div class="table-responsive">
+                        <table class="table table-hover table-responsive o_portal_my_doc_table">
+                            <thead>
+                                <tr class="active">
+                                    <th>Folder</th>
+                                    <th>Name</th>
+                                    <th>Date</th>
+                                    <th/>
+                                </tr>
+                            </thead>
+                            <t t-foreach="attachments" t-as="attachment">
+                                <tr>
+                                    <td>
+                                        <t t-esc="attachment.folder_id.name"/>
+                                    </td>
+                                    <td>
+                                        <t t-esc="attachment.display_name"/>
+                                    </td>
+                                    <td>
+                                        <t t-esc="time.strftime('%b %d,%Y', time.strptime(attachment.create_date,'%Y-%m-%d %H:%M:%S'))"/>
+                                    </td>
+                                    <td>
+                                        <a t-if="attachment.mimetype not in ('image/png', 'image/jpeg')"
+                                           class="o_overlay_download" target="_blank"
+                                           t-attf-href="/web/content/#{attachment.id}?download=true">
+                                            <i class="fa fa-download"/>
+                                        </a>
+                                        <a t-if="attachment.mimetype in ('image/png','image/jpg','image/jpeg')"
+                                           class="o_overlay_download" target="_blank"
+                                           t-attf-href="/web/image/#{attachment.id}?download=true">
+                                            <i class="fa fa-download"/>
+                                        </a>
+                                    </td>
+                                </tr>
+                            </t>
+                        </table>
+                        <table class="table table-hover table-responsive o_portal_my_doc_mobile_table">
+                            <t t-foreach="attachments" t-as="attachment">
+                                <tr>
+                                    <td>
+                                        <p t-esc="attachment.display_name"/>
+                                        <p>
+                                            <i class="fa fa-calendar"/>
+                                            <t t-esc="time.strftime('%b %d,%Y', time.strptime(attachment.create_date,'%Y-%m-%d %H:%M:%S'))"/>
+                                        </p>
+                                    </td>
+                                    <td>
+                                        <a t-if="attachment.mimetype not in ('image/png','image/jpeg','image/jpg')"
+                                           class="o_overlay_download" target="_blank"
+                                           t-attf-href="/web/content/#{attachment.id}?download=true">
+                                            <i class="fa fa-download"/>
+                                        </a>
+                                        <a t-if="attachment.mimetype in ('image/png','image/jpg','image/jpeg')"
+                                           class="o_overlay_download" target="_blank"
+                                           t-attf-href="/web/image/#{attachment.id}?download=true">
+                                            <i class="fa fa-download"/>
+                                        </a>
+                                    </td>
+                                </tr>
+                            </t>
+                        </table>
+                    </div>
+                    <div t-if="pager" class="o_portal_pager text-center">
+                        <t t-call="portal.pager"/>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+    <template id="inuka_customer_portal.member_registration_page">
+        <t t-call="inuka_customer_portal.inuka_customer_portal_menu">
+            <div class="container">
+                <h3>
+                    Register a New INUKA Member
+                </h3>
+                <p>Kindly complete the form below to procced with the registration of a personally introduced new INUKA
+                    Member by choosing a Business Kit and making payment for the Kit.
+                </p>
+                <hr/>
+                <form method="post" action="/create_member" class="registration_form"
+                      id="registration_form">
+                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                    <h4>Your new Member's information</h4>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group label-floating">
+                                <label class="control-label">Fist Name *</label>
+                                <input type="text" name="first_name" required="required" class="form-control"/>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group label-floating">
+                                <label class="control-label">Last Name *</label>
+                                <input type="text" name="last_name" required="required" class="form-control"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group label-floating">
+                                <label class="control-label">ID / Passport *</label>
+                                <input type="text" name="passport_no" required="required" class="form-control"/>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group" style="margin:0px;">
+                                <label class="control-label">Date of Birth</label>
+                                <input type="text" data-type="date" required="required"
+                                       onkeydown="event.preventDefault()" name="dob" class="form-control"
+                                       id="date-input"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group label-floating">
+                                <label class="control-label">Email</label>
+                                <input type="email" name="email" class="form-control"/>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group" style="margin:0px">
+                                <label class="control-label" style="margin-top:13px;">Cell Number</label>
+                                <input type="hidden" name="countryCode" value="27" id="countryCode"/>
+                                <input type="tel" name="mobile" min="11" style="width:61%;float:left;"
+                                       required="required"
+                                       id="mobile"
+                                       class="form-control"/>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group label-floating">
+                                <label class="control-label">Work tel</label>
+                                <input type="text" name="phone" class="form-control"/>
+                            </div>
+                        </div>
+                    </div>
+                    <hr/>
+                    <h4>Physical Address</h4>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group label-floating">
+                                <label class="control-label">Street</label>
+                                <input type="text" name="street" class="form-control"/>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group label-floating">
+                                <label class="control-label">Street 2</label>
+                                <input type="text" name="street2" class="form-control"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group label-floating">
+                                <label class="control-label">City</label>
+                                <input type="text" name="city" class="form-control"/>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group label-floating">
+                                <label class="control-label">Postal Code</label>
+                                <input type="text" name="zip" class="form-control"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row o_register_member_details">
+                        <div class="col-md-6">
+                            <div class="form-group label-floating">
+                                <label class="control-label">Country</label>
+                                <select class="form-control" name="country_id">
+                                    <t t-set="countries" t-value="request.env['res.country'].sudo().search([])"/>
+                                    <t t-foreach="countries" t-as="country">
+                                        <option t-att-value="country.id"
+                                                t-att-selected="'selected' if country.name == 'South Africa' else False">
+                                            <t t-esc="country.name"/>
+                                        </option>
+                                    </t>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group label-floating">
+                                <label class="control-label">Province</label>
+                                <select class="form-control" name="state_id">
+                                    <option/>
+                                    <t t-set="states" t-value="request.env['res.country.state'].sudo().search([])"/>
+                                    <t t-foreach="states" t-as="state">
+                                        <option t-att-value="state.id" style="display:none;"
+                                                t-att-data-country_id="state.country_id.id">
+                                            <t t-esc="state.name"/>
+                                        </option>
+                                    </t>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <hr/>
+                    <h4>Physical Delivery Address where kit will be delivered within the borders of South Africa</h4>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <input type="checkbox" name="same_address" id="same_address"/>
+                                <label>Same as Physical Address.</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row physical_address" style="margin:0px">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group label-floating">
+                                    <label class="control-label">Street</label>
+                                    <input type="text" name="delivery_street" class="form-control"/>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group label-floating">
+                                    <label class="control-label">Street 2</label>
+                                    <input type="text" name="delivery_street2"
+                                           class="form-control"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group label-floating">
+                                    <label class="control-label">City</label>
+                                    <input type="text" name="delivery_city" class="form-control"/>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group label-floating">
+                                    <label class="control-label">Postal Code</label>
+                                    <input type="text" name="delivery_zip" class="form-control"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row o_register_member_details_shipping">
+                            <div class="col-md-6">
+                                <div class="form-group label-floating">
+                                    <label class="control-label">Country</label>
+                                    <select class="form-control" name="delivery_country_id">
+                                        <option/>
+                                        <t t-set="countries" t-value="request.env['res.country'].sudo().search([])"/>
+                                        <t t-foreach="countries" t-as="country">
+                                            <option t-att-value="country.id"
+                                                    t-att-selected="'selected' if country.name == 'South Africa' else False">
+                                                <t t-esc="country.name"/>
+                                            </option>
+                                        </t>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group label-floating">
+                                    <label class="control-label">Province</label>
+                                    <select class="form-control" name="delivery_state_id">
+                                        <option/>
+                                        <t t-set="states" t-value="request.env['res.country.state'].sudo().search([])"/>
+                                        <t t-foreach="states" t-as="state">
+                                            <option t-att-value="state.id" style="display:none;"
+                                                    t-att-data-country_id="state.country_id.id">
+                                                <t t-esc="state.name"/>
+                                            </option>
+                                        </t>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <p>Courier deliveries are done between 09h00 and 16h00 during week days. It is important
+                                    to
+                                    select a courier delivery address where there will always be someone to accept your
+                                    order
+                                    between these hours. Please also note that courier deliveries to townships,
+                                    villages,
+                                    farms,
+                                    mines and outlying and remote areas will incur extra Courier cost. We suggest
+                                    choosing a
+                                    physical delivery address in the Central Business District of a Metropolitan City or
+                                    a
+                                    Main
+                                    Center. Remote areas might not be serviced by our courier and be undeliverable.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <hr/>
+                    <h4>Order</h4>
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="form-group label-floating">
+                                <label class="control-label">Kit Selection</label>
+                                <select class="form-control" name="kit" required="required">
+                                    <option value="small">INUKA Small Kit (R 600.00)</option>
+                                    <option value="medium">INUKA Medium Kit (R 1300.00)</option>
+                                    <option value="large">INUKA Large Kit (R 1800.00)</option>
+                                    <option value="junior" selected="selected">INUKA Junior Kit (R 3000.00)</option>
+                                    <option value="senior">INUKA Senior Kit (R 8000.00)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <div class="form-group label-floating">
+                                <label class="control-label">Delivery Type</label>
+                                <select class="form-control" name="property_delivery_carrier_id" required="required">
+                                    <option/>
+                                    <t t-set="deliveries"
+                                       t-value="request.env['delivery.carrier'].sudo().search([('website_published','=',True)])"/>
+                                    <t t-foreach="deliveries" t-as="delivery">
+                                        <option t-att-value="delivery.id">
+                                            <t t-esc="delivery.name"/>
+                                            (
+                                            <t t-esc="delivery.fixed_price"
+                                               t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>
+                                            )
+                                        </option>
+                                    </t>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <p>INUKA offers a FREE Courier delivery within the borders of South Africa for new Members
+                                that
+                                register with a Senior Kit. However, should the physical delivery address be in a remote
+                                and
+                                undeliverable area INUKA reserves the right to contact the new Member to choose an
+                                alternative address in an area that is serviced regularly by our selected Courier
+                                company.
+                            </p>
+                        </div>
+                    </div>
+                    <hr/>
+                    <h4>Special Instruction</h4>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group label-floating">
+                                <label class="control-label">Instruction</label>
+                                <textarea class="form-control" name="comment" rows="5" style="height:auto"/>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary pull-right">Continue.</button>
+                    <div class="clearfix"/>
+                </form>
+            </div>
+        </t>
+    </template>
+    <template id="inuka_customer_portal.confirm_payment">
+        <t t-call="inuka_customer_portal.inuka_customer_portal_menu">
+            <div class="container">
+                <h2>Pay for the Kit Selection</h2>
+                <p>Please proceed to pay for the Kit Selection.</p>
+                <h3>Secure internet payment</h3>
+                <p>You will now redirected to a secure internet payment service where you can use a credit or debit card
+                    that has been enabled at a financial institution for Online Payment.
+                </p>
+                <p>Please press the "Pay now" button to continue.
+                </p>
+                <div class="col-md-12">
+                    <h2 class="pull-right">
+                        <t t-esc="order.amount_total"
+                           t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>
+                    </h2>
+                </div>
+                <t t-set="base_url" t-value="request.env['ir.config_parameter'].sudo().get_param('web.base.url')"/>
+                <div class="col-md-12">
+                    <t t-set="payment"
+                       t-value="request.env['payment.acquirer'].sudo().search([('provider', '=', 'mygate')])"/>
+                    <form name="Post" action="https://virtual.mygateglobal.com/PaymentPage.cfm" method="post">
+                        <!-- Mode value 0 indicates that this is in Test Mode. Change the value to 1 for Live Mode. -->
+                        <input type="hidden" name="Mode" t-att-value="'1' if payment.environment=='prod' else '0'"/>
+                        <input type="hidden" name="MerchantID"
+                               t-att-value="payment.mygate_merchant_id"/>
+                        <input type="hidden" name="ApplicationID"
+                               t-att-value="payment.mygate_application_id"/>
+                        <input type="hidden" name="MerchantReference" t-att-value="tx.reference"/>
+                        <input type="hidden" name="Amount" t-att-value='"{0:.2f}".format(order.amount_total or 0)'/>
+                        <input type="hidden" name="txtCurrencyCode" t-att-value="order.currency_id.name"/>
+                        <input type="hidden" name="RedirectSuccessfulURL"
+                               t-att-value="base_url + '/customer_payment/mygate/return'"/>
+                        <input type="hidden" name="RedirectFailedURL"
+                               t-att-value="base_url + '/customer_payment/mygate/error'"/>
+                        <!-- Additional variables for that can be populated by the merchant -->
+                        <input type="hidden" name="Variable1" t-att-value="order.name"/>
+                        <input type="hidden" name="Variable2" t-att-value="order.id"/>
+                        <!-- Additional details for the purchased items -->
+                        <input type="hidden" name="ShippingCost" t-att-value="order.shipping_cost"/>
+                        <!-- Fields for Clients Shipping Details -->
+                        <input type="hidden" name="Recipient" t-att-value="order.partner_id.name"/>
+                        <input type="hidden" name="ShippingAddress1" t-att-value="order.partner_shipping_id.street"/>
+                        <input type="hidden" name="ShippingAddress2"
+                               t-att-value="order.partner_shipping_id.state_id.name"/>
+                        <input type="hidden" name="ShippingAddress3" t-att-value="order.partner_shipping_id.city"/>
+                        <input type="hidden" name="ShippingAddress4" t-att-value="order.partner_shipping_id.zip"/>
+                        <input type="hidden" name="ShippingAddress5"
+                               t-att-value="order.partner_shipping_id.country_id.name"/>
+                        <button type="submit" value="Pay now" class="btn btn-primary pull-right" id="virtualPost">Pay
+                            now.
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </t>
+    </template>
+    <template id="inuka_customer_portal.payment_confirmation">
+        <t t-call="inuka_customer_portal.inuka_customer_portal_menu">
+            <div class="container">
+                <h2>Payment Successful</h2>
+                <p>Your Financial service provider has approved your transaction to INUKA Fragrances.</p>
+                <t t-if="order">
+                    <p>Transaction ID :
+                        <t t-esc="request.env['payment.transaction'].sudo().search([('sale_order_id','=',order.id),('state','=','done')],limit=1,order='id desc').acquirer_reference"/>
+                    </p>
+                    <p>Amount:
+                        <t t-esc="order.amount_total"
+                           t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>
+                    </p>
+                </t>
+                <t t-if="not order">
+                    <p>Transaction ID :
+                        <t t-esc="post.get('_TRANSACTIONINDEX')"/>
+                    </p>
+                    <p>Amount:
+                        <t t-esc="float(post.get('_AMOUNT'))"
+                           t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>
+                    </p>
+                </t>
+                <p>If you have any questions or need further information kindly
+                    <a href="#">Contact INUKA Fragrances.</a>
+                </p>
+            </div>
+        </t>
+    </template>
+    <template id="inuka_customer_portal.payment_unsuccessful">
+        <t t-call="inuka_customer_portal.inuka_customer_portal_menu">
+            <div class="container">
+                <h2>Payment Transaction failed</h2>
+                <p>Your Financial service provider has declined your transaction to INUKA Fragrances.</p>
+                <h3>Declined by Financial service provider
+                </h3>
+                <p>Financial service provider has declined the transaction
+                    code
+                    <t t-esc="post.get('_ERROR_CODE')"/>
+                    :
+                    <t t-esc="post.get('_ERROR_MESSAGE')"/>
+                </p>
+                <p>Amount:
+                    <t t-if="order">
+                        <t t-esc="order.amount_total"
+                           t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>
+                    </t>
+                    <t t-if="not order">
+                        <t t-esc="float(post.get('_AMOUNT'))"
+                           t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>
+                    </t>
+                </p>
+                <p>Please
+                    <a href="#">click here</a>
+                    for the INUKA banking details should you wish to do a direct bank deposit.
+                </p>
+                <p>If you have any questions or need further information kindly
+                    <a href="#">Contact INUKA Fragrances.</a>
+                </p>
+            </div>
+        </t>
+    </template>
+    <template id="inherit_contact" inherit_id="base.contact">
+        <xpath expr="//div[@itemprop='address']" position="after">
+            <div t-if="status and 'status' in fields">
+                <i t-if="not options.get('no_marker')" class='fa fa-signal fa-fw'/>
+                <span itemprop="status" t-esc="status"/>
+            </div>
+        </xpath>
+    </template>
+    <template id="inuka_customer_portal.feature">
+        <t t-call="inuka_customer_portal.inuka_customer_portal_menu">
+            <div class="container">
+                <h2>Suggest a feature</h2>
+                <p>Please use the form below to suggest a new feature or change to the INUKA Member's portal. Your input
+                    is very important to us.
+                </p>
+                <hr/>
+                <h3>Your Suggestion</h3>
+                <p>Please complete the form, providing as much detail as you can, and then press send button.</p>
+                <form action="/create/helpdesk_ticket" method="POST">
+                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group label-floating">
+                                <label class="control-label">Subject *</label>
+                                <input type="text" name="subject" required="required" class="form-control"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group label-floating">
+                                <label class="control-label">Suggestion *</label>
+                                <textarea class="form-control" name="suggestion" required="required" rows="5"
+                                          style="height:auto"/>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary pull-right">Send.</button>
+                    <div class="clearfix"/>
+                </form>
+            </div>
+        </t>
+    </template>
+    <template id="inuka_customer_portal.feature_sent">
+        <t t-call="inuka_customer_portal.inuka_customer_portal_menu">
+            <div class="container">
+                <h2>Thank you for contacting us!</h2>
+                <hr/>
+                <p>Your message was sent to INUKA Helpdesk and we will respond as soon as possible.</p>
+            </div>
+        </t>
+    </template>
+    <template id="inuka_customer_portal.payment">
+        <t t-call="inuka_customer_portal.inuka_customer_portal_menu">
+            <div class="container">
+                <h2>Make a payment</h2>
+                <hr/>
+                <h4>Credit card and Debit card payments</h4>
+                <p>Specify payment amount (South African Rand) and click "Continue" for our secure payment page.</p>
+                <hr/>
+                <t t-set="base_url" t-value="request.env['ir.config_parameter'].sudo().get_param('web.base.url')"/>
+                <div class="col-md-12">
+                    <form name="Post" action="https://virtual.mygateglobal.com/PaymentPage.cfm" method="post">
+                        <!-- Mode value 0 indicates that this is in Test Mode. Change the value to 1 for Live Mode. -->
+                        <input type="hidden" name="Mode" t-att-value="'1' if payment.environment=='prod' else '0'"/>
+                        <input type="hidden" name="MerchantID"
+                               t-att-value="payment.mygate_merchant_id"/>
+                        <input type="hidden" name="ApplicationID"
+                               t-att-value="payment.mygate_application_id"/>
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="basic-addon1"
+                                  style="float: left;margin-top: 10px;margin-right: 10px;">
+                                <t t-esc="website.currency_id.symbol"/>
+                            </span>
+                            <input type="text"
+                                   class="form-control number" style="float:left;width:50%" name="Amount"/>
+                        </div>
+                        <input type="hidden" name="txtCurrencyCode" t-att-value="website.currency_id.name"/>
+                        <input type="hidden" name="RedirectSuccessfulURL"
+                               t-att-value="base_url + '/mygate/return'"/>
+                        <input type="hidden" name="RedirectFailedURL"
+                               t-att-value="base_url + '/mygate/error'"/>
+                        <button type="submit" value="Pay now" style="float:left !important;margin-left: 10px;"
+                                class="btn btn-primary pull-right" id="virtualPost">Pay
+                            now.
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </t>
+    </template>
+    <template id="inuka_customer_portal.sms_log">
+        <t t-call="inuka_customer_portal.inuka_customer_portal_menu">
+            <div class="container">
+                <h3>SMS
+                    <t t-call="portal.portal_searchbar"/>
+                </h3>
+                <t t-if="not sms_logs">
+                    <p>There are currently no sms.</p>
+                </t>
+                <div class="panel panel-default">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr class="active">
+                                    <th>When</th>
+                                    <th>Message</th>
+                                </tr>
+                            </thead>
+                            <t t-foreach="sms_logs" t-as="sms">
+                                <tr>
+                                    <td>
+                                        <t t-esc="sms.message_date"/>
+                                    </td>
+                                    <td>
+                                        <t t-esc="sms.sms_content"/>
+                                    </td>
+                                </tr>
+                            </t>
+                        </table>
+                    </div>
+                    <div t-if="pager" class="o_portal_pager text-center">
+                        <t t-call="portal.pager"/>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+    <template id="inuka_login_page_inherit" inherit_id="web.login">
+        <xpath expr="//label[@for='login']" position="replace">
+            <label for="login" class="control-label">Member ID/ Email</label>
+        </xpath>
+    </template>
+    <template id="portal.portal_my_details">
+        <t t-call="inuka_customer_portal.inuka_customer_portal_menu">
+            <div class="container">
+                <t t-set="additional_title">Your Contact Details</t>
+                <h3>Your Details</h3>
+                <form action="/my/account" method="post" id="registration_form" enctype="multipart/form-data">
+                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                    <div class="row o_portal_details">
+                        <div class="col-md-4">
+                            <div class="avatar-upload">
+                                <div class="avatar-edit">
+                                    <input type='file' id="imageUpload" name="image" accept=".png, .jpg, .jpeg"/>
+                                    <label for="imageUpload"></label>
+                                </div>
+                                <div class="avatar-preview">
+                                    <div id="imagePreview"
+                                         t-attf-style="background-image: url('data:image/png;base64,#{partner.image}');">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div t-if="error_message" class="alert alert-danger">
+                                        <t t-foreach="error_message" t-as="err">
+                                            <t t-esc="err"/>
+                                            <br/>
+                                        </t>
+                                    </div>
+                                </div>
+                                <div t-attf-class="form-group #{error.get('name') and 'has-error' or ''} col-lg-6">
+                                    <label class="control-label" for="name">Your Name</label>
+                                    <input type="text" name="name" class="form-control"
+                                           t-att-value="name or partner.name"/>
+                                </div>
+                                <div t-attf-class="form-group #{error.get('email') and 'has-error' or ''} col-lg-6">
+                                    <label class="control-label" for="email">Email</label>
+                                    <input type="email" name="email" class="form-control"
+                                           t-att-value="email or partner.email"/>
+                                </div>
+                                <div t-attf-class="form-group #{error.get('phone') and 'has-error' or ''} col-lg-6">
+                                    <label class="control-label" for="phone">Phone</label>
+                                    <input type="tel" name="phone" class="form-control"
+                                           t-att-value="phone or partner.phone"/>
+                                </div>
+
+                                <div class="clearfix"/>
+                                <div t-attf-class="form-group #{error.get('mobile') and 'has-error' or ''} col-lg-6">
+                                    <label class="control-label label-optional" for="mobile">mobile</label>
+                                    <input type="tel" name="mobile" class="form-control"
+                                           t-att-value="mobile or partner.mobile"/>
+                                </div>
+                                <div t-if="has_check_vat"
+                                     t-attf-class="form-group #{error.get('vat') and 'has-error' or ''} col-lg-6">
+                                    <label class="control-label label-optional" for="vat">VAT Number</label>
+                                    <input type="text" name="vat" class="form-control"
+                                           t-att-value="vat or partner.vat"/>
+                                </div>
+
+                                <div class="clearfix"/>
+                                <div t-attf-class="form-group #{error.get('street') and 'has-error' or ''} col-lg-6">
+                                    <label class="control-label" for="street">Street</label>
+                                    <input type="text" name="street" class="form-control"
+                                           t-att-value="street or partner.street"/>
+                                </div>
+                                <div t-attf-class="form-group #{error.get('city') and 'has-error' or ''} col-lg-6">
+                                    <label class="control-label" for="city">City</label>
+                                    <input type="text" name="city" class="form-control"
+                                           t-att-value="city or partner.city"/>
+                                </div>
+                                <div t-attf-class="form-group #{error.get('zip') and 'has-error' or ''} col-lg-6">
+                                    <label class="control-label" for="zipcode">Zip / Postal Code</label>
+                                    <input type="text" name="zipcode" class="form-control"
+                                           t-att-value="zipcode or partner.zip"/>
+                                </div>
+                                <div t-attf-class="form-group #{error.get('country_id') and 'has-error' or ''} col-lg-6">
+                                    <label class="control-label" for="country_id">Country</label>
+                                    <select name="country_id" class="form-control">
+                                        <option value="">Country...</option>
+                                        <t t-foreach="countries or []" t-as="country">
+                                            <option t-att-value="country.id"
+                                                    t-att-selected="country.id == int(country_id) if country_id else country.id == partner.country_id.id">
+                                                <t t-esc="country.name"/>
+                                            </option>
+                                        </t>
+                                    </select>
+                                </div>
+                                <div t-attf-class="form-group #{error.get('state_id') and 'has-error' or ''} col-lg-6">
+                                    <label class="control-label label-optional" for="state_id">State / Province</label>
+                                    <select name="state_id" class="form-control">
+                                        <option value="">select...</option>
+                                        <t t-foreach="states or []" t-as="state">
+                                            <option t-att-value="state.id" style="display:none;"
+                                                    t-att-data-country_id="state.country_id.id"
+                                                    t-att-selected="state.id == partner.state_id.id">
+                                                <t t-esc="state.name"/>
+                                            </option>
+                                        </t>
+                                    </select>
+                                </div>
+                                <input type="hidden" name="redirect" t-att-value="redirect"/>
+                            </div>
+                        </div>
+
+                        <div class="clearfix col-md-12">
+                            <button type="submit" class="btn btn-primary pull-right mb32 ">
+                                Confirm
+                                <span class="fa fa-long-arrow-right"/>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </t>
+    </template>
+    <template id="products_add_to_cart_qty" inherit_id="website_sale.products_item">
+        <xpath expr="//div[hasclass('product_price')]/b" position="after">
+            <input type="hidden" name="from_shop" t-att-value="True"/>
+            <div class="css_quantity input-group oe_website_spinner" contenteditable="false" style="margin-top:3px;">
+                <a t-attf-href="#" class="mb8 input-group-addon js_add_cart_json min_qty">
+                    <i class="fa fa-minus"></i>
+                </a>
+                <input type="text" class="form-control quantity" data-min="1" name="add_qty" value="1"/>
+                <a t-attf-href="#" class="mb8 input-group-addon float_left js_add_cart_json plus_qty">
+                    <i class="fa fa-plus"></i>
+                </a>
+            </div>
+        </xpath>
+        <xpath expr="//div[hasclass('product_price')]" position="after">
+            <strong style="float:right;color:#df699c;margin-top:3px;width: 100%;text-align: right;padding-right: 10px;">
+                PV :
+                <t t-esc='"{0:,.2f}".format(product.pv or 0)'/>
+            </strong>
+        </xpath>
+    </template>
+    <template id="inuka_cart_lines" inherit_id="website_sale.cart_lines">
+        <xpath expr="//a[hasclass('js_delete_product')]" position="after">
+            <strong style="margin-right:10px;color:#df699c">PV :
+                <t t-esc='"{0:,.2f}".format(line.product_id.product_tmpl_id.pv or 0)'/>
+            </strong>
+        </xpath>
+    </template>
+
+    <template id="inuka_total" inherit_id="website_sale.total">
+        <xpath expr="//div[@id='order_total']" position="after">
+            <div class="row" id="Pv_total" style="color:#df699c">
+                <span class="col-xs-6 text-right h4 mt0">Total PV's:</span>
+                <span class="col-xs-6 text-right-not-xs text-left-xs h4 mt0" style="white-space: nowrap;">
+                    <span t-esc='"{0:,.2f}".format(website_sale_order.total_pv or 0)' style="white-space: nowrap;"/>
+                </span>
+            </div>
+        </xpath>
+    </template>
+    <template id="inuka_payment" inherit_id="website_sale.payment">
+        <xpath expr="//td[hasclass('td-product_name')]" position="inside">
+            <strong style="margin-right:10px;color:#df699c">PV :
+                <t t-esc='"{0:,.2f}".format(line.product_id.product_tmpl_id.pv or 0)'/>
+            </strong>
+        </xpath>
+    </template>
+    <template id="inuka_confirmation" inherit_id="website_sale.confirmation">
+        <xpath expr="//table/thead/tr/th[hasclass('td-qty')]" position="before">
+            <th>Unit PV</th>
+            <th>PV's</th>
+        </xpath>
+        <xpath expr="//table/tbody/tr/td[hasclass('td-qty')]" position="before">
+            <td>
+                <span t-esc='"{0:,.2f}".format(line.unit_pv or 0)'/>
+            </td>
+            <td>
+                <span t-esc='"{0:,.2f}".format(line.pv or 0)'/>
+            </td>
+        </xpath>
+    </template>
+
+    <template id="inuka_confirmation" inherit_id="website_sale.confirmation">
+        <xpath expr="//div[hasclass('oe_cart')]/table[hasclass('table')][2]" position="inside">
+            <tr>
+                <td class='noborder'></td>
+                <td class="text-right">
+                    <strong style="color:#df699c">Total PV's:</strong>
+                </td>
+                <td class="text-right-not-xs text-left-xs">
+                    <strong t-esc='"{0:,.2f}".format(order.total_pv or 0)' style="white-space: nowrap;color:#df699c"/>
+                </td>
+            </tr>
+        </xpath>
+    </template>
+
+    <template id="inuka_product" inherit_id="website_sale.product">
+        <xpath expr="//h1[@t-field='product.name']" position="after">
+            <strong style="color:#df699c;margin-top:3px;">PV :
+                <t t-esc='"{0:,.2f}".format(product.pv or 0)'/>
+            </strong>
+        </xpath>
+    </template>
+
+
+    <template id="header" inherit_id="website_sale.header" name="Header Shop My Cart Link">
+        <xpath expr="//li[@id='my_cart']" position="attributes">
+            <attribute name="t-att-class">''</attribute>
+        </xpath>
+    </template>
+
+
+    <template id="address_inherit" inherit_id="website_sale.address" name="Address Management">
+        <xpath expr="//form" position="replace">
+            <t t-set="partner_id" t-value="request.env.user.partner_id"/>
+            <form name="/shop/checkout" method="post" class="checkout_autoformat">
+                <div t-attf-class="form-group #{error.get('name') and 'has-error' or ''} col-md-12 div_name">
+                    <label class="control-label" for="name">Name</label>
+                    <input type="text" name="name" class="form-control"
+                           t-att-value="partner_id.name"/>
+                </div>
+                <div class="clearfix"/>
+                <t t-if="mode[1] == 'billing'">
+                    <div t-attf-class="form-group #{error.get('email') and 'has-error' or ''} col-md-6"
+                         id="div_email">
+                        <label class="control-label" for="email">Email</label>
+                        <input type="email" name="email" class="form-control"
+                               t-att-value="partner_id.email"/>
+                    </div>
+                </t>
+                <div t-attf-class="form-group #{error.get('mobile') and 'has-error' or ''} col-md-6"
+                     id="div_phone">
+                    <label class="control-label" for="phone">Mobile</label>
+                    <input type="tel" name="mobile" class="form-control"
+                           t-att-value="partner_id.mobile"/>
+                </div>
+                <div class="clearfix"/>
+                <t t-if="mode == ('new', 'billing')">
+                    <div t-attf-class="form-group #{error.get('company_name') and 'has-error' or ''} col-md-6">
+                        <label class="control-label font-weight-normal label-optional"
+                               for="company_name">Company Name
+                        </label>
+                        <input type="text" name="company_name" class="form-control"
+                               t-att-value="'company_name' in checkout and checkout['company_name']"/>
+                    </div>
+                    <div t-attf-class="form-group #{error.get('vat') and 'has-error' or ''} col-md-6 div_vat">
+                        <label class="control-label font-weight-normal label-optional" for="vat">TIN
+                            / VAT
+                        </label>
+                        <input type="text" name="vat" class="form-control"
+                               t-att-value="partner_id.vat"/>
+                    </div>
+                </t>
+                <div class="clearfix"/>
+                <div t-attf-class="form-group #{error.get('street') and 'has-error' or ''} col-md-12 div_street">
+                    <label class="control-label" for="street">Street
+                        <span class="hidden-xs">and Number</span>
+                    </label>
+                    <input type="text" name="street" class="form-control"
+                           t-att-value="partner_id.street"/>
+                </div>
+                <div t-attf-class="form-group #{error.get('street2') and 'has-error' or ''} col-md-12 div_street2">
+                    <label class="control-label label-optional" for="street2">Street 2</label>
+                    <input type="text" name="street2" class="form-control"
+                           t-att-value="partner_id.street2"/>
+                </div>
+                <div class="clearfix"/>
+                <t t-set='zip_city'
+                   t-value='country and [x for x in country.get_address_fields() if x in ["zip", "city"]] or ["city", "zip"]'/>
+                <t t-if="'zip' in zip_city and zip_city.index('zip') &lt; zip_city.index('city')">
+                    <div t-attf-class="form-group #{error.get('zip') and 'has-error' or ''} col-sm-4 div_zip">
+                        <label class="control-label label-optional" for="zip">Zip Code</label>
+                        <input type="text" name="zip" class="form-control"
+                               t-att-value="partner_id.zip"/>
+                    </div>
+                </t>
+                <div t-attf-class="form-group #{error.get('city') and 'has-error' or ''} col-sm-8 div_city">
+                    <label class="control-label" for="city">City</label>
+                    <input type="text" name="city" class="form-control"
+                           t-att-value="partner_id.city"/>
+                </div>
+                <t t-if="'zip' in zip_city and zip_city.index('zip') &gt; zip_city.index('city')">
+                    <div t-attf-class="form-group #{error.get('zip') and 'has-error' or ''} col-sm-4 div_zip">
+                        <label class="control-label label-optional" for="zip">Zip Code</label>
+                        <input type="text" name="zip" class="form-control"
+                               t-att-value="partner_id.zip"/>
+                    </div>
+                </t>
+                <div class="clearfix"/>
+                <div t-attf-class="form-group #{error.get('country_id') and 'has-error' or ''} col-md-6 div_country">
+                    <label class="control-label" for="country_id">Country</label>
+                    <select id="country_id" name="country_id" class="form-control">
+                        <option value="">Country...</option>
+                        <t t-foreach="countries" t-as="c">
+                            <option t-att-value="c.id"
+                                    t-att-selected="c.id == partner_id.country_id.id">
+                                <t t-esc="c.name"/>
+                            </option>
+                        </t>
+                    </select>
+                </div>
+                <div t-attf-class="form-group #{error.get('state_id') and 'has-error' or ''} col-md-6 div_state"
+                     t-att-style="(not country or not country.state_ids) and 'display: none'">
+                    <label class="control-label" for="state_id">State / Province</label>
+                    <select name="state_id" class="form-control" data-init="1">
+                        <option value="">State / Province...</option>
+                        <t t-foreach="country and country.state_ids or []" t-as="s">
+                            <option t-att-value="s.id"
+                                    t-att-selected="s.id == partner_id.state_id.id">
+                                <t t-esc="s.name"/>
+                            </option>
+                        </t>
+                    </select>
+                </div>
+
+                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                <input type="hidden" name="submitted" value="1"/>
+                <input type="hidden" name="partner_id" t-att-value="partner_id.id or '0'"/>
+                <input type="hidden" name="callback" t-att-value="callback"/>
+                <!-- Example -->
+                <input type="hidden" name="field_required" t-att-value="'name'"/>
+
+                <div class="clearfix"/>
+                <div style='padding: 0 15px'>
+                    <a t-att-href="mode == ('new', 'billing') and '/shop/cart' or '/shop/checkout'"
+                       class="btn btn-default mb32">
+                        <span class="fa fa-long-arrow-left"/>
+                        Back
+                    </a>
+                    <a class="btn btn-primary pull-right mb32 a-submit a-submit-disable a-submit-loading">
+                        <span>Next</span>
+                        <span class="fa fa-long-arrow-right"/>
+                    </a>
+                </div>
+            </form>
+        </xpath>
+    </template>
+
+
+</odoo>

@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+
+    <t t-name="Product">
+        <span class='product' t-att-data-product-id="product.id">
+            <div class="product-img">
+                <img t-att-src='image_url' /> 
+                <t t-if="!product.to_weight">
+                    <span class="price-tag">
+                        <t t-esc="widget.format_currency(product.get_price(pricelist, 1),'Product Price')"/>
+                    </span>
+                </t>
+                <t t-if="product.to_weight">
+                    <span class="price-tag">
+                        <t t-esc="widget.format_currency(product.get_price(pricelist, 1),'Product Price')+'/'+widget.pos.units_by_id[product.uom_id[0]].name"/>
+                    </span>
+                </t>
+                <span class="category_pv">
+                    <t t-esc="product.categ.category_pv"/> PV
+                </span>
+            </div>
+            <div class="product-name">
+                <t t-esc="product.display_name"/>
+            </div>
+        </span>
+    </t>
+
+    <t t-name="Orderline">
+        <li t-attf-class="orderline #{ line.selected ? 'selected' : '' }">
+            <span class="product-name">
+                <t t-esc="line.get_product().display_name"/>
+                <t t-if="line.get_product().tracking!=='none'">
+                    <i t-attf-class="oe_link_icon fa fa-list oe_icon line-lot-icon #{line.has_valid_product_lot() ? 'oe_green' : 'oe_red' }"/>
+                </t>
+            </span>
+            <span class="price">
+                <t t-esc="widget.format_currency(line.get_display_price())"/>
+            </span>
+            <ul class="info-list">
+                <t t-if="line.get_quantity_str() !== '1' || line.selected ">
+                    <li class="info">
+                        <em>
+                            <t t-esc="line.get_quantity_str()" />
+                        </em>
+                        <t t-esc="line.get_unit().name" />
+                        at
+                        <t t-esc="widget.format_currency(line.get_unit_display_price(),'Product Price')" />
+                        /
+                        <t t-esc="line.get_unit().name" />
+                        <span class="orderline_category_pv">
+                            <t t-esc="line.product.categ.category_pv * line.quantity"/> PV's
+                        </span>
+                    </li>
+                </t>
+                <t t-if="line.get_discount_str() !== '0'">
+                    <li class="info">
+                        With a 
+                        <em>
+                            <t t-esc="line.get_discount_str()" />%
+                        </em>
+                        discount
+                    </li>
+                </t>
+            </ul>
+        </li>
+    </t>
+
+    <t t-name="OrderWidget">
+        <div class="order-container">
+            <div class="order-scroller touch-scrollable">
+                <div class="order">
+                    <t t-if="orderlines.length === 0" >
+                        <div class='order-empty'>
+                            <i class='fa fa-shopping-cart' />
+                            <h1>Your shopping cart is empty</h1>
+                        </div>
+                    </t>
+                    <t t-if="orderlines.length > 0">
+                        <ul class="orderlines"></ul>
+                        <div class="summary clearfix">
+                            <div class="line">
+                                <div class='entry total'>
+                                    <span class="label">Total: </span> <span class="value">0.00 €</span>
+                                    <div class='subentry'>Taxes: <span class="value">0.00€</span></div>
+                                </div>
+                                <div class="line total_pv_line">
+                                    <div class='subentry'>Total Pv's: <span class="value">0</span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </div>
+            </div>
+        </div>
+    </t>
+
+    <t t-name="PaymentScreen-Paymentmethods">
+        <div class='paymentmethods'>
+            <t t-foreach="widget.pos.cashregisters" t-as="cashregister">
+                <t t-if="widget.pos.config.reserve_fund_account_id[0] == cashregister.journal.id">
+                    <div class="button paymentmethod" t-att-data-id="cashregister.journal_id[0]">
+                        <t t-esc="cashregister.journal_id[1]"/>
+                        <span class="reserve_amount"><t t-esc="widget.reserve"/></span>
+                    </div>
+                </t>
+                <t t-else="">
+                    <div class="button paymentmethod" t-att-data-id="cashregister.journal_id[0]">
+                        <t t-esc="cashregister.journal_id[1]" />
+                    </div>
+                </t>
+            </t>
+        </div>
+    </t>
+
+</templates>

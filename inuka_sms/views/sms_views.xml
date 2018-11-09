@@ -1,0 +1,492 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_sms_list_form" model="ir.ui.view">
+        <field name="name">sms.list.form</field>
+        <field name="model">sms.list</field>
+        <field name="arch" type="xml">
+            <form string="Mass List">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button class="oe_stat_button" type="object" name="view_sms_recipients"
+                            icon="fa-user">
+                            <field string="Recipients" name="sms_recipients_count" widget="statinfo"/>
+                        </button>
+                        <button name="toggle_active" type="object" class="oe_stat_button" icon="fa-archive">
+                            <field name="active" widget="boolean_button" options='{"terminology": "archive"}'/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" required="1"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="var1"/>
+                            <field name="var3"/>
+                            <field name="var5"/>
+                        </group>
+                        <group>
+                            <field name="var2"/>
+                            <field name="var4"/>
+                            <field name="var6"/>
+                        </group>
+                    </group>
+                    <field name="description" class="oe_inline" placeholder="Description ..."/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_sms_list_tree" model="ir.ui.view">
+        <field name="name">sms.list.tree</field>
+        <field name="model">sms.list</field>
+        <field name="arch" type="xml">
+            <tree string="Mass List">
+                <field name="name"/>
+                <field name="create_date" string="Creation Date"/>
+                <field name="sms_recipients_count"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_sms_list_filter" model="ir.ui.view">
+        <field name="name">sms.list.search</field>
+        <field name="model">sms.list</field>
+        <field name="arch" type="xml">
+            <search string="Search SMS List">
+                <field name="name" string="SMS List" filter_domain="['|','|','|','|','|','|',('name','ilike',self),('var1','ilike',self),('var2','ilike',self),('var3','ilike',self),('var4','ilike',self),('var5','ilike',self),('var6','ilike',self)]"/>
+                <filter string="Archived" name="archived" domain="[('active','=',False)]"/>
+           </search>
+        </field>
+    </record>
+
+    <record id="action_sms_list_form" model="ir.actions.act_window">
+        <field name="name">Mass List</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">sms.list</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form,search</field>
+        <field name="help" type="html">
+          <p class="oe_view_nocontent_create">
+            Click to add Mass List.
+          </p>
+        </field>
+    </record>
+
+    <record id="view_sms_recipients_form" model="ir.ui.view">
+        <field name="name">sms.recipients.form</field>
+        <field name="model">sms.recipients</field>
+        <field name="arch" type="xml">
+            <form string="SMS Recipients">
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="member_id"/>
+                            <field name="mobile" widget="phone" required="1"/>
+                            <field name="var1"/>
+                            <field name="var3"/>
+                            <field name="var5"/>
+                            <field name="optout"/>
+                            <field name="sms_list_id"/>
+                        </group>
+                        <group>
+                            <field name="partner_id"/>
+                            <field name="create_date" string="Created On"/>
+                            <field name="var2"/>
+                            <field name="var4"/>
+                            <field name="var6"/>
+                            <field name="unsubscription_date"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_sms_recipients_tree" model="ir.ui.view">
+        <field name="name">sms.recipients.tree</field>
+        <field name="model">sms.recipients</field>
+        <field name="arch" type="xml">
+            <tree string="SMS Recipients">
+                <field name="name"/>
+                <field name="member_id"/>
+                <field name="partner_id"/>
+                <field name="mobile"/>
+                <field name="var1"/>
+                <field name="var2"/>
+                <field name="var3"/>
+                <field name="var4"/>
+                <field name="var5"/>
+                <field name="optout"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="action_sms_recipients_form" model="ir.actions.act_window">
+        <field name="name">SMS Recipients</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">sms.recipients</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+          <p class="oe_view_nocontent_create">
+            Click to add SMS Recipients.
+          </p>
+        </field>
+    </record>
+
+    <record id="view_mass_sms_form" model="ir.ui.view">
+        <field name="name">mass.sms.form</field>
+        <field name="model">mass.sms</field>
+        <field name="arch" type="xml">
+            <form string="Mass SMS">
+                <header>
+                    <button name="%(action_test_mass_sms_form)d" string="Test" type="action" states="draft" class="btn-primary"/>
+                    <button name="generate_participants" string="Generate Participants" type="object" states="draft" class="btn-primary"/>
+                    <button name="button_send_all" string="Send All" type="object" attrs="{'invisible':['|', ('state', '!=', 'draft'), ('participant_generated', '=', False)]}" class="btn-primary"/>
+                    <button name="button_cancel" string="Cancel" type="object" states="draft,queue" class="btn-primary"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,queue,sending,sent"/>
+                </header>
+                <sheet>
+                <div class="oe_button_box" name="button_box">
+                    <button name="view_stastics"
+                            type="object" class="oe_stat_button">
+                        <field name="pending_ratio" string="SMS's Pending" widget="percentpie"/>
+                    </button>
+                    <button name="view_stastics"
+                            type="object" class="oe_stat_button">
+                        <field name="sent_ratio" string="SMS's Sent" widget="percentpie"/>
+                    </button>
+                    <button name="open_received_sms_message"
+                            type="object" class="oe_stat_button">
+                        <field name="received_ratio" string="Received" widget="percentpie"/>
+                    </button>
+                    <button name="open_error_sms_message"
+                            type="object" class="oe_stat_button">
+                        <field name="errors_ratio" string="Errors" widget="percentpie"/>
+                    </button>
+                    <button class="oe_stat_button" type="object" name="view_participants"
+                        icon="fa-user">
+                        <field string="Participants" name="sms_participant_count" widget="statinfo"/>
+                    </button>
+                </div>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" required="1"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="from_mobile_id" required="1"/>
+                            <field name="sms_template_id" required="1"/>
+                            <field name="participant_generated" invisible="1"/>
+                        </group>
+                        <group>
+                            <field name="recipient_ids" widget="many2many_tags" required="1"/>
+                            <field name="scheduled_date" required="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="SMS Body">
+                            <field name="sms_content" required="1"/>
+                        </page>
+                        <page string="Options">
+                            <group>
+                                <group>
+                                    <field name="batch_mode"/>
+                                    <field name="sent_date"/>
+                                </group>
+                                <group>
+                                    <field name="batch_size"/>
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_mass_sms_tree" model="ir.ui.view">
+        <field name="name">mass.sms.tree</field>
+        <field name="model">mass.sms</field>
+        <field name="arch" type="xml">
+            <tree string="Mass SMS">
+                <field name="name"/>
+                <field name="scheduled_date"/>
+                <field name="state"/>
+                <field name="sent"/>
+                <field name="pending"/>
+                <field name="received"/>
+                <field name="errors"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_mass_sms_kanban" model="ir.ui.view">
+        <field name="name">mass.sms.kanban</field>
+        <field name="model">mass.sms</field>
+        <field name="arch" type="xml">
+            <kanban>
+                <field name='color'/>
+                <field name='total'/>
+                <field name='sent_date'/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div t-attf-class="oe_kanban_color_#{kanban_getcolor(record.color.raw_value)} oe_kanban_card oe_kanban_global_click oe_kanban_mass_mailing">
+                            <div class="o_dropdown_kanban dropdown">
+                                <a class="dropdown-toggle btn" data-toggle="dropdown" href="#" >
+                                    <span class="fa fa-ellipsis-v"/>
+                                </a>
+                                <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                                    <li><ul class="oe_kanban_colorpicker" data-field="color"/></li>
+                                    <t t-if="widget.deletable">
+                                        <li><a type="delete">Delete</a></li>
+                                    </t>
+                                </ul>
+                            </div>
+                             <div class="oe_kanban_content">
+                                <div class="o_kanban_record_top">
+                                    <div class="o_kanban_record_headings">
+                                        <h3 class="mt4 mb4"><field name="name"/></h3>
+                                        <div class="o_kanban_record_subtitle" attrs="{'invisible': [('sent_date', '=', False)]}">
+                                            <field name="sent_date"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="o_kanban_record_body" attrs="{'invisible': [('sent_date', '=', False)]}">
+                                    <t t-if="record.sent_date">
+                                        <div class="row">
+                                            <div class="col-xs-8">
+                                                <a name="view_stastics"
+                                                   type="object">Received</a>
+                                            </div>
+                                            <div class="col-xs-4 text-right">
+                                                <field name="received_ratio"/> %
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-xs-8">
+                                                <a name="view_stastics"
+                                                   type="object">Errors</a>
+                                            </div>
+                                            <div class="col-xs-4 text-right">
+                                                <field name="errors_ratio"/> %
+                                            </div>
+                                        </div>
+                                        <div class='o_kanban_primary_bottom'>
+                                            <field name="sent" widget="progressbar" title="Sent" options="{'current_value': 'sent', 'max_value': 'total', 'editable': false}"/>
+                                        </div>
+                                    </t>
+                                </div>
+                            </div>
+                            <div class="oe_clear"></div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="action_mass_sms_form" model="ir.actions.act_window">
+        <field name="name">Mass SMS</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">mass.sms</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">kanban,tree,form</field>
+        <field name="help" type="html">
+          <p class="oe_view_nocontent_create">
+            Click to add Mass SMS.
+          </p>
+        </field>
+    </record>
+
+    <record id="view_sms_shortcode_form" model="ir.ui.view">
+        <field name="name">sms.shortcode.form</field>
+        <field name="model">sms.shortcode</field>
+        <field name="arch" type="xml">
+            <form string="SMS Shortcode">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="toggle_active" type="object" class="oe_stat_button" icon="fa-archive">
+                            <field name="active" widget="boolean_button" options='{"terminology": "archive"}'/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="keyword"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="sms_template_id"/>
+                            <field name="no_member_sms_template_id" attrs="{'required':[('member_required', '=', True)]}"/>
+                        </group>
+                        <group>
+                            <field name="member_required"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_sms_shortcode_tree" model="ir.ui.view">
+        <field name="name">sms.shortcode.tree</field>
+        <field name="model">sms.shortcode</field>
+        <field name="arch" type="xml">
+            <tree string="SMS Shortcode">
+                <field name="keyword"/>
+                <field name="sms_template_id"/>
+                <field name="member_required"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="action_sms_shortcode_form" model="ir.actions.act_window">
+        <field name="name">SMS Shortcodes</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">sms.shortcode</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+          <p class="oe_view_nocontent_create">
+            Click to add SMS Shortcode.
+          </p>
+        </field>
+    </record>
+
+    <record id="action_sms_message_form_inbound" model="ir.actions.act_window">
+        <field name="name">Inbound</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">sms.message</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">kanban,tree,form</field>
+        <field name="domain">[('direction','=','I')]</field>
+        <field name="context">{'default_direction':'I'}</field>
+        <field name="help" type="html">
+          <p class="oe_view_nocontent_create">
+            Click to add Inbound SMS Message.
+          </p>
+        </field>
+    </record>
+
+    <record id="action_sms_message_form_outbound" model="ir.actions.act_window">
+        <field name="name">Outbound</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">sms.message</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">kanban,tree,form</field>
+        <field name="domain">[('direction','=','O')]</field>
+        <field name="context">{'default_direction':'O'}</field>
+        <field name="help" type="html">
+          <p class="oe_view_nocontent_create">
+            Click to add Outbound SMS Message.
+          </p>
+        </field>
+    </record>
+
+    <record id="view_sms_participant_form" model="ir.ui.view">
+        <field name="name">sms.participant.form</field>
+        <field name="model">sms.participant</field>
+        <field name="arch" type="xml">
+            <form string="SMS Participants">
+                <header>
+                    <field name="state" widget="statusbar" statusbar_visible="running,completed"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="partner_id"/>
+                        </group>
+                        <group>
+                            <field name="mass_sms_id"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_sms_participant_tree" model="ir.ui.view">
+        <field name="name">sms.participant.tree</field>
+        <field name="model">sms.participant</field>
+        <field name="arch" type="xml">
+            <tree string="SMS Participants">
+                <field name="partner_id"/>
+                <field name="mass_sms_id"/>
+                <field name="state"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="action_sms_participant_form" model="ir.actions.act_window">
+        <field name="name">SMS Participants</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">sms.participant</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+          <p class="oe_view_nocontent_create">
+            Click to add SMS Participants.
+          </p>
+        </field>
+    </record>
+
+    <record id="sms" model="res.groups">
+        <field name="name">SMS</field>
+    </record>
+
+    <menuitem id="menu_sms_inuka_root" name="SMS" web_icon="fa fa-random,#f1c40f,#34495e" groups="sms"/>
+
+    <menuitem id="menu_sms_customers" name="Customers" action="base.action_partner_form" parent="menu_sms_inuka_root" sequence="1"/>
+
+    <menuitem id="menu_sms_history" name="SMS History" parent="menu_sms_inuka_root" sequence="2"/>
+    <menuitem id="menu_inbound_sms_history" action="action_sms_message_form_inbound" name="Inbound" parent="menu_sms_history" sequence="1"/>
+    <menuitem id="menu_outbound_sms_history" action="action_sms_message_form_outbound" name="Outbound" parent="menu_sms_history" sequence="2"/>
+
+    <menuitem id="menu_mass_sms" name="Mass SMS" parent="menu_sms_inuka_root" sequence="3"/>
+    <menuitem id="menu_sms_list" name="Mass List" action="action_sms_list_form" parent="menu_mass_sms" sequence="1"/>
+    <menuitem id="menu_mass_sms_child" name="Mass SMS" action="action_mass_sms_form" parent="menu_mass_sms" sequence="2"/>
+
+    <menuitem id="menu_sms_shortcode" name="Shortcodes" parent="menu_sms_inuka_root" sequence="4"/>
+    <menuitem id="menu_inbound_sms_message" action="action_sms_message_form_inbound" name="Inbound" parent="menu_sms_shortcode" sequence="1"/>
+    <menuitem id="menu_outbound_sms_message" action="action_sms_message_form_outbound" name="Outbound" parent="menu_sms_shortcode" sequence="2"/>
+    <menuitem id="menu_sms_shortcode_child" action="action_sms_shortcode_form" name="Shortcodes" parent="menu_sms_shortcode" sequence="3"/>
+
+    <menuitem id="menu_sms_configuration" name="Configuration" parent="menu_sms_inuka_root" sequence="5"/>
+    <menuitem id="menu_sms_accounts" action="sms_frame.sms_account_action" name="SMS Accounts" parent="menu_sms_configuration" sequence="1"/>
+    <menuitem id="menu_sms_numbers" action="sms_frame.sms_number_action" name="SMS Numbers" parent="menu_sms_configuration" sequence="2"/>
+    <menuitem id="menu_sms_templates" action="sms_frame.sms_template_action" name="SMS Templates" parent="menu_sms_configuration" sequence="3"/>
+
+    <record id="view_sms_message_form_inherit_inuka" model="ir.ui.view">
+        <field name="name">sms.message.form.inherit.inuka</field>
+        <field name="model">sms.message</field>
+        <field name="inherit_id" ref="sms_frame.sms_message_view_form"/>
+        <field name="arch" type="xml">
+            <field name="sms_content" position="after">
+                <field name="keyword"/>
+            </field>
+        </field>
+    </record>
+
+    <!--record id="view_sms_account_form_inherit_inuka" model="ir.ui.view">
+        <field name="name">sms.account.form.inherit.inuka</field>
+        <field name="model">sms.account</field>
+        <field name="inherit_id" ref="sms_frame.sms_account_view_form_inherit_sms_frame_twilio"/>
+        <field name="arch" type="xml">
+            <field name="account_gateway_id" position="after">
+                <field name="active"/>
+                <field name="international"/>
+            </field>
+        </field>
+    </record-->
+
+</odoo>

@@ -1,0 +1,787 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_res_partner_property_form_inherit_inuka" model="ir.ui.view">
+        <field name="name">res.partner.property.form.inherit.inuka</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="account.view_partner_property_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet" position="before">
+                <header>
+                    <button name="action_watchlist_add" type="object" string="Add Watchlist" attrs="{'invisible':['|',('watchlist', '=', True),('customer', '=', False)]}" class="btn-primary"/>
+                    <button name="action_watchlist_remove" type="object" string="Remove Watchlist" attrs="{'invisible':['|',('watchlist', '=', False),('customer', '=', False)]}" class="btn-primary"/>
+                    <button name="fund_transfer" type="object" string="FUNDS TRANSFER" class="btn-primary" attrs="{'invisible': [('customer', '!=', True)]}"
+                            groups="inuka.group_cash_specialist"/>
+                </header>
+            </xpath>
+            <field name="category_id" position="after">
+                <field name="status" attrs="{'invisible':[('customer', '=', False)], 'required':[('customer', '=', True)]}"
+                                     readonly="1"/>
+            </field>
+            <field name="trust" position="after">
+                <field name="credit_limit" attrs="{'readonly':[('is_credit_adjustment_group', '=', False)]}" context="{'parent_id': parent_id}"/>
+                <field name="is_credit_adjustment_group" invisible="1"/>
+            </field>
+            <page name="accounting_disabled" position="after">
+                <page string="Roles" name="roles" attrs="{'invisible': [('customer', '=', False)]}">
+                    <group>
+                        <group>
+                            <field name="compute_field" invisible='1'/>
+                            <field name="candidate_registrar" attrs="{'readonly': [('compute_field', '=',True)]}"/>
+                            <field name="up_front_kits" attrs="{'readonly': [('compute_field', '=',True)]}"/>
+                        </group>
+                        <group>
+                            <field name="bulk_custodian" attrs="{'readonly': [('compute_field', '=',True)]}"/>
+                        </group>
+                    </group>
+                </page>
+                <page string="MTD Performance" name="member" attrs="{'invisible': [('customer', '=', False)]}">
+                    <separator string="PV Performance"/>
+                    <group>
+                        <group>
+                            <field name="personal_pv" string="Personal PV (MTD)" readonly="1"/>
+                            <field name="pv_downline_1" string="PV Downline 1 (MTD)" readonly="1"/>
+                            <field name="pv_downline_2" string="PV Downline 2 (MTD)" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="pv_tot_group" string="Group PV (MTD)" readonly="1"/>
+                            <field name="pv_downline_3" string="PV Downline 3 (MTD)" readonly="1"/>
+                            <field name="pv_downline_4" string="PV Downline 4 (MTD)" readonly="1"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Recruiting">
+                            <field name="new_members" string="# of New Members (MTD)" readonly="1"/>
+                            <field name="new_junior_recruits" readonly="1"/>
+                            <field name="new_senior_recruits" readonly="1"/>
+                        </group>
+                        <group string="Downline Activity">
+                            <field name="personal_members" string="# of Active Downline (MTD)" readonly="1"/>
+                            <field name="vr_earner" readonly="1"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Member Activity">
+                            <field name="is_active_mtd" readonly="1"/>
+                            <field name="is_vr_earner_mtd" readonly="1"/>
+                            <field name="is_new_mtd" readonly="1"/>
+                            <field name="is_new_junior_mtd" readonly="1"/>
+                            <field name="is_new_senior_mtd" readonly="1"/>
+                            <field name="is_new_ruby_mtd" readonly="1"/>
+                        </group>
+                        <group>
+                        </group>
+                    </group>
+                </page>
+                <page string="QTD Performance" attrs="{'invisible': [('customer', '=', False)]}">
+                    <separator string="PV Performance"/>
+                    <group>
+                        <group>
+                            <field name="personal_pv_qtd" readonly="1"/>
+                            <field name="pv_downline_1_qtd" readonly="1"/>
+                            <field name="pv_downline_2_qtd" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="pv_tot_group_qtd" readonly="1"/>
+                            <field name="pv_downline_3_qtd" readonly="1"/>
+                            <field name="pv_downline_4_qtd" readonly="1"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Recruiting">
+                            <field name="new_members_qtd" readonly="1"/>
+                            <field name="new_junior_recruits_qtd" readonly="1"/>
+                            <field name="new_senior_recruits_qtd" readonly="1"/>
+                        </group>
+                        <group string="Downline Activity">
+                            <field name="personal_members_qtd" readonly="1"/>
+                            <field name="vr_earner_qtd" readonly="1"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Member Activity">
+                            <field name="is_active_qtd" readonly="1"/>
+                            <field name="is_vr_earner_qtd" readonly="1"/>
+                            <field name="is_new_qtd" readonly="1"/>
+                            <field name="is_new_junior_qtd" readonly="1"/>
+                            <field name="is_new_senior_qtd" readonly="1"/>
+                            <field name="is_new_ruby_qtd" readonly="1"/>
+                        </group>
+                        <group>
+                        </group>
+                    </group>
+                </page>
+                <page string="YTD Performance" attrs="{'invisible': [('customer', '=', False)]}">
+                    <separator string="PV Performance"/>
+                    <group>
+                        <group>
+                            <field name="personal_pv_ytd" readonly="1"/>
+                            <field name="pv_downline_1_ytd" readonly="1"/>
+                            <field name="pv_downline_2_ytd" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="pv_tot_group_ytd" readonly="1"/>
+                            <field name="pv_downline_3_ytd" readonly="1"/>
+                            <field name="pv_downline_4_ytd" readonly="1"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Recruiting">
+                            <field name="new_members_ytd" readonly="1"/>
+                            <field name="new_junior_recruits_ytd" readonly="1"/>
+                            <field name="new_senior_recruits_ytd" readonly="1"/>
+                        </group>
+                        <group string="Downline Activity">
+                            <field name="personal_members_ytd" readonly="1"/>
+                            <field name="vr_earner_ytd" readonly="1"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Member Activity">
+                            <field name="is_active_ytd" readonly="1"/>
+                            <field name="is_vr_earner_ytd" readonly="1"/>
+                            <field name="is_new_ytd" readonly="1"/>
+                            <field name="is_new_junior_ytd" readonly="1"/>
+                            <field name="is_new_senior_ytd" readonly="1"/>
+                            <field name="is_new_ruby_ytd" readonly="1"/>
+                        </group>
+                        <group>
+                        </group>
+                    </group>
+                </page>
+                <page string="MTD (Odoo)" attrs="{'invisible': [('customer', '=', False)]}">
+                    <separator string="PV Performance"/>
+                    <group>
+                        <group>
+                            <field name="o_personal_pv_mtd" readonly="1"/>
+                            <field name="o_pv_downline_1_mtd" readonly="1"/>
+                            <field name="o_pv_downline_2_mtd" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="o_pv_tot_group_mtd" readonly="1"/>
+                            <field name="o_pv_downline_3_mtd" readonly="1"/>
+                            <field name="o_pv_downline_4_mtd" readonly="1"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Recruiting">
+                            <field name="o_new_members_mtd" readonly="1"/>
+                            <field name="o_new_junior_recruits_mtd" readonly="1"/>
+                            <field name="o_new_senior_recruits_mtd" readonly="1"/>
+                        </group>
+                        <group string="Downline Activity">
+                            <field name="o_personal_members_mtd" readonly="1"/>
+                            <field name="o_vr_earner_mtd" readonly="1"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Member Activity">
+                            <field name="o_is_active_mtd" readonly="1"/>
+                            <field name="o_is_vr_earner_mtd" readonly="1"/>
+                            <field name="o_is_new_mtd" readonly="1"/>
+                            <field name="o_is_new_junior_mtd" readonly="1"/>
+                            <field name="o_is_new_senior_mtd" readonly="1"/>
+                            <field name="o_is_new_ruby_mtd" readonly="1"/>
+                        </group>
+                        <group>
+                        </group>
+                    </group>
+                </page>
+                <page string="QTD (Odoo)" attrs="{'invisible': [('customer', '=', False)]}">
+                    <separator string="PV Performance"/>
+                    <group>
+                        <group>
+                            <field name="o_personal_pv_qtd" readonly="1"/>
+                            <field name="o_pv_downline_1_qtd" readonly="1"/>
+                            <field name="o_pv_downline_2_qtd" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="o_pv_tot_group_qtd" readonly="1"/>
+                            <field name="o_pv_downline_3_qtd" readonly="1"/>
+                            <field name="o_pv_downline_4_qtd" readonly="1"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Recruiting">
+                            <field name="o_new_members_qtd" readonly="1"/>
+                            <field name="o_new_junior_recruits_qtd" readonly="1"/>
+                            <field name="o_new_senior_recruits_qtd" readonly="1"/>
+                        </group>
+                        <group string="Downline Activity">
+                            <field name="o_personal_members_qtd" readonly="1"/>
+                            <field name="o_vr_earner_qtd" readonly="1"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Member Activity">
+                            <field name="o_is_active_qtd" readonly="1"/>
+                            <field name="o_is_vr_earner_qtd" readonly="1"/>
+                            <field name="o_is_new_qtd" readonly="1"/>
+                            <field name="o_is_new_junior_qtd" readonly="1"/>
+                            <field name="o_is_new_senior_qtd" readonly="1"/>
+                            <field name="o_is_new_ruby_qtd" readonly="1"/>
+                        </group>
+                        <group>
+                        </group>
+                    </group>
+                </page>
+                <page string="YTD (Odoo)" attrs="{'invisible': [('customer', '=', False)]}">
+                    <separator string="PV Performance"/>
+                    <group>
+                        <group>
+                            <field name="o_personal_pv_ytd" readonly="1"/>
+                            <field name="o_pv_downline_1_ytd" readonly="1"/>
+                            <field name="o_pv_downline_2_ytd" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="o_pv_tot_group_ytd" readonly="1"/>
+                            <field name="o_pv_downline_3_ytd" readonly="1"/>
+                            <field name="o_pv_downline_4_ytd" readonly="1"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Recruiting">
+                            <field name="o_new_members_ytd" readonly="1"/>
+                            <field name="o_new_junior_recruits_ytd" readonly="1"/>
+                            <field name="o_new_senior_recruits_ytd" readonly="1"/>
+                        </group>
+                        <group string="Downline Activity">
+                            <field name="o_personal_members_ytd" readonly="1"/>
+                            <field name="o_vr_earner_ytd" readonly="1"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Member Activity">
+                            <field name="o_is_active_ytd" readonly="1"/>
+                            <field name="o_is_vr_earner_ytd" readonly="1"/>
+                            <field name="o_is_new_ytd" readonly="1"/>
+                            <field name="o_is_new_junior_ytd" readonly="1"/>
+                            <field name="o_is_new_senior_ytd" readonly="1"/>
+                            <field name="o_is_new_ruby_ytd" readonly="1"/>
+                        </group>
+                        <group>
+                        </group>
+                    </group>
+                </page>
+                <page string="Device Info" name="device_info" attrs="{'invisible': [('customer', '=', False)]}">
+                    <group>
+                        <group>
+                            <field name="device_id"/>
+                            <field name="is_device_live"/>
+                        </group>
+                        <group>
+                            <field name="device_type"/>
+                            <!--field name="portal_password" readonly="1"/-->
+                        </group>
+                    </group>
+                </page>
+                <page string="Other Info" name="other_info" attrs="{'invisible': [('customer', '=', False)], 'readonly': [('status', '!=', 'candidate')]}">
+                    <group>
+                        <group>
+                            <field name="watchlist" attrs="{'invisible': [('customer', '=', False)], 'readonly': [('status', '!=', 'candidate')]}"/>
+                        </group>
+                        <group>
+                            <field name="source" attrs="{'invisible': [('customer', '=', False)], 'readonly': [('status', '!=', 'candidate')]}"/>
+                        </group>
+                    </group>
+                </page>
+            </page>
+        </field>
+    </record>
+
+    <record id="view_res_partner_form_inherit_inuka" model="ir.ui.view">
+        <field name="name">res.partner.form.inherit.inuka</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <field name="company_type" position="attributes">
+                <attribute name="attrs">{'invisible': [('customer', '=', True)]}</attribute>
+            </field>
+            <field name="parent_id" position="attributes">
+                <attribute name="attrs">{'invisible': [('customer', '=', True)]}</attribute>
+            </field>
+            <!--<field name="street" position="attributes">
+                <attribute name="attrs">{'required': [('customer', '=', True)]}</attribute>
+            </field>
+            <field name="city" position="attributes">
+                <attribute name="attrs">{'required': [('customer', '=', True)]}</attribute>
+            </field>-->
+            <!-- <field name="state_id" position="attributes">
+                <attribute name="placeholder">Province</attribute>
+                <attribute name="attrs">{'required': [('customer', '=', False)]}</attribute>
+            </field> -->
+            <!--<field name="zip" position="attributes">
+                <attribute name="attrs">{'required': [('customer', '=', True)]}</attribute>
+            </field>
+            <<field name="country_id" position="attributes">
+                <attribute name="attrs">{'required': [('customer', '=', True)]}</attribute>
+            </field>-->
+            <field name="user_id" position="attributes">
+                <attribute name="string">Mentor</attribute>
+            </field>
+            <field name="mobile" position="attributes">
+                <attribute name="attrs">{'required': [('customer', '=', True)], 'readonly': [('status', '!=', 'candidate')]}</attribute>
+            </field>
+            <field name="email" position="attributes">
+            	<attribute name="attrs">{'readonly': [('status', '!=', 'candidate')]}</attribute>
+            </field>
+            <field name="phone" position="attributes">
+            	<attribute name="attrs">{'readonly': [('status', '!=', 'candidate')]}</attribute>
+            </field>
+            <field name="type" position="before">
+                <field name="first_name" string="First Name"
+                       attrs="{'invisible': [('customer', '=', False)],
+                               'readonly': [('status', '!=', 'candidate')],
+                               'required': [('customer', '=', True)]}" />
+                <field name="last_name"
+                       attrs="{'invisible': [('customer', '=', False)],
+                               'readonly': [('status', '!=', 'candidate')],
+                               'required': [('customer', '=', True)]}"/>
+                <field name="passport_no" attrs="{'invisible': [('customer', '=', False)], 'readonly': [('status', '!=', 'candidate')]}"/>
+                <field name="join_date" attrs="{'invisible': [('customer', '=', False)], 'readonly': [('status', '!=', 'candidate')], 'required': [('customer', '=', True)]}"/>
+                <field name="dob" attrs="{'invisible': [('customer', '=', False)],
+                                          'readonly': [('status', '!=', 'candidate')],
+                                          'required': [('customer', '!=', False)]}"/><!--,'required': [('customer', '=', True)]-->
+                <field name="is_admin" invisible="1"/>
+                <field name="available_bal" invisible="1"/>
+                <field name="available_fund" invisible="1"/>
+            </field>
+            <!-- <field name="function" position="before">
+                <field name="last_name" attrs="{'invisible': [('customer', '=', False)], 'required': [('customer', '=', True)]}"/>
+            </field> -->
+            <field name="lang" position="before">
+                <field name="home_phone" widget="phone" attrs="{'invisible': [('customer', '=', False)], 'readonly': [('status', '!=', 'candidate')]}"/>
+            </field>
+            <field name="lang" position="after">
+                <field name="upline" domain="[('customer', '=', True), ('id', '!=', id), ('type', '=', 'contact')]" attrs="{'invisible': [('customer', '=', False)], 'readonly': [('status', '!=', 'candidate')], 'required': [('customer', '=', True)]}"/><!--,'required': [('customer', '=', True)]-->
+                <field name="upline_id" attrs="{'invisible': [('customer', '=', False)], 'readonly': [('status', '!=', 'candidate')], 'required': [('customer', '=', True)]}"/>
+
+<!--                <field name="kit" 
+                       attrs="{'invisible': ['|', ('customer', '=', False), ('status', 'not in', ('candidate'))], 'required': [('customer', '=', True), ('status', 'in', ('candidate'))]}"/>
+                 <field name="status"/> -->
+                <field name="kit"
+                       attrs="{'invisible': ['|', ('customer', '=', False), ('status', 'not in', ('candidate'))], 'required': [('customer', '=', True), ('status', 'in', ('candidate'))]}"/>
+            </field>
+            <field name="vat" position="replace"/>
+            <field name="function" position="replace"/>
+            <field name="website" position="replace"/>
+            <field name="ref" position="replace">
+            </field>
+            <field name="street" position="attributes">
+                <attribute name="attrs">{'readonly': ['|', ('parent_id', '!=', False), ('type', '=', 'contact'),('status', '!=', 'candidate')]}</attribute>
+            </field>
+            <field name="street2" position="attributes">
+                <attribute name="attrs">{'readonly': ['|', ('parent_id', '!=', False), ('type', '=', 'contact'),('status', '!=', 'candidate')]}</attribute>
+            </field>
+            <field name="city" position="attributes">
+                <attribute name="attrs">{'readonly': ['|', ('parent_id', '!=', False), ('type', '=', 'contact'),('status', '!=', 'candidate')]}</attribute>
+            </field>
+            <field name="state_id" position="attributes">
+                <attribute name="attrs">{'readonly': ['|', ('parent_id', '!=', False), ('type', '=', 'contact'),('status', '!=', 'candidate')], 'required': [('customer', '=', True)]}</attribute>
+                <attribute name="options">{'no_quick_create':True,'no_create_edit':True, 'no_create': True}</attribute>
+                <attribute name="placeholder">Province</attribute>
+            </field>
+            <!-- <field name="state_id" position="replace">
+                <field name="state_id" placeholder="Province" readonly="0"
+                       attrs="{'required': [('customer', '=', True)]}"
+                       options="{'no_quick_create':True,'no_create_edit':True, 'no_create': True}"/>
+            </field> -->
+            <field name="zip" position="attributes">
+                <attribute name="attrs">{'readonly': ['|', ('parent_id', '!=', False), ('type', '=', 'contact'),('status', '!=', 'candidate')]}</attribute>
+            </field>
+            <field name="country_id" position="attributes">
+                <attribute name="attrs">{'readonly': ['|', ('parent_id', '!=', False), ('type', '=', 'contact'),('status', '!=', 'candidate')]}</attribute>
+            </field>
+        </field>
+    </record>
+
+	<record id="view_res_partner_form_inherit_inuka_inherited" model="ir.ui.view">
+		<field name="name">res.partner</field>
+			<field name="model">res.partner</field>
+			<field name="inherit_id" ref="inuka.view_res_partner_form_inherit_inuka" />
+			<field name="groups_id" eval="[(6, 0, [ref('inuka.member_profile_changes_group')])]" />
+			<field name="arch" type="xml">
+			<field name="first_name" position="attributes">
+				<attribute name="attrs">{'invisible': [('customer', '=', False)], 'required': [('customer', '=', True)]}</attribute>
+			</field>
+			<field name="last_name" position="attributes">
+				<attribute name="attrs">{'invisible': [('customer', '=', False)], 'required': [('customer', '=', True)]}</attribute>
+			</field>
+			<field name="join_date" position="attributes">
+				<attribute name="attrs">{'invisible': [('customer', '=', False)], 'required': [('customer', '=', True)]}</attribute>
+			</field>
+			<field name="dob" position="attributes">
+				<attribute name="attrs">{'invisible': [('customer', '=', False)], 'required': [('customer', '=', True)]}</attribute>
+			</field>
+			<field name="mobile" position="attributes">
+                <attribute name="attrs">{'required': [('customer', '=', True)]}</attribute>
+            </field>
+            <field name="email" position="attributes">
+            	<attribute name="attrs"></attribute>
+            </field>
+            <field name="phone" position="attributes">
+            	<attribute name="attrs"></attribute>
+            </field>
+            <field name="upline_id" position="attributes">
+            	<attribute name="attrs">{'invisible': [('customer', '=', False)], 'required': [('customer', '=', True)]}</attribute>
+            </field>
+            <field name="street" position="attributes">
+                <attribute name="attrs">{'readonly': [('type', '=', 'contact'),('parent_id', '!=', False)]}</attribute>
+            </field>
+            <field name="street2" position="attributes">
+                <attribute name="attrs">{'readonly': [('type', '=', 'contact'),('parent_id', '!=', False)]}</attribute>
+            </field>
+            <field name="city" position="attributes">
+                <attribute name="attrs">{'readonly': [('type', '=', 'contact'),('parent_id', '!=', False)]}</attribute>
+            </field>
+            <field name="state_id" position="attributes">
+                <attribute name="attrs">{'readonly': [('type', '=', 'contact'),('parent_id', '!=', False)], 'required': [('customer', '=', True)]}</attribute>
+            </field>
+            <field name="zip" position="attributes">
+                <attribute name="attrs">{'readonly': [('type', '=', 'contact'),('parent_id', '!=', False)]}</attribute>
+            </field>
+            <field name="country_id" position="attributes">
+                <attribute name="attrs">{'readonly': [('type', '=', 'contact'),('parent_id', '!=', False)]}</attribute>
+            </field>
+		</field>
+	</record>
+
+	<!-- Hide Bank Details from Partner Form -->
+	<record id="partner_view_buttons_account_inherited_1" model="ir.ui.view">
+		<field name="name">res.partner</field>
+		<field name="model">res.partner</field>
+		<field name="inherit_id" ref="account.partner_view_buttons" />
+		<field name="arch" type="xml">
+			<xpath expr="//button[@name='%(base.action_res_partner_bank_account_form)d']" position="attributes">
+				<attribute name="attrs">{'invisible': [('status', '!=', 'candidate')]}</attribute>
+			</xpath>
+			<xpath expr="//button[@name='%(base.action_res_partner_bank_account_form)d']" position="after">
+				<field string="Bank account(s)" name="bank_account_count" id="bank_account_count"
+                       attrs="{'invisible': [('status', '=', 'candidate')]}" widget="statinfo"/>
+			</xpath>
+        </field>
+    </record>
+
+	<record id="partner_view_buttons_account_1_inherited" model="ir.ui.view">
+		<field name="name">res.partner</field>
+		<field name="model">res.partner</field>
+		<field name="inherit_id" ref="inuka.partner_view_buttons_account_inherited_1" />
+		<field name="groups_id" eval="[(6, 0, [ref('inuka.member_profile_changes_group')])]" />
+		<field name="arch" type="xml">
+			<xpath expr="//button[@name='%(base.action_res_partner_bank_account_form)d']" position="replace">
+				<button type="action" class="btn-link"
+                    name="%(base.action_res_partner_bank_account_form)d"
+                    context="{'search_default_partner_id': active_id, 'default_partner_id': active_id}">
+                    <field string="Bank account(s)" name="bank_account_count" widget="statinfo"/>
+                </button>
+			</xpath>
+			<xpath expr="//field[@id='bank_account_count']" position="replace"/>
+        </field>
+    </record>
+
+	<!-- Hide Credit Card Details from Partner Form -->
+	<record id="view_partners_form_payment_defaultcreditcard_inherited" model="ir.ui.view">
+		<field name="name">res.partner</field>
+		<field name="model">res.partner</field>
+		<field name="inherit_id" ref="account.partner_view_buttons" />
+		<field name="arch" type="xml">
+			<xpath expr="//button[@name='%(payment.payment_token_action)d']" position="attributes">
+				<attribute name="attrs">{'invisible': [('status', '!=', 'candidate')]}</attribute>
+			</xpath>
+			<xpath expr="//button[@name='%(payment.payment_token_action)d']" position="after">
+				<div>
+				<field name="payment_token_count" widget="statinfo" string="Credit card(s)" id="payment_token_count"
+					   attrs="{'invisible': [('status', '=', 'candidate')]}"/>
+			   	</div>
+			</xpath>
+        </field>
+    </record>
+
+	<record id="view_partners_form_payment_defaultcreditcard_sub_inherited" model="ir.ui.view">
+		<field name="name">res.partner</field>
+		<field name="model">res.partner</field>
+		<field name="inherit_id" ref="inuka.view_partners_form_payment_defaultcreditcard_inherited" />
+		<field name="groups_id" eval="[(6, 0, [ref('inuka.member_profile_changes_group')])]" />
+		<field name="arch" type="xml">
+			<xpath expr="//button[@name='%(payment.payment_token_action)d']" position="replace">
+				<button type="action" class="btn-link"
+                    name="%(payment.payment_token_action)d"
+                    context="{'search_default_partner_id': active_id}">
+                    <field name="payment_token_count" widget="statinfo" string="Credit card(s)"/>
+                </button>
+			</xpath>
+			<xpath expr="//field[@id='payment_token_count']" position="replace"/>
+        </field>
+    </record>
+
+    <!-- Hide the Send SMS and SMS icon on partner form -->
+    <delete model="ir.ui.view" search="[('name','=','res.partner.form.send.sms')]"/>
+    <delete model="ir.actions.act_window" search="[('name', '=', 'Send SMS'), ('src_model', '=', 'res.partner')]"/>
+
+    <record id="view_res_partner_downline_tree" model="ir.ui.view">
+        <field name="name">res.partner.downline.tree</field>
+        <field name="model">res.partner</field>
+        <field name="arch" type="xml">
+            <tree string="Downline">
+                <field name="ref" string="Member ID"/>
+                <field name="display_name" string="Name"/>
+                <field name="status"/>
+                <field name="join_date"/>
+                <field name="state_id" string="Region"/>
+                <field name="personal_pv" string="Personal PV (MTD)"/>
+                <field name="pv_tot_group" string="Group PV (MTD)"/>
+                <field name="is_active_mtd"/>
+                <field name="personal_members" string="# of Active Downline (MTD)"/>
+                <field name="vr_earner"/>
+                <field name="new_members" string="# of New Members (MTD)"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Default view for res.partner should be the list view -->
+    <record id="base.action_partner_form_view1" model="ir.actions.act_window.view">
+        <field eval="2" name="sequence"/>
+    </record>
+    <record id="base.action_partner_form_view2" model="ir.actions.act_window.view">
+        <field eval="1" name="sequence"/>
+    </record>
+    <record id="base.action_partner_tree_view1" model="ir.actions.act_window.view">
+        <field name="sequence" eval="0"/>
+        <field name="view_id" ref="view_res_partner_downline_tree"/>
+    </record>
+
+    <record id="contacts.action_contacts_view_kanban" model="ir.actions.act_window.view">
+        <field name="sequence" eval="2"/>
+    </record>
+    <record id="contacts.action_contacts_view_tree" model="ir.actions.act_window.view">
+        <field name="sequence" eval="0"/>
+        <field name="view_id" ref="view_res_partner_downline_tree"/>
+    </record>
+    <record id="contacts.action_contacts_view_form" model="ir.actions.act_window.view">
+        <field name="sequence" eval="1"/>
+    </record>
+
+    <record id="base.action_partner_customer_form_view1" model="ir.actions.act_window.view">
+        <field eval="2" name="sequence"/>
+    </record>
+    <record id="base.action_partner_customer_form_view2" model="ir.actions.act_window.view">
+        <field eval="0" name="sequence"/>
+        <field name="view_id" ref="view_res_partner_downline_tree"/>
+    </record>
+    <record id="base.action_partner_customer_form_view3" model="ir.actions.act_window.view">
+        <field eval="1" name="sequence"/>
+    </record>
+
+    <record id="view_res_partner_tree_inherit_inuka" model="ir.ui.view">
+        <field name="name">res.partner.tree.inherit.inuka</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_tree"/>
+        <field name="arch" type="xml">
+            <field name="display_name" position="before">
+                <field name="ref" string="Member ID"/>
+            </field>
+            <field name="display_name" position="after">
+                <field name="status"/>
+            </field>
+            <field name="email" position="after">
+                <field name="mobile"/>
+                <field name="state_id" string="Region"/>
+            </field>
+            <field name="phone" position="replace"/>
+        </field>
+    </record>
+
+    <record id="res_partner_view_buttons_inuka" model="ir.ui.view">
+        <field name="name">res.partner.view.buttons.inuka</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="sale.res_partner_view_buttons"/>
+        <field name="priority" eval="20"/>
+        <field name="arch" type="xml">
+            <button name="%(crm.crm_lead_opportunities)d" position="before">
+                <button class="oe_stat_button" type="object" name="view_downline_member"
+                    attrs="{'invisible': [('customer', '=', False)]}"
+                    icon="fa-users">
+                    <field string="Downline" name="downline_count" widget="statinfo"/>
+                </button>
+                <button class="oe_stat_button" type="object" name="view_project"
+                    attrs="{'invisible': [('customer', '=', False)]}"
+                    icon="fa-puzzle-piece">
+                    <field string="Mentorship" name="project_count" widget="statinfo"/>
+                </button>
+                <button class="oe_stat_button" type="object" name="view_rewards"
+                    attrs="{'invisible': [('customer', '=', False)]}"
+                    icon="fa-calculator">
+                    <field string="Rewards" name="rewards_count" widget="statinfo"/>
+                </button>
+                <button class="oe_stat_button" type="object" name="view_performance_history"
+                    attrs="{'invisible': [('customer', '=', False)]}"
+                    icon="fa-calculator">
+                    <field string="Performance History" name="performance_history_count" widget="statinfo"/>
+                </button>
+                <button class="oe_stat_button" type="object" name="view_sms_message"
+                    attrs="{'invisible': [('customer', '=', False)]}"
+                    icon="fa-random">
+                    <field string="SMS's" name="sms_count" widget="statinfo"/>
+                </button>
+            </button>
+        </field>
+    </record>
+
+    <record id="view_res_partner_filter_inherit_inuka" model="ir.ui.view">
+        <field name="name">res.partner.filter.inherit.inuka</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_res_partner_filter"/>
+        <field name="arch" type="xml">
+            <field name="name" position="replace">
+                <field name="name" filter_domain="['|','|','|',('display_name','ilike',self),('ref','=',self),('email','ilike',self),('mobile','ilike',self)]"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="view_performance_history_tree" model="ir.ui.view">
+        <field name="name">performance.history.tree</field>
+        <field name="model">performance.history</field>
+        <field name="arch" type="xml">
+            <tree string="Performance History">
+                <field name="partner_id" domain="[('customer','=',True)]"/>
+                <field name="performance_type"/>
+                <field name="date"/>
+                <field name="months"/>
+                <field name="quarters"/>
+                <field name="years"/>
+                <field name="status"/>
+                <field name="personal_pv"/>
+                <field name="pv_tot_group"/>
+                <field name="pv_downline_1"/>
+                <field name="pv_downline_2"/>
+                <field name="pv_downline_3"/>
+                <field name="pv_downline_4"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_performance_history_form" model="ir.ui.view">
+        <field name="name">performance.history.form</field>
+        <field name="model">performance.history</field>
+        <field name="arch" type="xml">
+            <form string="Performance History" create="false" edit="false">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="partner_id" domain="[('customer','=',True)]" readonly="1"/>
+                            <field name="date" readonly="1"/>
+                            <field name="quarters" readonly="1"/>
+                            <field name="status" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="performance_type" readonly="1"/>
+                            <field name="months" readonly="1"/>
+                            <field name="years" readonly="1"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group>
+                            <field name="personal_pv" readonly="1"/>
+                            <field name="pv_downline_1" readonly="1"/>
+                            <field name="pv_downline_3" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="pv_tot_group" readonly="1"/>
+                            <field name="pv_downline_2" readonly="1"/>
+                            <field name="pv_downline_4" readonly="1"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group>
+                            <field name="is_active" readonly="1"/>
+                            <field name="is_vr_earner" readonly="1"/>
+                            <field name="is_new_junior" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="is_new" readonly="1"/>
+                            <field name="is_new_senior" readonly="1"/>
+                            <field name="is_new_ruby" readonly="1"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group>
+                            <field name="personal_members" readonly="1"/>
+                            <field name="vr_earner" readonly="1"/>
+                            <field name="new_junior_recruits" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="new_members" readonly="1"/>
+                            <field name="new_senior_recruits" readonly="1"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_performance_history_search" model="ir.ui.view">
+        <field name="name">performance.history.search</field>
+        <field name="model">performance.history</field>
+        <field name="arch" type="xml">
+            <search string="Search Performance History">
+                <field name="partner_id" domain="[('customer', '=', True)]" />
+                <group expand="0" string="Group By">
+                    <filter string="Customer" context="{'group_by': 'partner_id'}"/>
+                    <filter string="Month" context="{'group_by': 'months'}"/>
+                    <filter string="Quarter" context="{'group_by': 'quarters'}"/>
+                    <filter string="Year" context="{'group_by': 'years'}"/>
+                    <filter string="Type" context="{'group_by': 'performance_type'}"/>
+                    <filter string="Status" context="{'group_by': 'status'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_performance_history_pivot" model="ir.ui.view">
+         <field name="name">performance.history.pivot</field>
+         <field name="model">performance.history</field>
+         <field name="arch" type="xml">
+             <pivot string="Performance History" disable_linking="True">
+                <field name="partner_id" type="row"/>
+                <field name="personal_pv" type="measure"/>
+                <field name="pv_downline_1" type="measure"/>
+                <field name="pv_downline_2" type="measure"/>
+                <field name="pv_downline_3" type="measure"/>
+                <field name="pv_downline_4" type="measure"/>
+                <field name="pv_tot_group" type="measure"/>
+                <field name="personal_members" type="measure"/>
+                <field name="new_members" type="measure"/>
+                <field name="vr_earner" type="measure"/>
+                <field name="new_senior_recruits" type="measure"/>
+                <field name="new_junior_recruits" type="measure"/>
+             </pivot>
+         </field>
+    </record>
+
+    <record id="action_performance_history_form" model="ir.actions.act_window">
+        <field name="name">Performance History</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">performance.history</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form,search,pivot</field>
+        <field name="help" type="html">
+          <p class="oe_view_nocontent_create">
+            Click to add Performance History.
+          </p>
+        </field>
+    </record>
+
+    <menuitem id="menu_performance_history" name="Performance History" action="action_performance_history_form" parent="crm.crm_menu_root" sequence="3"/>
+
+    <record id="view_res_company_form_inherit_inuka" model="ir.ui.view">
+        <field name="name">res.company.form.inherit.inuka</field>
+        <field name="model">res.company</field>
+        <field name="inherit_id" ref="base.view_company_form"/>
+        <field name="arch" type="xml">
+            <field name="vat" position="attributes">
+                <attribute name="string">VAT</attribute>
+            </field>
+        </field>
+    </record>
+
+</odoo>

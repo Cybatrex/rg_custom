@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record model="ir.ui.view" id="csir_product_template_only_form_view">
+        <field name="name">inuka.partner.view</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="inuka.view_res_partner_form_inherit_inuka"/>
+        <field name="arch" type="xml">
+            <!-- renaming user_id to mentor_id-->
+            <field name="user_id" position="replace">
+                <field name="mentor_id"
+                  options="{'no_quick_create':True,'no_create_edit':True, 'no_create': True}"/>
+            </field>
+            <field name="last_name" position="after">
+                <field name="ref" required="1" attrs="{'readonly': [('id', '!=', False)]}"/>
+            </field>
+            <field name="upline" position="replace">
+                 <field name="upline"
+                        domain="[('customer', '=', True), ('id', '!=', id), ('type', '=', 'contact')]"
+                        attrs="{'invisible': [('customer', '=', False)],'required': [('customer', '=', True)], 'readonly': [('status', '!=', 'candidate')]}"
+                        options="{'no_quick_create':True,'no_create_edit':True, 'no_create': True}"/>
+            </field>
+            <!-- <field name="state_id" position="replace">
+                <field name="state_id" placeholder="Province" readonly="0"
+                       attrs="{'required': [('customer', '=', True)]}"
+                       options="{'no_quick_create':True,'no_create_edit':True, 'no_create': True}"/>
+            </field> -->
+        </field>
+    </record>
+    <!-- <record model="ir.ui.view" id="inuka_res_parner_view_inherit">
+        <field name="name">inuka.partner.view2</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="inuka.view_res_partner_property_form_inherit_inuka"/>
+        <field name="arch" type="xml">
+            <field name="status" position="replace">
+                <field name="status"
+                       readonly="1"
+                       attrs="{'invisible':[('customer', '=', False)], 'required':[('customer', '=', True)]}"/>
+            </field>
+        </field>
+    </record> -->
+
+    <record id="view_view_partner_form_inuka2" model="ir.ui.view">
+        <field name="name">res.partner.filter.inherit.inuka</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <field name="name" position="attributes">
+              <attribute name="attrs">{'required': [('type', '=', 'contact')], 'readonly':[('customer', '=', True)]}</attribute>
+            </field>
+            <field name="category_id" position="before">
+                <field name="region" attrs="{'invisible': [('is_company','=',False),('parent_id','!=',False)], 'readonly': [('status', '!=', 'candidate')]}"/>
+            </field>
+            <!--<field name="country_id" position="replace">
+                <field name="country_id" domain="[('country_id.members', '=', True), ('country_id.members', '=', True)]"/>
+            </field>-->
+        </field>
+    </record>
+
+    <record id="view_partner_property_form_inuka" model="ir.ui.view">
+        <field name="name">partner.property.form.inuka</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="account.view_partner_property_form"/>
+        <field name="arch" type="xml">
+            <field name="property_account_payable_id" position="replace">
+                <field name="property_account_payable_id"
+                       options="{'no_quick_create':True,'no_create_edit':True, 'no_create': True}"/>
+            </field>
+            <field name="property_account_receivable_id" position="replace">
+                <field name="property_account_receivable_id"
+                       options="{'no_quick_create':True,'no_create_edit':True, 'no_create': True}"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="view_partner_property_form_inuka2" model="ir.ui.view">
+        <field name="name">partner.property.form.inuka2</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="product.view_partner_property_form"/>
+        <field name="arch" type="xml">
+            <field name="property_product_pricelist" position="replace">
+                <field name="property_product_pricelist"
+                         groups="product.group_sale_pricelist"
+                         attrs="{'invisible': [('is_company','=',False),('parent_id','!=',False)], 'readonly': [('status', '!=', 'candidate')]}"
+                         options="{'no_quick_create':True,'no_create_edit':True, 'no_create': True}"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="view_partner_stock_form_inuka" model="ir.ui.view">
+        <field name="name">view.partner.stock.form.inuka</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="stock.view_partner_stock_form"/>
+        <field name="arch" type="xml">
+            <field name="property_stock_customer" position="replace">
+                <field name="property_stock_customer"
+                       domain="[('usage','=','customer')]"
+                       options="{'no_quick_create':True,'no_create_edit':True, 'no_create': True}"/>
+            </field>
+            <field name="property_stock_supplier" position="replace">
+                <field name="property_stock_supplier"
+                       domain="[('usage','=','supplier')]"
+                       options="{'no_quick_create':True,'no_create_edit':True, 'no_create': True}"/>
+            </field>
+        </field>
+    </record>
+    <record id="view_partner_property_form_inuka3" model="ir.ui.view">
+        <field name="name">view.partner.property.form.inuka3</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="delivery.view_partner_property_form"/>
+        <field name="arch" type="xml">
+            <field name="property_delivery_carrier_id" position="replace">
+                <field name="property_delivery_carrier_id"
+                       options="{'no_quick_create':True,'no_create_edit':True, 'no_create': True}"/>
+            </field>
+        </field>
+    </record>
+</odoo>

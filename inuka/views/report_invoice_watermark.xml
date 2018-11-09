@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<odoo>
+    <template id="report_invoice_inherited_watermark" inherit_id="account.report_invoice_document">
+        <xpath expr="//table[@name='invoice_line_table']" position="before">
+            <t t-if="o.state not in ('open', 'paid')">
+                <div class="watermark"
+                    style="position:absolute;opacity:0.25;z-index:1000;transform:rotate(300deg);-webkit-transform:rotate(300deg);width:100%;text-align:center;">
+                    <p style="font-size:100px;">DRAFT</p>
+                    <p style="font-size:80px;"><span t-esc="context_timestamp(datetime.datetime.now()).strftime('%Y-%m-%d %H:%M:%S')"/></p>
+                </div>
+            </t>
+        </xpath>
+    </template>
+</odoo>

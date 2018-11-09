@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="stage_already_imported" model="helpdesk.stage">
+        <field name="name">Already Imported</field>
+        <field name="team_ids" eval="[(4, ref('helpdesk.helpdesk_team1'))]"/>
+        <field name="sequence">2</field>
+        <field name="is_close" eval="True"/>
+    </record>
+
+</odoo>

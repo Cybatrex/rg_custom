@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record model="ir.ui.view" id="inuka_view_picking_form">
+        <field name="name">inuka.view.stock.picking.form</field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="stock.view_picking_form"/>
+        <field name="arch" type="xml">
+          <xpath expr="//field[@name='partner_id']" position="replace">
+            <field name="partner_id" attrs="{'invisible': [('picking_type_code', '=', 'internal')]}"/>
+          </xpath>
+          <xpath expr="//field[@name='location_id']" position="replace">
+             <field name="location_id"
+                    groups="stock.group_stock_multi_locations"
+                    attrs="{'invisible': [('picking_type_code', '=', 'outgoing')]}"
+                   options="{'no_quick_create':True, 'no_create_edit':True, 'no_create': True}"/>
+          </xpath>
+          <xpath expr="//field[@name='location_dest_id']" position="replace">
+             <field name="location_dest_id"
+                    groups="stock.group_stock_multi_locations"
+                    attrs="{'invisible': [('picking_type_code', '=', 'incoming')]}"
+                    options="{'no_quick_create':True, 'no_create_edit':True, 'no_create': True}"/>
+          </xpath>
+          <xpath expr="//page[@name='extra']//field[@name='picking_type_id']" position="replace">
+            <field name="picking_type_id"
+                   attrs="{'readonly': [('state', '!=', 'draft')]}"
+                   options="{'no_quick_create':True, 'no_create_edit':True, 'no_create': True}"/>
+          </xpath>
+<!--           <xpath expr="//field[@name='move_line_ids']//field[@name='product_id']" position="replace"> -->
+<!--             <field name="product_id" -->
+<!--                    required="1" -->
+<!--                    attrs="{'readonly': ['|', ('state', '=', 'done'), ('move_id', '!=', False)]}" -->
+<!--                    options="{'no_quick_create':True, 'no_create_edit':True, 'no_create': True}"/> -->
+<!--           </xpath> -->
+<!--           <xpath expr="//field[@name='move_lines']//field[@name='product_id']" position="replace"> -->
+<!--             <field name="product_id" -->
+<!--                    required="1" -->
+<!--                    attrs="{'readonly': ['|', '&amp;', ('state', '!=', 'draft'), ('additional', '=', False), ('has_move_lines', '=', True)]}" -->
+<!--                    options="{'no_quick_create':True, 'no_create_edit':True, 'no_create': True}"/> -->
+<!--           </xpath> -->
+        </field>
+    </record>
+    <record model="ir.ui.view" id="inuka_view_stock_picking_form_inherit_inuka">
+        <field name="name">inuka.bulk.view.stock.picking.form</field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="inuka.view_stock_picking_form_inherit_inuka"/>
+        <field name="arch" type="xml">
+          <xpath expr="//field[@name='bulk_master_id']" position="replace">
+            <field name="bulk_master_id"
+                   attrs="{'invisible': [('picking_type_code', '!=', 'outgoing')]}"
+                   options="{'no_quick_create':True, 'no_create_edit':True, 'no_create': True}"/>
+          </xpath>
+        </field>
+    </record>
+</odoo>

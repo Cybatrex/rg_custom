@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_inuka_rewards_tree" model="ir.ui.view">
+        <field name="name">inuka.rewards.tree</field>
+        <field name="model">inuka.reward</field>
+        <field name="arch" type="xml">
+            <tree string="Rewards">
+                <field name="partner_id"/>
+                <field name="date"/>
+                <field name="quarters"/>
+                <field name="category_id"/>
+                <field name="achievement_level_id"/>
+                <field name="cash"/>
+                <field name="product_id"/>
+                <field name="reward_type"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_inuka_rewards_form" model="ir.ui.view">
+        <field name="name">inuka.rewards.form</field>
+        <field name="model">inuka.reward</field>
+        <field name="arch" type="xml">
+            <form string="Rewards">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="partner_id"/>
+                            <field name="date"/>
+                            <field name="achievement_level_id"/>
+                            <field name="cash"/>
+                        </group>
+                        <group>
+                            <field name="category_id"/>
+                            <field name="quarters"/>
+                            <field name="reward_type"/>
+                            <field name="product_id"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_inuka_rewards_search" model="ir.ui.view">
+        <field name="name">inuka.rewards.search</field>
+        <field name="model">inuka.reward</field>
+        <field name="arch" type="xml">
+            <search string="Search Rewards">
+                <field name="partner_id"/>
+                <group expand="0" string="Group By">
+                    <filter string="Member" context="{'group_by': 'partner_id'}"/>
+                    <filter string="Quarter" context="{'group_by': 'quarters'}"/>
+                    <filter string="Category" context="{'group_by': 'category_id'}"/>
+                    <filter string="Achievement Level" context="{'group_by': 'achievement_level_id'}"/>
+                    <filter string="Type" context="{'group_by': 'reward_type'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_inuka_rewards_form" model="ir.actions.act_window">
+        <field name="name">Rewards</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">inuka.reward</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form,search</field>
+        <field name="help" type="html">
+          <p class="oe_view_nocontent_create">
+            Click to add Rewards.
+          </p>
+        </field>
+    </record>
+
+    <menuitem id="menu_rewards"
+        name="Rewards"
+        action="action_inuka_rewards_form"
+        parent="crm.crm_menu_root"
+        sequence="4"
+        groups="account.group_account_user,account.group_account_invoice,account.group_account_manager"/>
+
+</odoo>

@@ -1,0 +1,532 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_product_categ_form_inuka" model="ir.ui.view">
+        <field name="name">product.categ.form.inuka.view</field>
+        <field name="model">product.category</field>
+        <field name="inherit_id" ref="product.product_category_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet/group[1]" position="replace">
+                <group>
+                    <group name="first">
+                        <field name="parent_id" class="oe_inline"/>
+                    </group>
+                    <group>
+                        <field name="category_pv" required="1"/>
+                    </group>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_product_template_form_inherit_inuka" model="ir.ui.view">
+        <field name="name">product.template.form.inherit.inuka</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_form_view"/>
+        <field name="arch" type="xml">
+            <div name="standard_price_uom" position="after">
+                <field name="pv"/>
+                <field name="product_fragrance"/>
+            </div>
+        </field>
+    </record>
+
+	<record id="view_sale_form_inuka_inherit" model="ir.ui.view">
+        <field name="name">sale.form.inuka.view</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <field name="partner_shipping_id" position="after">
+                <field name="member_status" readonly="1"/>
+            </field>
+            <xpath expr="//button[@name='action_confirm'][1]" position="replace">
+                <button name="action_confirm" id="action_confirm"
+                    string="Confirm Sale" class="btn-primary" type="object"
+                    attrs="{'invisible': ['|', ('state', 'not in', ['sent']), ('paid', '=', False)]}"/>
+            </xpath>
+            <xpath expr="//button[@name='action_confirm'][2]" position="replace">
+                <button name="action_confirm"
+                    string="Confirm Sale" type="object"
+                    attrs="{'invisible': ['|', ('state', 'not in', ['draft']), ('paid', '=', False)]}"/>
+            </xpath>
+            <button name="action_unlock" position="after">
+                <button name="action_add_reserved_fund"
+                    string="Reserve Funds" type="object"
+                    attrs="{'invisible': ['|', ('state', 'in', ['sale', 'done', 'cancel']), ('paid', '=', True)]}"/>
+                <button name="action_unlink_reserved_fund"
+                    string="Unreserve Funds" type="object"
+                    attrs="{'invisible': ['|', ('state', 'in', ['sale', 'done', 'cancel']), ('paid', '=', False)]}"/>
+                <button name="action_account_invoice_payment_so" type="object"
+                        attrs="{'invisible': [('state', 'not in', ('draft', 'sent'))]}"
+                        string="Register Payment" class="oe_highlight"
+                        groups="inuka.pos_users"/>
+            </button>
+
+            <button name="action_view_invoice" position="after">
+                <!--button name="dummy_redirect" type="object" class="oe_stat_button disabled" icon="fa-pencil-square-o">
+                    <div class="o_field_widget o_stat_info">
+                        <span class="o_stat_value"><field name="reserve" widget='monetary'/></span>
+                        <span class="o_stat_text">Available Funds</span>
+                    </div>
+                </button-->
+                <button name="view_sale_orders" type="object" class="oe_stat_button" icon="fa-usd">
+                    <div class="o_field_widget o_stat_info">
+                        <span class="o_stat_value"><field name="sale_order_count"/></span>
+                        <span class="o_stat_text">Sales</span>
+                    </div>
+                </button>
+            </button>
+            <xpath expr="//field[@name='payment_term_id']" position="after">
+                <field name="pv" required="True" force_save="1"/>
+            </xpath>
+            <field name="user_id" position="attributes">
+                <attribute name="string">Sales Team</attribute>
+            </field>
+            <field name="user_id" position="after">
+                <field name="channel"/>
+            </field>
+            <field name="team_id" position="replace"/>
+            <xpath expr="//sheet/group" position="after">
+                <group>
+                    <group>
+                        <field name="order_sent_by" required="True"/>
+                        <field name="sale_date" required="True"/>
+                        <field name="order_type" required="True" options="{'fold_field': 'fold'}" clickable="True"/>
+                        <field name="bulk_lock" invisible="1"/>
+                        <field name="bulk_master_id" options="{'fold_field': 'fold'}" clickable="True" context="{'order_type': order_type, 'partner_id': partner_id, 'quick_create': True}" 
+                   			   attrs="{'invisible': [('order_type', 'not in', ['bulk', 'consolidated'])], 
+                   			   		   'required': [('order_type', 'in', ['bulk', 'consolidated'])],
+                   			   		   'readonly': [('bulk_lock', '=', True)]}"/>
+                        <field name="paid"/>
+                    </group>
+                    <group>
+                        <field name="order_total" required="True" force_save="1"/>
+                        <field name="product_cost"/>
+                        <field name="shipping_cost"/>
+                        <field name="order_status"/>
+                        <field name="team_id"/>
+                    </group>
+                </group>
+            </xpath>
+            
+            <xpath expr="//notebook/page[1]/field[@name='order_line']/tree/field[@name='price_unit']" position="attributes">
+                <attribute name="readonly">not context.get('group_change_unit_prices',False)</attribute>
+            </xpath>
+            <xpath expr="//notebook/page[1]/field[@name='order_line']/tree/field[@name='qty_to_invoice']" position="after">
+                <field name="unit_pv" string="Unit PV" readonly="1" force_save="1"/>
+                <field name="pv" string="PV's" readonly="1" force_save="1"/>
+            </xpath>
+            <xpath expr="//notebook/page[1]/field[@name='order_line']/tree/field[@name='name']" position="attributes">
+                <attribute name="invisible">True</attribute>
+            </xpath>
+            <xpath expr="//field[@name='amount_total']" position="after">
+                <label for="total_pv" string="Total PV's" style="color: red;"/>
+                <div>
+                    <field name="total_pv" style="color: red;"/>
+                </div>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="sale_management.sale_order_view_form" model="ir.ui.view">
+        <field name="name">sale.order.form</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group[@name='sale_pay']/field[@name='invoice_status']" position="attributes">
+                <attribute name="invisible" eval="False"/>
+            </xpath>
+            <xpath expr="//button[@name='action_quotation_send']" position="before">
+                <button name="%(sale.action_view_sale_advance_payment_inv)d" string="Create Invoice"
+                    type="action" class="btn-primary"
+                    attrs="{'invisible': [('invoice_status', '!=', 'to invoice')]}"/>
+                <button name="%(sale.action_view_sale_advance_payment_inv)d" string="Create Invoice"
+                    type="action"
+                    attrs="{'invisible': ['|',('invoice_status', '!=', 'no'), ('state', '!=', 'sale')]}"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_sale_order_form_inherit_inuka" model="ir.ui.view">
+        <field name="name">sale.order.form.inherit.inuka</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale_stock.view_order_form_inherit_sale_stock"/>
+        <field name="arch" type="xml">
+            <group name="sale_shipping" position="inside">
+                <field name="delivery_status"/>
+            </group>
+        </field>
+    </record>
+
+    <record id="view_sale_quotation_tree_inherit_inuka" model="ir.ui.view">
+        <field name="name">sale.quotation.tree.inherit.inuka</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_quotation_tree"/>
+        <field name="arch" type="xml">
+            <field name="name" position="attributes">
+                <attribute name="string">Order Number</attribute>
+            </field>
+            <field name="date_order" position="attributes">
+                <attribute name="string">Order Date</attribute>
+            </field>
+            <field name="date_order" position="after">
+                <field name="sale_date"/>
+                <field name="order_type" string="Type"/>
+            </field>
+            <field name="user_id" position="replace"/>
+            <field name="amount_total" position="after">
+                <field name="shipping_cost" string="Ship"/>
+                <field name="reserve"/>
+                <field name="paid"/>
+                <field name="order_status"/>
+                <field name="invoice_status"/>
+                <field name="delivery_status"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="view_sale_order_tree_inherit_inuka" model="ir.ui.view">
+        <field name="name">sale.order.tree.inherit.inuka</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_tree"/>
+        <field name="arch" type="xml">
+            <field name="confirmation_date" position="after">
+                <field name="sale_date"/>
+                <field name="order_type" string="Type"/>
+            </field>
+            <field name="user_id" position="replace"/>
+            <field name="amount_total" position="after">
+                <field name="shipping_cost" string="Ship"/>
+                <field name="reserve"/>
+                <field name="paid"/>
+                <field name="order_status"/>
+            </field>
+            <field name="invoice_status" position="after">
+                <field name="delivery_status"/>
+                <field name="state"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="view_order_form_with_carrier_inherit_inuka" model="ir.ui.view">
+        <field name="name">sale.order.form.with.carrier.inherit.inuka</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="delivery.view_order_form_with_carrier"/>
+        <field name="arch" type="xml">
+            <field name="carrier_id" position="attributes">
+                <attribute name="required">True</attribute>
+            </field>
+        </field>
+    </record>
+
+    <record id="view_reserved_fund_form" model="ir.ui.view">
+        <field name="name">reserved.fund.form</field>
+        <field name="model">reserved.fund</field>
+        <field name="arch" type="xml">
+            <form string="Reserved Funds" create="false" delete="false">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="date"/>
+                            <field name="amount"/>
+                        </group>
+                        <group>
+                            <field name="order_id"/>
+                            <field name="customer_id"/>
+                            <field name="active"/>
+                        </group>
+                    </group>
+                    <label for="desctiption" string="Description"/>
+                    <div>
+                        <field name="desctiption"/>
+                    </div>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_reserved_fund_tree" model="ir.ui.view">
+        <field name="name">reserved.fund.tree</field>
+        <field name="model">reserved.fund</field>
+        <field name="arch" type="xml">
+            <tree string="Reserved Funds" create="false" delete="false">
+                <field name="date" readonly="True"/>
+                <field name="desctiption" readonly="True"/>
+                <field name="amount" readonly="True"/>
+                <field name="order_id" readonly="True"/>
+                <field name="customer_id" readonly="True"/>
+                <field name="active" readonly="True"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="action_reserved_fund_form" model="ir.actions.act_window">
+        <field name="name">Reserved Funds</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">reserved.fund</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{"search_default_customer":1}</field>
+        <field name="help" type="html">
+          <p class="oe_view_nocontent_create">
+            Click to add Reserved Fund entries.
+          </p>
+        </field>
+    </record>
+
+    <menuitem id="reserved_fund_menu"
+        name="Reserved Funds"
+        parent="sale.sale_order_menu"
+        action="inuka.action_reserved_fund_form"
+        sequence="9"/>
+
+    <record id="view_sale_upload_form" model="ir.ui.view">
+        <field name="name">sale.upload.form</field>
+        <field name="model">sale.upload</field>
+        <field name="arch" type="xml">
+            <form string="Sale Upload">
+            <header>
+                <button name="button_start" string="Start" type="object" states="new,inprogress" class="btn-primary"/>
+                <button name="button_cancel" string="Cancel" type="object" states="new,inprogress" class="btn-primary"/>
+                <field name="state" widget="statusbar" statusbar_visible="new,inprogress,completed,error,cancelled"/>
+            </header>
+            <sheet>
+                <div class="oe_title">
+                    <h1>
+                        <field name="name"/>
+                    </h1>
+                </div>
+                <group>
+                    <group>
+                        <field name="start_time" readonly="1"/>
+                        <field name="duration"/>
+                        <field name="batch_size"/>
+                    </group>
+                    <group>
+                        <field name="end_time" readonly="1"/>
+                        <field name="create_date" string="Date" readonly="1"/>
+                        <field name="end_point" readonly="1"/>
+                    </group>
+                </group>
+                <group>
+                    <field name="file" filename="name"/>
+                </group>
+                <label for="result"/>
+                <div>
+                    <field name="result" readonly="1"/>
+                </div>
+            </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_sale_upload_tree" model="ir.ui.view">
+        <field name="name">sale.upload.tree</field>
+        <field name="model">sale.upload</field>
+        <field name="arch" type="xml">
+            <tree string="Sale Upload">
+                <field name="name"/>
+                <field name="create_date" string="Date"/>
+                <field name="start_time"/>
+                <field name="end_time"/>
+                <field name="duration"/>
+                <field name="state"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="action_sale_upload_form" model="ir.actions.act_window">
+        <field name="name">Sales Upload</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">sale.upload</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+          <p class="oe_view_nocontent_create">
+            Click to add Sales Upload.
+          </p>
+        </field>
+    </record>
+
+    <menuitem id="menu_sale_upload" name="Sales Upload" action="action_sale_upload_form" parent="crm.crm_menu_config" sequence="10" groups="base.group_system"/>
+
+    <record id="view_sale_upload_intermediate_form" model="ir.ui.view">
+        <field name="name">sale.upload.intermediate.form</field>
+        <field name="model">sale.upload.intermediate</field>
+        <field name="arch" type="xml">
+            <form string="Sale Upload Intermediate">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="partner_id" domain="[('customer', '=', True)]"/>
+                            <field name="old_status"/>
+                        </group>
+                        <group>
+                            <field name="active"/>
+                            <field name="new_status"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_sale_upload_intermediate_tree" model="ir.ui.view">
+        <field name="name">sale.upload.intermediate.tree</field>
+        <field name="model">sale.upload.intermediate</field>
+        <field name="arch" type="xml">
+            <tree string="Sale Upload Intermediate">
+                <field name="partner_id"/>
+                <field name="old_status"/>
+                <field name="new_status"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="action_sale_upload_intermediate_form" model="ir.actions.act_window">
+        <field name="name">Sales Upload Intermediate</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">sale.upload.intermediate</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="menu_sale_upload_intermediate" name="Sales Upload Intermediate" action="action_sale_upload_intermediate_form" parent="crm.crm_menu_config" sequence="10" groups="base.group_system"/>
+
+    <menuitem id="crm.crm_team_config"
+        name="Sales Team"
+        parent="crm.crm_menu_config"
+        action="sales_team.sales_team_config_action"
+        sequence="5"/>
+
+    <menuitem id="crm.sales_team_menu_report_crm"
+        name="Sales Team"
+        parent="crm.crm_menu_report"
+        action="sales_team.crm_team_salesteams_act"
+        sequence="10"/>
+
+    <menuitem id="sale.sales_team_config"
+        name="Sales Team"
+        parent="sale.menu_sale_config"
+        action="sales_team.sales_team_config_action"
+        sequence="2"/>
+
+    <menuitem id="sale.report_sales_team"
+        name="Sales Team"
+        parent="sale.menu_sale_report"
+        action="sales_team.crm_team_salesteams_act"
+        sequence="2"/>
+
+    <record id="sale_order_view_search_inherit_inuka" model="ir.ui.view">
+        <field name="name">sale.order.search.inuka</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.sale_order_view_search_inherit_quotation"/>
+        <field name="arch" type="xml">
+            <xpath expr='//filter[@name="sales"]' position="after">
+                <separator/>
+                <filter string="Today" name="today"
+                            domain="[('sale_date', '=', context_today().strftime('%Y-%m-%d'))]"/>
+                <filter string="Last 7 Days" name="last_7_days"
+                        domain="['&amp;', ('sale_date', '&lt;=', context_today().strftime('%Y-%m-%d')),
+                                 ('sale_date', '&gt;=', (context_today()+datetime.timedelta(days=-7)).strftime('%Y-%m-%d'))]"/>
+                <!-- <filter string="Last Month" name="last_month" 
+                        domain="['&amp;', 
+                                ('sale_date', '&gt;=', (context_today() - relativedelta(months=1)).strftime('%%Y-%%m-06')), 
+                                ('sale_date', '&lt;=', context_today().strftime('%%Y-%%m-07'))]"/>
+                <filter string="Inuka Month" name="inuka_month" 
+                        domain="['&amp;',
+                                ('sale_date', '&gt;=', context_today().strftime('%%Y-%%m-07')),
+                                ('sale_date', '&lt;=', (context_today() + relativedelta(months=1)).strftime('%%Y-%%m-06'))]"/> -->
+                <filter string="Last Inuka Month" name="last_month"
+                        domain="['&amp;', 
+                                ('sale_date', '&gt;=', (context_today() - relativedelta(months=1)).strftime('%%Y-%%m-07')), 
+                                ('sale_date', '&lt;=', context_today().strftime('%%Y-%%m-06'))]"/>
+                <filter string="Last Inuka Month" name="last_month_1_7"
+                        domain="['&amp;', 
+                                ('sale_date', '&gt;=', (context_today() - relativedelta(months=2)).strftime('%%Y-%%m-07')), 
+                                ('sale_date', '&lt;=', (context_today() - relativedelta(months=1)).strftime('%%Y-%%m-06'))]"/>
+                <filter string="Inuka Month" name="inuka_month" 
+                        domain="['&amp;',
+                                ('sale_date', '&gt;=', context_today().strftime('%%Y-%%m-07')),
+                                ('sale_date', '&lt;=', (context_today() + relativedelta(months=1)).strftime('%%Y-%%m-06'))]"/>
+                <filter string="Inuka Month" name="inuka_month_1_7" 
+                        domain="['&amp;',
+                                ('sale_date', '&gt;=', (context_today() - relativedelta(months=1)).strftime('%%Y-%%m-07')),
+                                ('sale_date', '&lt;=', (context_today()).strftime('%%Y-%%m-06'))]"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="sale_order_view_search_inherit_sale_inuka" model="ir.ui.view">
+        <field name="name">sale.order.search.inuka</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.sale_order_view_search_inherit_sale"/>
+        <field name="arch" type="xml">
+            <xpath expr='//filter[@name="sales"]' position="after">
+                <separator/>
+                <filter string="Today" name="today"
+                            domain="[('sale_date', '=', context_today().strftime('%Y-%m-%d'))]"/>
+                <filter string="Last 7 Days" name="last_7_days"
+                        domain="['&amp;', ('sale_date', '&lt;=', context_today().strftime('%Y-%m-%d')),
+                                 ('sale_date', '&gt;=', (context_today()+datetime.timedelta(days=-7)).strftime('%Y-%m-%d'))]"/>
+                <!-- <filter string="Last Month" name="last_month" 
+                        domain="['&amp;', 
+                                ('sale_date', '&gt;=', (context_today() - relativedelta(months=1)).strftime('%%Y-%%m-06')), 
+                                ('sale_date', '&lt;=', context_today().strftime('%%Y-%%m-07'))]"/>
+                <filter string="Inuka Month" name="inuka_month" 
+                        domain="['&amp;',
+                                ('sale_date', '&gt;=', context_today().strftime('%%Y-%%m-07')),
+                                ('sale_date', '&lt;=', (context_today() + relativedelta(months=1)).strftime('%%Y-%%m-06'))]"/> -->
+                <filter string="Last Inuka Month" name="last_month"
+                        domain="['&amp;', 
+                                ('sale_date', '&gt;=', (context_today() - relativedelta(months=1)).strftime('%%Y-%%m-07')), 
+                                ('sale_date', '&lt;=', context_today().strftime('%%Y-%%m-06'))]"/>
+                <filter string="Last Inuka Month" name="last_month_1_7"
+                        domain="['&amp;', 
+                                ('sale_date', '&gt;=', (context_today() - relativedelta(months=2)).strftime('%%Y-%%m-07')), 
+                                ('sale_date', '&lt;=', (context_today() - relativedelta(months=1)).strftime('%%Y-%%m-06'))]"/>
+                <filter string="Inuka Month" name="inuka_month" 
+                        domain="['&amp;',
+                                ('sale_date', '&gt;=', context_today().strftime('%%Y-%%m-07')),
+                                ('sale_date', '&lt;=', (context_today() + relativedelta(months=1)).strftime('%%Y-%%m-06'))]"/>
+                <filter string="Inuka Month" name="inuka_month_1_7" 
+                        domain="['&amp;',
+                                ('sale_date', '&gt;=', (context_today() - relativedelta(months=1)).strftime('%%Y-%%m-07')),
+                                ('sale_date', '&lt;=', (context_today()).strftime('%%Y-%%m-06'))]"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_order_product_search_inherited_inuka" model="ir.ui.view">
+        <field name="name">sale.report.search</field>
+        <field name="model">sale.report</field>
+        <field name="inherit_id" ref="sale.view_order_product_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='user_id']" position="after">
+                <separator/>
+                <filter string="Today" name="today"
+                            domain="[('sale_date', '=', context_today().strftime('%Y-%m-%d'))]"/>
+                <filter string="Last 7 Days" name="last_7_days"
+                        domain="['&amp;', ('sale_date', '&lt;=', context_today().strftime('%Y-%m-%d')),
+                                 ('sale_date', '&gt;=', (context_today()+datetime.timedelta(days=-7)).strftime('%Y-%m-%d'))]"/>
+                <filter string="Last Inuka Month" name="last_month"
+                        domain="['&amp;', 
+                                ('sale_date', '&gt;=', (context_today() - relativedelta(months=1)).strftime('%%Y-%%m-07')), 
+                                ('sale_date', '&lt;=', context_today().strftime('%%Y-%%m-06'))]"/>
+                <filter string="Last Inuka Month" name="last_month_1_7"
+                        domain="['&amp;', 
+                                ('sale_date', '&gt;=', (context_today() - relativedelta(months=2)).strftime('%%Y-%%m-07')), 
+                                ('sale_date', '&lt;=', (context_today() - relativedelta(months=1)).strftime('%%Y-%%m-06'))]"/>
+                <filter string="Inuka Month" name="inuka_month" 
+                        domain="['&amp;',
+                                ('sale_date', '&gt;=', context_today().strftime('%%Y-%%m-07')),
+                                ('sale_date', '&lt;=', (context_today() + relativedelta(months=1)).strftime('%%Y-%%m-06'))]"/>
+                <filter string="Inuka Month" name="inuka_month_1_7" 
+                        domain="['&amp;',
+                                ('sale_date', '&gt;=', (context_today() - relativedelta(months=1)).strftime('%%Y-%%m-07')),
+                                ('sale_date', '&lt;=', (context_today()).strftime('%%Y-%%m-06'))]"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

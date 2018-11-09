@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record model="ir.ui.view" id="inuka_res_country_view_inherit">
+        <field name="name">inuka.res.country</field>
+        <field name="model">res.country</field>
+        <field name="inherit_id" ref="base.view_country_form"/>
+        <field name="arch" type="xml">
+            <field name="code" position="after">
+              <field name="members"/>
+            </field>
+        </field>
+    </record>
+</odoo>

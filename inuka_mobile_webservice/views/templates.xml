@@ -1,0 +1,125 @@
+<odoo>
+    <record id="website_menu_mobilewstest" model="website.menu">
+        <field name="name">Test WebService</field>
+        <field name="url">/mobilewstest</field>
+        <field name="parent_id" ref="website.main_menu"/>
+        <field name="sequence" type="int">50</field>
+    </record>
+    <template id="assets_frontend_inuka_mobile_webservice" inherit_id="website.assets_frontend">
+        <xpath expr="." position="inside">
+            <script type="text/javascript" src="/inuka_mobile_webservice/static/src/js/main.js"/>
+        </xpath>
+    </template>
+
+    <template id="mobilewstest_template" name="Web Services">
+        <t t-call="website.layout">
+            <div id="wrap">
+                <div class="container">
+                    <h3>Mobile Webservices</h3>
+                    <form id="webservice_test" method="GET">
+                        <div class="form-group col-md-7">
+                            <label for="webservice_list">Webservices</label>
+                            <select class="form-control" id="webservice_list" name="service">
+                                <option>Select Webservice..</option>
+                                <option value="add_to_favourite">Add as favourite (add_to_favourite)</option>
+                                <option value="remove_wishlist_item">Remove from favourite (remove_wishlist_item)
+                                </option>
+                                <option value="add_to_cart">Add to Cart (add_to_cart)</option>
+                                <option value="get_all_products">Get Product List (get_all_products)</option>
+                                <option value="get_all_order_details">Get All Orders(get_all_order_details)</option>
+                                <option value="update_cart_qty">Update Quantity (update_cart_qty)</option>
+                                <option value="get_cart_details">Get cart details (get_cart_details)</option>
+                                <option value="remove_cart_item">Remove cart items (remove_cart_item)</option>
+                                <option value="get_user_address_details">Get Billing &amp; Shipping address
+                                    (get_user_address_details)
+                                </option>
+                                <option value="add_edit_address">Add/Edit Billing &amp; Shipping address
+                                    (add_edit_address)
+                                </option>
+                                <option value="get_inuka_wallet_balance">Get Inuka Wallet balance
+                                    (get_inuka_wallet_balance)
+                                </option>
+                                <option value="get_order_details">Fetch order history with order status
+                                    (get_order_details)
+                                </option>
+                                <option value="get_all_favourite_products">Fetch Favourites – Products
+                                    (get_all_favourite_products)
+                                </option>
+                                <option value="get_all_favourite_members">Fetch Favourites – Members
+                                    (get_all_favourite_members)
+                                </option>
+                                <option value="get_ppv">Month wise PPV (get_ppv)</option>
+                                <option value="get_gpv">Month wise GPV (get_gpv)</option>
+                                <option value="get_product_details">Product Details (get_product_details)</option>
+                                <option value="get_user_details">Get profile details (get_user_details)</option>
+                                <option value="update_user_details">Update profile details (update_user_details)
+                                </option>
+                                <option value="get_account_history">Account/Wallet-Fetch list of previous transactions
+                                    (get_account_history)
+                                </option>
+                                <option value="add_money_to_wallet">Add money to Wallet (add_money_to_wallet)</option>
+                                <option value="get_inuka_wallet_balance">Account/Wallet- (get_inuka_wallet_balance)
+                                </option>
+                                <option value="get_dashboard_details">Fetch Dashboard details (get_dashboard_details)
+                                </option>
+                                <option value="get_performance_details">Fetch Performance details
+                                    (get_performance_details)
+                                </option>
+                                <option value="get_member_details">Fetch member list &amp; details
+                                    (get_member_details)
+                                </option>
+                                <option value="submit_contact_us_details">Submit contact us details
+                                    (submit_contact_us_details)
+                                </option>
+                                <option value="get_current_cart">Get Current Cart
+                                    (get_current_cart)
+                                </option>
+                                <option value="get_sms">Get SMS
+                                    (get_sms)
+                                </option>
+                                <option value="get_download_files">Get Downloads
+                                    (get_download_files)
+                                </option>
+                                <option value="get_all_categories">Get Categories
+                                    (get_all_categories)
+                                </option>
+                                <option value="confirm_sale_order">Confirm Sale Order
+                                    (confirm_sale_order)
+                                </option>
+
+                                <option value="update_shipping_address">Update Shipping Address
+                                    (update_shipping_address)
+                                </option>
+                                <option value="update_delivery_method">Update Delivery Methods
+                                    (update_delivery_method)
+                                </option>
+                                <option value="get_all_delivery_methods">Get Delivery Methods
+                                    (get_all_delivery_methods)
+                                </option>
+                                <option value="get_all_tickets">Get Tickets
+                                    (get_all_tickets)
+                                </option>
+                                <option value="suggest_feature">Suggest Feature
+                                    (suggest_feature)
+                                </option>
+                                <option value="submit_ticket">Submit Ticket
+                                    (submit_ticket)
+                                </option>
+
+                            </select>
+                        </div>
+                        <div id="request_param_list" class="col-md-12">
+                            <h3>Request Parameter</h3>
+                        </div>
+                    </form>
+                    <t t-if="response">
+                        <div id="response" class="col-md-12">
+                            <h3>Response</h3>
+                            <t t-esc="response"/>
+                        </div>
+                    </t>
+                </div>
+            </div>
+        </t>
+    </template>
+</odoo>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="assets_backend_inuka" name="account inuka assets" inherit_id="web.assets_backend">
+        <xpath expr="." position="inside">
+            <script type="text/javascript" src="/inuka/static/src/js/reconciliation_action.js"></script>
+        </xpath>
+    </template>
+
+</odoo>

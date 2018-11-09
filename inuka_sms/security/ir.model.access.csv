@@ -1,0 +1,6 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_sms_recipients,access_sms_recipients,model_sms_recipients,,1,0,0,0
+access_sms_list,access_sms_list,model_sms_list,,1,0,0,0
+access_mass_sms,access_mass_sms,model_mass_sms,,1,0,0,0
+access_sms_participant,access_sms_participant,model_sms_participant,,1,0,0,0
+access_sms_shortcode,access_sms_shortcode,model_sms_shortcode,,1,0,0,0

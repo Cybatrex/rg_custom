@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="mygate_form" name="Mygate Form">
+        <!-- Virtual Form Post -->
+        <!-- Mode value 0 indicates that this is in Test Mode. Change the value to 1 for Live Mode. -->
+        <input type="hidden" name="data_set" t-att-data-action-url="tx_url" data-remove-me=""/>
+        <input type="hidden" name="Mode" value="0"/>
+        <input type="hidden" name="MerchantID" value="F5785ECF-1EAE-40A0-9D37-93E2E8A4BAB3"/>
+        <input type="hidden" name="ApplicationID" value="1DBBBAAE-958E-4346-A27A-6BB5171CEEDC"/>
+        <input type="hidden" name="MerchantReference" t-att-value="merchantReference"/>
+        <input type="hidden" name="Amount" t-att-value="amount"/>
+        <input type="hidden" name="txtCurrencyCode" t-att-value="txtCurrencyCode"/>
+        <input type="hidden" name="RedirectSuccessfulURL" t-att-value="redirectSuccessfulURL"/>
+        <input type="hidden" name="RedirectFailedURL" t-att-value="redirectFailedURL"/>
+        <!-- Fields for Clients Shipping Details -->
+        <input type="hidden" name="Recipient" t-att-value="recipient"/>
+        <input type="hidden" name="ShippingAddress1" t-att-value="shippingAddress1"/>
+        <input type="hidden" name="ShippingAddress2" t-att-value="shippingAddress2"/>
+        <input type="hidden" name="ShippingAddress3" t-att-value="shippingAddress3"/>
+        <input type="hidden" name="ShippingAddress4" t-att-value="shippingAddress4"/>
+        <input type="hidden" name="ShippingAddress5" t-att-value="shippingAddress5"/>
+    </template>
+
+    <template id="inherit_shop_confirmation_page" inherit_id="website_sale.confirmation">
+        <xpath expr="//div[hasclass('thanks_msg')]" position="replace">
+            <div class="thanks_msg" t-if="order.payment_tx_id.state == 'done'">
+                <h2>Thank you for your order.
+                    <a class="btn btn-primary pull-right hidden-xs" href="/shop/print" target="_blank">
+                        <i class="fa fa-print"></i>
+                        Print
+                    </a>
+                </h2>
+            </div>
+            <div class="thanks_msg" t-if="order.payment_tx_id.state != 'done'">
+                <h2>Order is not Confirmed.
+                    <a class="btn btn-primary pull-right hidden-xs" href="/shop/print" target="_blank">
+                        <i class="fa fa-print"></i>
+                        Print
+                    </a>
+                </h2>
+            </div>
+        </xpath>
+    </template>
+
+</odoo>

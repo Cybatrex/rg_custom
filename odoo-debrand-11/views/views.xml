@@ -1,0 +1,245 @@
+<odoo>
+    <record id="res_config_settings_view_form" model="ir.ui.view">
+        <field name="name">Debranding Configuration</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="website.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[hasclass('app_settings_block')]" position="after">
+                <div class="app_settings_block" data-string="Debrand" string="Debrand" data-key="odoo-debrand"
+                     groups="website.group_website_designer">
+                    <field name="website_id" invisible="1"/>
+                    <h2>Debranding Configurations</h2>
+                    <div class="row mt16 o_settings_container" id="debrand_settings">
+                        <div class="col-xs-12 col-md-6 o_setting_box" id="company_logo">
+                            <div class="o_setting_right_pane">
+                            <label for="company_logo" string="Company Logo"/>
+                                <div id="company_logo" class="oe_inline">
+                                    <field name="company_logo"
+                                       widget="image"
+                                       class="oe_avatar"
+                                       options="{'preview_image': 'image_medium', 'size': [130, 130]}"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-md-6 o_setting_box" id="favicon">
+                            <div class="o_setting_right_pane">
+                            <label for="favicon" string="Favicon"/>
+                                <div id="favicon" class="oe_inline">
+                                    <field name="favicon"
+                                       widget="image"
+                                       class="oe_avatar"
+                                       options="{'preview_image': 'image_small', 'size': [30, 30]}"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-md-6 o_setting_box" id="company_name">
+                            <div class="o_setting_right_pane">
+                            <label for="company_name" string="Company Name"/>
+                                <div id="company_name" class="oe_inline">
+                                    <field name="company_name"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-md-6 o_setting_box" id="company_website">
+                            <div class="o_setting_right_pane">
+                            <label for="company_website" string="Company Website"/>
+                                <div id="company_website" class="oe_inline">
+                                    <field name="company_website"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-md-6 o_setting_box" id="button_error">
+                            <div class="o_setting_right_pane">
+                            <label for="check_error" string="Check Error Dialogue"/>
+                                <div id="check_error" class="oe_inline">
+                                    <button name="error" id="error" type="object" string="error" class="btn-danger"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-md-6 o_setting_box" id="button_warning">
+                            <div class="o_setting_right_pane">
+                            <label for="checkwarning" string="Check Warning Dialogue"/>
+                                <div id="check_warning" class="oe_inline">
+                                    <button name="warning" id="warning" type="object" string="warning" class="btn-warning"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </xpath>
+        </field>
+    </record>
+    <!-- Branding Login Layout -->
+    <template id="login_layout_extend_11" name="Login Layout Extend" inherit_id="web.login_layout">
+        <xpath position="replace" expr="//div[1]">
+            <div class="row" style="margin-top: 15px;">
+                <t t-set="website_id" t-value="request.env['website'].sudo().search([])"/>
+                <div class="col-md-6 col-md-offset-3 o_database_list">
+                    <div class="text-center" t-if="website_id and website_id[0] and website_id[0].company_logo">
+                        <img t-att-src="'data:image/png;base64,%s' % to_text(website_id[0].company_logo or '')"
+                        width="180px" height="80px"/>
+                    </div>
+                    <div class="text-center" t-if="not website_id and website_id[0] and website_id[0].company_logo">
+                        <img t-attf-src="/web/binary/company_logo{{ '?dbname='+db if db else '' }}"/>
+                    </div>
+                    <t t-raw="0"/>
+                    <div class="text-center" t-if="not disable_footer">
+                        <t t-if="not disable_database_manager">
+                            <a class="" href="/web/database/manager">Manage Databases</a> |
+                        </t>
+                        <t>
+                            <a t-att-href="website_id and website_id[0] and website_id[0].company_website or ''"
+                               target="_blank">Powered by
+                            <span t-esc="website_id and website_id[0] and website_id[0].company_name or ''"/></a>
+                        </t>
+                    </div>
+                </div>
+            </div>
+        </xpath>
+    </template>
+    <!-- Web Powered By Label -->
+    <template id="login_layout_secondary" inherit_id="web.menu_secondary">
+        <xpath expr="//div[hasclass('o_sub_menu_footer')]" position="replace">
+            <div class="o_sub_menu_footer">
+                <t t-set="website_id" t-value="request.env['website'].sudo().search([])"/>
+                Powered by <a t-att-href="website_id and website_id[0] and website_id[0].company_website or ''"
+                              target="_blank">
+               <span t-esc="website_id and website_id[0] and website_id[0].company_name or ''"/></a>
+            </div>
+        </xpath>
+    </template>
+    <!-- Im Live Chat -->
+<!--     <template id="login_layout_im_livechat" inherit_id="im_livechat.support_page">
+        <xpath expr="//body" position="replace">
+            <body>
+                <div class="main" style="opacity: 1;">
+                    <t t-set="website_id" t-value="request.env['website'].sudo().search([])"/>
+                    <h1 class="channel_name"><t t-esc="channel.name"/></h1>
+                    <div>Website Live Chat Powered by
+                        <strong>
+                            <t t-esc="website_id and website_id[0] and website_id[0].company_name or ''"/>
+                        </strong>
+                    </div>
+                </div>
+            </body>
+        </xpath>
+    </template> -->
+
+    <template id="login_layout" inherit_id="mail.message_user_assigned">
+        <xpath expr="//p[last()]" position="replace">
+            <t t-set="website_id" t-value="request.env['website'].sudo().search([])"/>
+            <p style="color:#9E588B;">Powered by <a t-att-href="website_id and website_id[0] and website_id[0].company_website or ''">
+                <t t-esc="website_id and website_id[0] and website_id[0].company_name or ''"/></a>.</p>
+        </xpath>
+    </template>
+    <!-- Copyright Template -->
+    <template id="layout_footer_copyright" inherit_id="website.layout" name="Footer Copyright">
+        <xpath expr="//div[@class='container mt16 mb8']" position="replace">
+          <div class="container mt16 mb8">
+              <t t-set="website_id" t-value="request.env['website'].sudo().search([])"/>
+              <div class="pull-right" t-if="not editable">
+                Powered by <a class="label label-danger" t-att-href="website_id and website_id[0] and website_id[0].company_website or ''">
+                  <t t-esc="website_id and website_id[0] and website_id[0].company_name or ''"/> </a>.
+              </div>
+              <div class="pull-left text-muted">
+                  Copyright &amp;copy; <span t-esc="website_id and website_id[0] and website_id[0].company_name or ''"/>
+              </div>
+          </div>
+        </xpath>
+    </template>
+    <!-- removing social icons -->
+    <template id="footer_extend" inherit_id="website.footer_custom">
+        <xpath position="replace" expr="//h2"/>
+    </template>
+    <!--put teh company logo or the fav icons path here in href-->
+    <template id="web_layout_extend" inherit_id="web.layout">
+        <xpath expr="//title" position="replace">
+            <t t-set="website_id" t-value="request.env['website'].sudo().search([])"/>
+            <title><t t-esc="website_id and website_id[0] and website_id[0].company_name or ''"/></title>
+        </xpath>
+        <xpath position="replace" expr="//link[@rel='shortcut icon']"><t>
+            <link type="image/x-icon" rel="shortcut icon"
+                  t-att-href="'data:image/png;base64,%s' % to_text(website_id and website_id[0] and website_id[0].favicon or '')"
+                  /></t>
+        </xpath>
+    </template>
+    <!-- Debrand Assets -->
+    <template id="title_extend" name="Extend Title" inherit_id="web.assets_backend">
+        <xpath expr="." position="inside">
+            <script type="text/javascript" src="/odoo-debrand-11/static/src/js/title.js"/>
+        </xpath>
+    </template>
+    
+    <!-- Enterprise Debranding website_sign  -->
+    <template id="website_sign_header_extend" inherit_id="website_sign.doc_sign">
+        <xpath expr="//div[hasclass('o_sign_document')]" position="replace">
+            <header>
+                <div class="container text-center">
+                    <div t-if="signature_request" class="o_sign_header_instruction">
+                        <t t-if="not current_request_item">Need to sign? Check your inbox to get your secure access</t>
+                        <t t-if="current_request_item and current_request_item.state == 'draft'">This document cannot be filled right now</t>
+                        <t t-if="current_request_item and current_request_item.state == 'sent'">Please Review And Act On This Document</t>
+                        <t t-if="current_request_item and current_request_item.state == 'completed'">You have completed the document</t>
+                    </div>
+                </div>
+            </header>
+            <t t-call="website_sign._doc_sign"/>
+        </xpath>
+    </template>
+    
+    <record id="website_sign.website_sign_mail_template" model="mail.template">
+        <field name="body_html"><![CDATA[
+            <link href='http://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
+
+            <div style="width:90%; max-width:600px; margin:auto; font-size:10pt; padding:20px 0; font-family:'Lato', serif;">
+                <div style="background-color:#EFEDED; padding: 20px;">
+                    % if ctx['template_type'] == "request":
+                        ${ctx['email_from_usr']} (<a href="mailto:${ctx['email_from']}?subject=Re: ${ctx['subject']|safe}" style="color:#428BCA; text-decoration:none;" target="_blank">${ctx['email_from_mail']}</a>) has requested your signature on this document :
+                    % endif
+                    % if ctx['template_type'] == "follower":
+                        ${ctx['email_from_usr']} (<a href="mailto:${ctx['email_from']}?subject=Re: ${ctx['subject']|safe}" style="color:#428BCA; text-decoration:none;" target="_blank">${ctx['email_from_mail']}</a>) has added you as a Follower of this Signature Request :
+                    % endif
+                    % if ctx['template_type'] == "completed":
+                        This document has been completed and signed by everyone :
+                    % endif
+
+                    <h1 style="font-size:1.25em; margin:15px 0 25px 0;">${object['reference']}</h1>
+                    
+                    <div style="margin:0 -15px">
+                        <a style="float:left; display:inline-block; margin:0 15px 10px 15px; padding:5px 10px; border-radius: 3px; background-color:#5C6ED0; text-align:center; text-decoration:none; color:#F7FBFD;" href=${ctx['link']}>
+                            % if ctx['template_type'] == "request":
+                                Sign Document Now
+                            % endif
+                            % if ctx['template_type'] == "follower":
+                                View Signature Request
+                            % endif
+                            % if ctx['template_type'] == "completed":
+                                View Signed Document
+                            % endif
+                        </a>
+                        
+                        <div style="font-size:0.8em; color:#999999; margin:0 15px 10px 15px">
+                            % if ctx['template_type'] == "request":
+                                <strong style="font-weight:bold; color:black;">Warning: do not forward this email to other people!</strong><br/>
+                                They will be able to access this document and sign it as yourself.
+                            % endif
+                            % if ctx['template_type'] == "follower":
+                                You will be notified once the document has been signed by everyone involved.
+                            % endif
+                        </div>
+                        <div style="clear:both;"/>
+                    </div>
+                    
+                    % if ctx['msgbody']:
+                    <div style="background-color:white; padding:10px;">
+                        ${ctx['msgbody']|safe}
+                    </div>
+                    % endif
+                </div>
+            </div>
+        ]]>
+        </field>
+    </record>
+    
+</odoo>

@@ -1,0 +1,376 @@
+<section class="oe_container">
+    <div class="oe_row oe_spaced">
+        <div class="oe_span12">
+            <h2 class="oe_slogan"><span class="text-primary">Odoo Office 365</span></h2>
+            <h3 class="oe_slogan">Use Odoo Office 365 to sync calendar and mailsbetween ODOO and office 365</h3>
+        </div>
+    </div>
+</section>
+
+<section class="oe_container oe_dark">
+    <div class="oe_row oe_spaced">
+        <h2 class="oe_slogan"><span class="text-primary">Overview</span></h2>
+        <div class="oe_span12">
+            <p class="oe_mt32">
+                Odoo is a fully integrated suite of business modules that encompass the traditional ERP functionality.
+                Odoo office 365 Connector provides the opportunity to sync calendar and mail  between ODOO and office 365.
+            </p>
+        </div>
+    </div>
+</section>
+
+<section class="oe_container">
+    <div class="oe_row oe_spaced">
+        <h2 class="oe_slogan"><span class="text-primary">Manage Your!</span></h2>
+        <div class="oe_span6 text-center">
+            <div class="oe_row_img oe_centered">
+                <h4>office 365 Integration</h4>
+                <img class="oe_picture oe_screenshot" src="icon.png">
+            </div>
+        </div>
+        <div class="oe_span6 text-center">
+            <div class="oe_row_img oe_centered">
+                <h4 >office 365 Calendar</h4>
+                <img class="oe_picture oe_screenshot" src="odoo_office365_calender_integration.png">
+            </div>
+        </div>
+        <div class="oe_span6 text-center">
+            <div class="oe_row_img oe_centered">
+                <h4>office 365 Mail</h4>
+                <img class="oe_picture oe_screenshot" src="odoo_office365_mail_integration.png">
+            </div>
+        </div>
+        <div class="oe_span6 text-center">
+            <div class="oe_row_img oe_centered">
+                <h4 >office 365 Task</h4>
+                <img class="oe_picture oe_screenshot" src="odoo_office365_tasks_integration.png">
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<section class="oe_container">
+    <div class="oe_row oe_spaced">
+        <h2 class="oe_slogan"><span class="text-primary">Key Features And Functions</span></h2>
+        <div class="oe_span6">
+            <ul>
+                <li class="list-group-item"><span class="text-primary"><i class="fa fa-2x fa-check-square-o"
+                                                                      aria-hidden="true"></i></span> Sync ODOO calendar to office 365</li>
+                <li class="list-group-item"><span class="text-primary"><i class="fa fa-2x fa-check-square-o"
+                                                                      aria-hidden="true"></i></span> Sync office 365 calendar to ODOO</li>
+                <li class="list-group-item"><span class="text-primary"><i class="fa fa-2x fa-check-square-o"
+                                                                      aria-hidden="true"></i></span> Sync office 365 Mail to ODOO</li>
+                <li class="list-group-item"><span class="text-primary"><i class="fa fa-2x fa-check-square-o"
+                                                                      aria-hidden="true"></i></span> Sync ODOO Mail messages to office 365</li>
+                <li class="list-group-item"><span class="text-primary"><i class="fa fa-2x fa-check-square-o"
+                                                                      aria-hidden="true"></i></span> Sync ODOO tasks to office 365</li>
+                <li class="list-group-item"><span class="text-primary"><i class="fa fa-2x fa-check-square-o"
+                                                                      aria-hidden="true"></i></span> Sync office 365 tasks to ODOO</li>
+            </ul>
+        </div>
+        <div class="oe_span6">
+            <div class="oe_row_img oe_centered">
+                <img class="oe_picture oe_screenshot" src="icon.png">
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class='oe_container oe_dark'>
+    <div class='oe_row oe_spaced'>
+        <h2 class="oe_slogan"><span class="text-primary">office 365 Credentials</span></h2>
+        <ul>
+            <li class="list-group-item"><span class="text-primary"><i class="fa fa-angle-double-right"
+                                                                      aria-hidden="true"></i></span> You must have a microsoft account to use this connector.</li>
+            <li class="list-group-item"><span class="text-primary"><i class="fa fa-angle-double-right"
+                                                                      aria-hidden="true"></i></span> Go to https://apps.dev.microsoft.com/#/appList and create an app</li>
+            <li class="list-group-item"><span class="text-primary"><i class="fa fa-angle-double-right"
+                                                                      aria-hidden="true"></i></span> Open the app and you can see Application Id. It is also your client ID.</li>
+        </ul>
+        <div class='oe_row_img oe_centered oe_mt32'>
+            <img class="oe_picture oe_screenshot" src="odooapp.png">
+        </div>
+        <ul>
+            <li class="list-group-item"><span class="text-primary"><i class="fa fa-angle-double-right"
+                                                                      aria-hidden="true"></i></span> You can see Generate New Password button underneath it. Generate a password and save this password as
+                you can only view this password once.
+            </li>
+            <li class="list-group-item"><span class="text-primary"><i class="fa fa-angle-double-right"
+                                                                      aria-hidden="true"></i></span> You can see Platform section under it. Add a web platform here and also provide domain of you ODOO
+                instance in redirect URI field in my case it is http://localhost:8069/ .
+            </li>
+            <li class="list-group-item"><span class="text-primary"><i class="fa fa-angle-double-right"
+                                                                      aria-hidden="true"></i></span> Open ODOO. Go to settings --> users & companies --> office 365</li>
+            <li class="list-group-item"><span class="text-primary"><i class="fa fa-angle-double-right"
+                                                                      aria-hidden="true"></i></span> Enter client id and secret(password that you generate earlier), Redirect URI and click Activate.</li>
+        </ul>
+        <div class='oe_row_img oe_centered oe_mt32'>
+            <img class="oe_picture oe_screenshot" src="settings.png">
+        </div>
+        <ul>
+            <li class="list-group-item"><span class="text-primary"><i class="fa fa-angle-double-right"
+                                                                      aria-hidden="true"></i></span> Now go to settings --> users & companies --> user</li>
+            <li class="list-group-item"><span class="text-primary"><i class="fa fa-angle-double-right"
+                                                                      aria-hidden="true"></i></span> Open user and go to office 365 tab</li>
+        </ul>
+        <div class='oe_row_img oe_centered oe_mt32'>
+            <img class="oe_picture oe_screenshot" src="user_credentials.PNG">
+        </div>
+        <ul>
+            <li class="list-group-item"><span class="text-primary"><i class="fa fa-angle-double-right"
+                                                                      aria-hidden="true"></i></span> Open the link given in front of Login URL in new tab. This will ask microsoft credentials. After you
+                enter credentials it will ask for permissions. Click Allow.
+            </li>
+            <li class="list-group-item"><span class="text-primary"><i class="fa fa-angle-double-right"
+                                                                      aria-hidden="true"></i></span> Now it will be redirected back to ODOO</li>
+            <li class="list-group-item"><span class="text-primary"><i class="fa fa-angle-double-right"
+                                                                      aria-hidden="true"></i></span> You have to copy code from the URL as you can see in the screenshot and past it in ODOO office 365
+                settings in code field and click generate token button
+            </li>
+        </ul>
+        <div class='oe_row_img oe_centered oe_mt32'>
+            <img class="oe_picture oe_screenshot" src="code.png">
+        </div>
+    </div>
+</section>
+<!--<section class='oe_container oe_dark'>
+    <div class='oe_row oe_spaced'>
+        <h2 class="oe_slogan">SharePoint Credentials</h2>
+        <div>
+            <ul>
+                <li>After module installation, go to the SharePoint menu</li>
+                <li>Click SharePoint Settings submenu inside SharePoint</li>
+                <li>Here we need to provide SharePoint credentials(Account Name, Root URL, Email, Password)</li>
+                <li>Also there are two optional fields Site Name and Document library name</li>
+
+            </ul>
+        </div>
+        <div class='oe_row_img oe_centered oe_mt32'>
+            <img class="oe_picture oe_screenshot" src="sharepoint_settings.png">
+        </div>
+    </div>
+</section>
+
+<section class="oe_container">
+    <div class="oe_row oe_spaced">
+        <h2 class="oe_slogan">ODOO File Upload/Download</h2>
+        <div class="oe_span6">
+            <ul>
+                <li>Integration of ODOO document with SharePoint for each customers</li>
+                <li>Multiple attachments</li>
+                <li>Download latest files from SharePoint to ODOO for each customer.</li>
+                <li>Download related files links from SharePoint to ODOO for each customer, and each customer can download file from the Download Document button when required.</li>
+            </ul>
+        </div>
+        <div class="oe_span6">
+            <div class="oe_row_img oe_centered">
+                <img class="oe_picture oe_screenshot" src="customer_upload_download.png">
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="oe_container">
+    <div class="oe_row oe_spaced">
+        <h2 class="oe_slogan">ODOO Documents links</h2>
+        <div class="oe_span6">
+            <ul>
+                <li>Download related files links from SharePoint to ODOO for each customer.</li>
+                <li>Each customer can download file from the Download Document button when required.</li>
+            </ul>
+        </div>
+        <div class="oe_span6">
+            <div class="oe_row_img oe_centered">
+                <img class="oe_picture oe_screenshot" src="doculinks.png">
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="oe_container oe_dark">
+    <div class="oe_row oe_spaced">
+        <h2 class="oe_slogan">Documents on SharePoint </h2>
+
+        <div class="oe_span6">
+            <div class="oe_row_img oe_centered">
+                <img class="oe_picture oe_screenshot" src="sharepointdocs.png">
+            </div>
+        </div>
+        <div class="oe_span6">
+            <ul>
+             <li>Directory structure for each customer at SharePoint.</li>
+             <li>Management of sites and document libraries on SharePoint.</li>
+            </ul>
+        </div>
+    </div>
+</section>!-->
+
+<section class='oe_container oe_dark'>
+    <div class='oe_row oe_spaced'>
+        <h2 class="oe_slogan"><span class="text-primary">Sync Calendar</span> </h2>
+        <div>
+            <ul>
+                <li class="list-group-item"><span class="text-primary"><i class="fa fa-angle-double-right"
+                                                                      aria-hidden="true"></i></span> Now Go to office 365 Sync tab</li>
+                <li class="list-group-item"><span class="text-primary"><i class="fa fa-angle-double-right"
+                                                                      aria-hidden="true"></i></span> Click Sync office 365 Calendar to ODOO button. Now if you go to ODOO calendar you can see your
+                    meetings from office 365 calendar are imported in ODOO
+                </li>
+                <li class="list-group-item"><span class="text-primary"><i class="fa fa-angle-double-right"
+                                                                      aria-hidden="true"></i></span> Click Sync ODOO Calendar to office 365 button. Now if you go to ODOO calendar you can see your
+                    meetings from ODOO calendar are exported to Office 365
+                </li>
+            </ul>
+        </div>
+        <div class='oe_row_img oe_centered oe_mt32'>
+            <img class="oe_picture oe_screenshot" src="office_sync.png">
+        </div>
+    </div>
+</section>
+<section class='oe_container oe_dark'>
+    <div class='oe_row oe_spaced'>
+        <h2 class="oe_slogan"><span class="text-primary">ODOO Calendar</span></h2>
+        <div>
+            <ul>
+                <li class="list-group-item"><span class="text-primary"><i class="fa fa-angle-double-right"
+                                                                      aria-hidden="true"></i></span> Now Go to ODOO calendar, here you can see your meetings are synced.</li>
+            </ul>
+        </div>
+        <div class='oe_row_img oe_centered oe_mt32'>
+            <img class="oe_picture oe_screenshot" src="odoo_calendar.png">
+        </div>
+    </div>
+</section>
+<section class='oe_container oe_dark'>
+    <div class='oe_row oe_spaced'>
+        <h2 class="oe_slogan"><span class="text-primary">office 365 Mail</span></h2>
+        <div>
+            <ul>
+                <li class="list-group-item"><span class="text-primary"><i class="fa fa-angle-double-right"
+                                                                      aria-hidden="true"></i></span> You can send messages to the customer by your office 365 Mail</li>
+                <li class="list-group-item"><span class="text-primary"><i class="fa fa-angle-double-right"
+                                                                      aria-hidden="true"></i></span> Go to CRM > leads. open a lead. In the bottom you can send messages to the customer.
+                    These messages will be send to the customer's email by your office 365 mail
+                </li>
+                <li class="list-group-item"><span class="text-primary"><i class="fa fa-angle-double-right"
+                                                                      aria-hidden="true"></i></span> You can also send attachemts as well</li>
+                <li class="list-group-item"><span class="text-primary"><i class="fa fa-angle-double-right"
+                                                                      aria-hidden="true"></i></span> You can perform same for lead, opportunity, quotaion, sale order, invoice and customer</li>
+            </ul>
+        </div>
+        <div class='oe_row_img oe_centered oe_mt32'>
+            <img class="oe_picture oe_screenshot" src="mail_odoo.png">
+        </div>
+    </div>
+</section>
+<section class='oe_container oe_dark'>
+    <div class='oe_row oe_spaced'>
+        <h2 class="oe_slogan"><span class="text-primary">Import office 365 Mails(inbox and sent) to ODOO Mail</span></h2>
+        <div>
+            <ul>
+                <li class="list-group-item"><span class="text-primary"><i class="fa fa-angle-double-right"
+                                                                      aria-hidden="true"></i></span> Now Go to settings--> users and open user. In office 365 Mail Sync tab.</li>
+                <li class="list-group-item"><span class="text-primary"><i class="fa fa-angle-double-right"
+                                                                      aria-hidden="true"></i></span> Here you can see two buttons.</li>
+                <li class="list-group-item"><span class="text-primary"><i class="fa fa-angle-double-right"
+                                                                      aria-hidden="true"></i></span> Click Import Users Mails if you want to sync mails for odoo users. You can view user's synced Mails in Discuss app of odoo</li>
+                <li class="list-group-item"><span class="text-primary"><i class="fa fa-angle-double-right"
+                                                                      aria-hidden="true"></i></span> Click Import Customers Mails if you want to sync your Mails for Customer. You can view customers mails in sales--> customers app.</li>
+
+            </ul>
+        </div>
+        <div class='oe_row_img oe_centered oe_mt32'>
+            <img class="oe_picture oe_screenshot" src="mail_imported.png">
+        </div>
+    </div>
+</section>
+<section class='oe_container oe_dark'>
+    <div class='oe_row oe_spaced'>
+        <h2 class="oe_slogan"><span class="text-primary">Send ODOO messages to user's email</span></h2>
+        <div>
+            <ul>
+                <li class="list-group-item"><span class="text-primary"><i class="fa fa-angle-double-right"
+                                                                      aria-hidden="true"></i></span>
+                    Now Go to ODOO Discuss App, here when you send message in a channel it will be sent to user's
+                    email address using your office 365 credentials. It Also supports sending attachments.
+                </li>
+            </ul>
+        </div>
+        <div class='oe_row_img oe_centered oe_mt32'>
+            <h4>Message in ODOO</h4>
+            <img class="oe_picture oe_screenshot" src="odoo_message.PNG">
+        </div>
+        <div class='oe_row_img oe_centered oe_mt32'>
+            <h4>Sent Mail</h4>
+            <img class="oe_picture oe_screenshot" src="sent_message.PNG">
+        </div>
+    </div>
+</section>
+<section class='oe_container oe_dark'>
+    <div class='oe_row oe_spaced'>
+        <h2 class="oe_slogan"><span class="text-primary">Sync tasks between office 365 and ODOO</span></h2>
+        <div>
+            <ul>
+                <li class="list-group-item"><span class="text-primary"><i class="fa fa-angle-double-right"
+                                                                      aria-hidden="true"></i></span>
+                    Go to Settings --> users --> Administrator --> office 365 Task tab
+                </li>
+            </ul>
+            <img class="oe_picture oe_screenshot" src="office365_sync_tasks.png">
+        </div>
+        <div class='oe_row_img oe_centered oe_mt32'>
+            <ul>
+                <li class="list-group-item"><span class="text-primary"><i class="fa fa-angle-double-right"
+                                                                      aria-hidden="true"></i></span>
+                    Click Import Tasks From office 365 to ODOO button. Now go to sales --> order --> customers. At the end in Planned activities section you can view synced tasks. If you delete a task in office 365 then when you will sync task in ODOO that deleted task will be deleted from ODOO as well.
+                </li>
+            </ul>
+            <img class="oe_picture oe_screenshot" src="odooactivities.png">
+        </div>
+        <div class='oe_row_img oe_centered oe_mt32'>
+            <ul>
+                <li class="list-group-item"><span class="text-primary"><i class="fa fa-angle-double-right"
+                                                                      aria-hidden="true"></i></span>
+                    Click Export Tasks From ODOO to office 365 button. All user(logged in)’s tasks from ODOO will be exported to office 365. Also if you go to sales --> order --> customers and create an activity. This activity will also be created in office 365 as Task. Now if you delete this task in ODOO it will be deleted in office 365 as Well.
+                </li>
+            </ul>
+            <img class="oe_picture oe_screenshot" src="office365_task.png">
+        </div>
+    </div>
+</section>
+<section class='oe_container oe_dark'>
+    <div class='oe_row oe_spaced'>
+        <h2 class="oe_slogan"><span class="text-primary">Auto Schedulers</span></h2>
+        <div>
+            <ul>
+                <li class="list-group-item"><span class="text-primary"><i class="fa fa-angle-double-right"
+                                                                      aria-hidden="true"></i></span> Go to settings > Technical > Automation > Scheduled Action</li>
+                <li class="list-group-item"><span class="text-primary"><i class="fa fa-angle-double-right"
+                                                                      aria-hidden="true"></i></span> Here you can see schedulers to sync data between office 365 and odoo
+                    <ul>
+                        <li>Auto office 365 calendar export</li>
+                        <li>Auto office 365 calendar import</li>
+                        <li>Auto office 365 tasks export</li>
+                        <li>Auto office 365 tasks import</li>
+                        <li>Sync office 365 Mail</li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+        <div class='oe_row_img oe_centered oe_mt32'>
+            <img class="oe_picture oe_screenshot" src="schedulers.png">
+        </div>
+    </div>
+</section>
+
+<section class='oe_container oe_dark'>
+    <div class='oe_row oe_spaced text-center'>
+        <h2 class="oe_slogan"><span class="text-warning"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> License Terms</span></h2>
+        <div>
+            <span><h5>Package is non distributable and can only be used by the organization which is buying the package</h5></span>
+        </div>
+    </div>
+</section>
+
+

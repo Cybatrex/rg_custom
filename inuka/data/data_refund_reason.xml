@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+    <record id="refund_reason_1" model="account.invoice.refund.reason">
+        <field name="name">Processing Error</field>
+    </record>
+
+    <record id="refund_reason_2" model="account.invoice.refund.reason">
+        <field name="name">Goods Returned</field>
+    </record>
+
+    <record id="refund_reason_3" model="account.invoice.refund.reason">
+        <field name="name">Member Rebate</field>
+    </record>
+
+    <record id="refund_reason_4" model="account.invoice.refund.reason">
+        <field name="name">Order Change</field>
+    </record>
+
+</odoo>

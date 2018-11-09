@@ -1,0 +1,350 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="action_send_approval_email_it" model="ir.actions.server">
+        <field name="name">Send Email (IT)</field>
+        <field name="type">ir.actions.server</field>
+        <field name="state">email</field>
+        <field name="model_id" ref="purchase.model_purchase_order"/>
+        <field name="template_id" ref="inuka.email_template_purchase_order_it"/>
+    </record>
+
+    <record id="action_add_followers_it" model="ir.actions.server">
+        <field name="name">Add Followers (IT)</field>
+        <field name="type">ir.actions.server</field>
+        <field name="state">followers</field>
+        <field name="model_id" ref="purchase.model_purchase_order"/>
+        <field name="partner_ids">[]</field>
+    </record>
+
+    <record id="action_update_sent_for_approval_it" model="ir.actions.server">
+        <field name="name">Update Sent For Approval</field>
+        <field name="type">ir.actions.server</field>
+        <field name="state">object_write</field>
+        <field name="model_id" ref="purchase.model_purchase_order"/>
+    </record>
+
+    <record id="action_update_sent_for_approval_line_it" model="ir.server.object.lines">
+        <field name="type">value</field>
+        <field name="col1" search="[('model', '=', 'purchase.order'), ('name', '=', 'sent_for_approval')]"/>
+        <field name="value">1</field>
+        <field name="server_id" ref="inuka.action_update_sent_for_approval_it"/>
+    </record>
+
+    <record id="action_send_approval_email_non_it" model="ir.actions.server">
+        <field name="name">Send Email (Non IT)</field>
+        <field name="type">ir.actions.server</field>
+        <field name="state">email</field>
+        <field name="model_id" ref="purchase.model_purchase_order"/>
+        <field name="template_id" ref="inuka.email_template_purchase_order_non_it"/>
+    </record>
+
+    <record id="action_add_followers_non_it" model="ir.actions.server">
+        <field name="name">Add Followers (Non IT)</field>
+        <field name="type">ir.actions.server</field>
+        <field name="state">followers</field>
+        <field name="model_id" ref="purchase.model_purchase_order"/>
+        <field name="partner_ids">[]</field>
+    </record>
+
+    <record id="rule_purchase_order_it_to_approve" model="base.automation">
+        <field name="name">Send Approval Request (IT)</field>
+        <field name="model_id" ref="purchase.model_purchase_order"/>
+        <field name="state">multi</field>
+        <field name="trigger">on_write</field>
+        <field name="active" eval="True"/>
+        <field name="filter_domain">[('state', '=', 'to approve'), ('sent_for_approval', '=', False), ('purchase_type', '=', 'it')]</field>
+        <field name="filter_pre_domain">['|', ("state", "=", "draft"), ("state", "=", "sent")]</field>
+        <field name="child_ids" eval="[(6, 0, [ref('action_send_approval_email_it'), ref('action_add_followers_it'), ref('action_update_sent_for_approval_it')])]"/>
+    </record>
+
+    <record id="rule_purchase_order_non_it_to_approve" model="base.automation">
+        <field name="name">Send Approval Request (Non IT)</field>
+        <field name="model_id" ref="purchase.model_purchase_order"/>
+        <field name="state">multi</field>
+        <field name="trigger">on_write</field>
+        <field name="active" eval="True"/>
+        <field name="filter_domain">[("state", "=", "to approve"), ("sent_for_approval", "=", False), ("purchase_type", "!=", "it")]</field>
+        <field name="filter_pre_domain">["|", ("state", "=", "draft"), ("state", "=", "sent")]</field>
+        <field name="child_ids" eval="[(6, 0, [ref('action_send_approval_email_non_it'), ref('action_add_followers_non_it'), ref('action_update_sent_for_approval_it')])]"/>
+    </record>
+
+    <record id="action_send_approval_email_account_invoice" model="ir.actions.server">
+        <field name="name">Send Email (Vendor Bill To Approve)</field>
+        <field name="type">ir.actions.server</field>
+        <field name="state">email</field>
+        <field name="model_id" ref="account.model_account_invoice"/>
+        <field name="template_id" ref="inuka.email_template_account_invoice_to_approve"/>
+    </record>
+
+    <record id="rule_vendor_bill_to_approve" model="base.automation">
+        <field name="name">Send Approval Request (Vendor Bill)</field>
+        <field name="model_id" ref="account.model_account_invoice"/>
+        <field name="state">multi</field>
+        <field name="trigger">on_create</field>
+        <field name="active" eval="True"/>
+        <field name="filter_domain">[('state', '=', 'draft'), ('type', '=', 'in_invoice'), ('approved_for_payment', '=', False)]</field>
+        <field name="child_ids" eval="[(6, 0, [ref('action_send_approval_email_account_invoice')])]"/>
+    </record>
+
+    <record id="rule_unreserved_fund_fully_invoiced_id" model="base.automation">
+        <field name="name">Unreserved Fund (Fully Invoiced)</field>
+        <field name="model_id" ref="account.model_account_invoice"/>
+        <field name="state">code</field>
+        <field name="trigger">on_write</field>
+        <field name="active" eval="True"/>
+        <field name="filter_domain">[("state", "=", "paid")]</field>
+        <field name="code">
+records.action_unlink_reserved_fund()
+        </field>
+    </record>
+
+    <record id="rule_kit_order_fully_invoiced" model="base.automation">
+        <field name="name">Kit Order (Fully Invoiced)</field>
+        <field name="model_id" ref="sale.model_sale_order"/>
+        <field name="state">code</field>
+        <field name="trigger">on_write</field>
+        <field name="active" eval="True"/>
+        <field name="filter_pre_domain">[("state", "=", "sale"), ("invoice_status", "!=", "invoiced"), ("kit_order", "=", True)]</field>
+        <field name="filter_domain">[("state", "=", "sale"), ("invoice_status", "=", "invoiced"), ("kit_order", "=", True)]</field>
+        <field name="code">
+Pricelist = env['product.pricelist']
+for order in records:
+    kit = order.partner_id.kit
+    country= order.partner_id.country_id.name
+    if order.partner_id.status == 'candidate':
+        if kit in ('small', 'medium', 'large'):
+            if country != 'Namibia':
+                pricelist = Pricelist.search([('name', '=', 'New Pricelist')], limit=1)
+            else:
+                pricelist = Pricelist.search([('name', '=', 'New Pricelist (Namibia)')], limit=1)
+            order.partner_id.write({'status': 'new', 'property_product_pricelist': pricelist.id})
+
+        elif kit in ('junior', 'senior'):
+            if country != 'Namibia':
+                pricelist = Pricelist.search([('name', '=', 'Established Pricelist')], limit=1)
+            else:
+                pricelist = Pricelist.search([('name', '=', 'Established Pricelist (Namibia)')], limit=1)
+            order.partner_id.write({'status': kit, 'property_product_pricelist': pricelist.id})
+        </field>
+    </record>
+
+    <record id="res_partner_birthday_sms" model="ir.cron">
+        <field name="name">Customer: Birthday SMS</field>
+        <field name="model_id" ref="model_res_partner"/>
+        <field name="state">code</field>
+        <field name="code">model.check_birthday()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="numbercall">-1</field>
+        <field name="doall" eval="False"/>
+        <field name="nextcall" eval="(DateTime.now() + timedelta(days=0)).strftime('%Y-%m-%d 09:00:00')" />
+    </record>
+
+    <record id="res_partner_birthday_helpdesk_ticket" model="ir.cron">
+        <field name="name">Birthday Helpdesk Ticket</field>
+        <field name="model_id" ref="model_res_partner"/>
+        <field name="state">code</field>
+        <field name="code">model.create_birthday_ticket()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="numbercall">-1</field>
+        <field name="doall" eval="False"/>
+        <field name="nextcall" eval="(DateTime.now() + timedelta(days=0)).strftime('%Y-%m-%d 09:00:00')" />
+    </record>
+
+    <record id="rule_send_sms_junior_status" model="base.automation">
+        <field name="name">Send SMS - Junior Status</field>
+        <field name="model_id" ref="base.model_res_partner"/>
+        <field name="state">code</field>
+        <field name="trigger">on_write</field>
+        <field name="active" eval="True"/>
+        <field name="filter_pre_domain">[("customer", "=", True), ("status", "!=", "junior")]</field>
+        <field name="filter_domain">[("customer", "=", True), ("status", "=", "junior")]</field>
+        <field name="code">
+for record in records:
+  if record.mobile:
+    sms_template = env.ref('sms_frame.sms_template_inuka_international')
+    msg_compose = env['sms.compose'].create({
+        'record_id': record.id,
+        'model': 'res.partner',
+        'sms_template_id': sms_template.id,
+        'from_mobile_id': env.ref('sms_frame.sms_number_inuka_international').id,
+        'to_number': record.mobile,
+        'sms_content': """INUKA Junior Status, WELL DONE! %s %s,you've reached Junior Status. You can now buy at Established Member wholesale prices(on average 10%% less than New Member wholesale prices). Are you HUNGRY to work towards the next level of success? Reply / Call our friendly Helpdesk for advice 27219499850""" %(record.first_name, record.last_name)
+    })
+    msg_compose.send_entity()
+        </field>
+    </record>
+
+    <record id="rule_send_sms_senior_status" model="base.automation">
+        <field name="name">Send SMS - Senior Status</field>
+        <field name="model_id" ref="base.model_res_partner"/>
+        <field name="state">code</field>
+        <field name="trigger">on_write</field>
+        <field name="active" eval="True"/>
+        <field name="filter_pre_domain">[("customer", "=", True), ("status", "!=", "senior")]</field>
+        <field name="filter_domain">[("customer", "=", True), ("status", "=", "senior")]</field>
+        <field name="code">
+for record in records:
+  if record.mobile:
+    sms_template = env.ref('sms_frame.sms_template_inuka_international')
+    msg_compose = env['sms.compose'].create({
+        'record_id': record.id,
+        'model': 'res.partner',
+        'sms_template_id': sms_template.id,
+        'from_mobile_id': env.ref('sms_frame.sms_number_inuka_international').id,
+        'to_number': record.mobile,
+        'sms_content': """INUKA Senior Status,CONGRATULATIONS! %s %s,you are a Senior Member You can now also earn CASH Volume Rebates on future qualifying orders Reply/Call our friendly Helpdesk on 27219499850 for info  We also offer advice to achieve Pearl Leadership Status and even MORE financial rewards Why wait?""" %(record.first_name, record.last_name)
+    })
+    msg_compose.send_entity()
+        </field>
+    </record>
+
+    <record id="rule_send_sms_pearl_status" model="base.automation">
+        <field name="name">Send SMS - Pearl Status</field>
+        <field name="model_id" ref="base.model_res_partner"/>
+        <field name="state">code</field>
+        <field name="trigger">on_write</field>
+        <field name="active" eval="True"/>
+        <field name="filter_pre_domain">[("customer", "=", True), ("status", "!=", "pearl")]</field>
+        <field name="filter_domain">[("customer", "=", True), ("status", "=", "pearl")]</field>
+        <field name="code">
+for record in records:
+  if record.mobile:
+    sms_template = env.ref('sms_frame.sms_template_inuka_international')
+    msg_compose = env['sms.compose'].create({
+        'record_id': record.id,
+        'model': 'res.partner',
+        'sms_template_id': sms_template.id,
+        'from_mobile_id': env.ref('sms_frame.sms_number_inuka_international').id,
+        'to_number': record.mobile,
+        'sms_content': """INUKA Pearl Leadership Status %s %s,we SALUTE you for achieving PEARL Status Let's work together to grow you to RUBY Leadership Status and MUCH MORE financial rewards Reply/Call our friendly Helpdesk for advice on 27219499850 Be the BEST YOU and create your legacy! YOU CAN do this.Why wait?""" %(record.first_name, record.last_name)
+    })
+    msg_compose.send_entity()
+        </field>
+    </record>
+
+    <record id="rule_send_sms_ruby_status" model="base.automation">
+        <field name="name">Send SMS - Ruby Status</field>
+        <field name="model_id" ref="base.model_res_partner"/>
+        <field name="state">code</field>
+        <field name="trigger">on_write</field>
+        <field name="active" eval="True"/>
+        <field name="filter_pre_domain">[("customer", "=", True), ("status", "!=", "ruby")]</field>
+        <field name="filter_domain">[("customer", "=", True), ("status", "=", "ruby")]</field>
+        <field name="code">
+for record in records:
+  if record.mobile:
+    sms_template = env.ref('sms_frame.sms_template_inuka_international')
+    msg_compose = env['sms.compose'].create({
+        'record_id': record.id,
+        'model': 'res.partner',
+        'sms_template_id': sms_template.id,
+        'from_mobile_id': env.ref('sms_frame.sms_number_inuka_international').id,
+        'to_number': record.mobile,
+        'sms_content': """INUKA RUBY Leadership Status %s %s,we are SO PROUD of you for achieving RUBY Status YOU are climbing the ladder of SUCCESS!Let's work together to grow you to EMERALD Status to also start earning Quarterly Maintenance Bonuses Reply/Call our Helpdesk for advice on 27219499850 Why wait?""" %(record.first_name, record.last_name)
+    })
+    msg_compose.send_entity()
+        </field>
+    </record>
+
+    <record id="rule_send_sms_emerald_status" model="base.automation">
+        <field name="name">Send SMS - Emerald Status</field>
+        <field name="model_id" ref="base.model_res_partner"/>
+        <field name="state">code</field>
+        <field name="trigger">on_write</field>
+        <field name="active" eval="True"/>
+        <field name="filter_pre_domain">[("customer", "=", True), ("status", "!=", "emerald")]</field>
+        <field name="filter_domain">[("customer", "=", True), ("status", "=", "emerald")]</field>
+        <field name="code">
+for record in records:
+  if record.mobile:
+    sms_template = env.ref('sms_frame.sms_template_inuka_international')
+    msg_compose = env['sms.compose'].create({
+        'record_id': record.id,
+        'model': 'res.partner',
+        'sms_template_id': sms_template.id,
+        'from_mobile_id': env.ref('sms_frame.sms_number_inuka_international').id,
+        'to_number': record.mobile,
+        'sms_content': """INUKA EMERALD Leadership Status %s %s, YOU are PHENOMENAL for achieving EMERALD Status We are so HAPPY that you can now work towards SAPPHIRE Status Let's make sure that YOU will reap all the rewards of this new status Reply/Call our Helpdesk for advice on 27219499850 Why wait?""" %(record.first_name, record.last_name)
+    })
+    msg_compose.send_entity()
+        </field>
+    </record>
+
+    <record id="rule_update_pricelist_change_status" model="base.automation">
+        <field name="name">Update Pricelist - Member Status Change</field>
+        <field name="model_id" ref="base.model_res_partner"/>
+        <field name="state">code</field>
+        <field name="trigger">on_write</field>
+        <field name="active" eval="True"/>
+        <field name="filter_pre_domain">[("customer", "=", True)]</field>
+        <field name="filter_domain">[("customer", "=", True)]</field>
+        <field name="code">
+Pricelist = env['product.pricelist']
+for partner in records:
+  company = partner.company_id.name
+  if partner.status in ('candidate', 'new'):
+    if company == 'INUKA':
+      pricelist = Pricelist.search([('name', '=', 'RSA New')], limit=1)
+    else:
+      pricelist = Pricelist.search([('name', '=', 'Namibia New')], limit=1)
+    partner.write({'property_product_pricelist': pricelist.id})
+
+  elif partner.status not in ('candidate', 'new'):
+    if company == 'INUKA':
+      pricelist = Pricelist.search([('name', '=', 'RSA Established')], limit=1)
+    else:
+      pricelist = Pricelist.search([('name', '=', 'Namibia Established')], limit=1)
+    partner.write({'property_product_pricelist': pricelist.id})
+        </field>
+    </record>
+
+    <record id="rule_create_helpdesk_ticket_change_status" model="base.automation">
+        <field name="name">Create a Helpdesk Ticket - Member Status Change</field>
+        <field name="model_id" ref="base.model_res_partner"/>
+        <field name="state">code</field>
+        <field name="trigger">on_write</field>
+        <field name="active" eval="True"/>
+        <field name="filter_pre_domain">[('status','in', ['candidate','new','junior','senior','pearl','ruby','emerald']),('customer','=',True)]</field>
+        <field name="filter_domain">[('status','in', ['sapphire','diamond','double_diamond','triple_diamond','exective_diamond','presidential']),('customer','=',True)]</field>
+        <field name="code">
+records.create_helpdesk_ticket()
+        </field>
+    </record>
+
+    <record id="sale_upload_intermediate_update_status" model="ir.cron">
+        <field name="name">Sale Upload Intermediate: Status Update</field>
+        <field name="model_id" ref="model_sale_upload_intermediate"/>
+        <field name="state">code</field>
+        <field name="code">model.update_status()</field>
+        <field name="interval_number">15</field>
+        <field name="interval_type">minutes</field>
+        <field name="numbercall">-1</field>
+        <field name="doall" eval="False"/>
+    </record>
+
+    <record id="sale_upload_import_data" model="ir.cron">
+        <field name="name">Sale Upload: Import Data</field>
+        <field name="model_id" ref="model_sale_upload"/>
+        <field name="state">code</field>
+        <field name="code">model.run()</field>
+        <field name="interval_number">15</field>
+        <field name="interval_type">minutes</field>
+        <field name="numbercall">-1</field>
+        <field name="doall" eval="False"/>
+    </record>
+
+    <record id="auto_allocate_transaction_lines" model="ir.cron">
+        <field name="name">Auto Allocate: Transaction Lines</field>
+        <field name="model_id" ref="account.model_account_bank_statement_line"/>
+        <field name="state">code</field>
+        <field name="code">model.auto_allocate_from_cron()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">hours</field>
+        <field name="numbercall">-1</field>
+        <field name="doall" eval="False"/>
+    </record>
+
+</odoo>

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+
+        <!--Email template for it purchase order-->
+        <record id="email_template_purchase_order_it" model="mail.template">
+            <field name="name">Purchase Order - IT (To Approve)</field>
+            <field name="email_from">odoo@inuka.co.za</field>
+            <field name="subject">${object.purchase_type} Purchase to Approve (${object.name})</field>
+            <field name="email_to">carel@inuka.co.za</field>
+            <field name="model_id" ref="purchase.model_purchase_order"/>
+            <field name="auto_delete" eval="True"/>
+            <field name="lang">${object.partner_id.lang}</field>
+            <field name="body_html"><![CDATA[
+% set access_url = object.get_mail_url() or ''
+A ${object.purchase_type} Purchase Order ${object.name} requires your approval, please review.
+
+    <br/><br/>
+    <center>
+        <a href="${access_url}" style="background-color: #1abc9c; padding: 20px; text-decoration: none; color: #fff; border-radius: 5px; font-size: 16px;" class="o_default_snippet_text">View Purchase Order</a>
+        <br/><br/><br/>
+    </center>
+    <br/>
+
+]]></field>
+        </record>
+
+        <!--Email template for non-it purchase order-->
+        <record id="email_template_purchase_order_non_it" model="mail.template">
+            <field name="name">Purchase Order - Non-IT (To Approve)</field>
+            <field name="email_from">odoo@inuka.co.za</field>
+            <field name="subject">${object.purchase_type} Purchase to Approve (${object.name})</field>
+            <field name="email_to">carel@inuka.co.za</field>
+            <field name="model_id" ref="purchase.model_purchase_order"/>
+            <field name="auto_delete" eval="True"/>
+            <field name="lang">${object.partner_id.lang}</field>
+            <field name="body_html"><![CDATA[
+% set access_url = object.get_mail_url() or ''
+A ${object.purchase_type} Purchase Order ${object.name} requires your approval, please review.
+
+    <br/><br/>
+    <center>
+        <a href="${access_url}" style="background-color: #1abc9c; padding: 20px; text-decoration: none; color: #fff; border-radius: 5px; font-size: 16px;" class="o_default_snippet_text">View Purchase Order</a>
+        <br/><br/><br/>
+    </center>
+    <br/>
+
+]]></field>
+        </record>
+
+        <!--Email template for account invoice to approve-->
+        <record id="email_template_account_invoice_to_approve" model="mail.template">
+            <field name="name">Vendor Bill to Approve</field>
+            <field name="email_from">odoo@inuka.co.za</field>
+            <field name="subject">Vendor Bill to Approve</field>
+            <!--field name="email_to">carel@inuka.co.za</field-->
+            <field name="partner_to">${object.user_id.partner_id.id}</field>
+            <field name="model_id" ref="account.model_account_invoice"/>
+            <field name="auto_delete" eval="True"/>
+            <field name="lang">${object.partner_id.lang}</field>
+            <field name="body_html"><![CDATA[
+% set access_url = object.get_mail_url()
+A vendor bill has been created for your purchase order, please approve the vendor bill for payment.
+
+    <br/><br/>
+    <center>
+      <a href="${access_url}" style="background-color: #1abc9c; padding: 20px; text-decoration: none; color: #fff; border-radius: 5px; font-size: 16px;" class="o_default_snippet_text">View Vendor Bill</a>
+    </center>
+    <br/>
+
+]]></field>
+        </record>
+
+    </data>
+</odoo>

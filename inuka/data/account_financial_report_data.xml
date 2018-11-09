@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="action_master_account_report_bank_reconciliation_with_journal" model="ir.actions.client">
+        <field name="name">Master Bank Reconciliation</field>
+        <field name="tag">account_report</field>
+        <field name="context" eval="{'model': 'master.account.bank.reconciliation.report'}" />
+    </record>
+
+    <record id="account_reconcile_model_1" model="account.reconcile.model">
+        <field name="name">Receivable</field>
+        <field name="account_id" search="[('code', '=', '9000/510'), ('company_id.name', '=', 'INUKA')]"/>
+        <field name="company_id" search="['|', ('name', '=', 'INUKA'), ('id', '=', 1)]"/>
+    </record>
+
+    <record id="account_reconcile_model_2" model="account.reconcile.model">
+        <field name="name">Receivable</field>
+        <field name="account_id" search="[('code', '=', '9000/510'), ('company_id.name', '=', 'INUKA Namibia')]"/>
+        <field name="company_id" search="['|', ('name', '=', 'INUKA Namibia'), ('id', '=', 1)]"/>
+    </record>
+
+    <record id="account_reconcile_model_3" model="account.reconcile.model">
+        <field name="name">Payable</field>
+        <field name="account_id" search="[('code', '=', '9000/611'), ('company_id.name', '=', 'INUKA')]"/>
+        <field name="company_id" search="['|', ('name', '=', 'INUKA'), ('id', '=', 1)]"/>
+    </record>
+
+    <record id="account_reconcile_model_4" model="account.reconcile.model">
+        <field name="name">Payable</field>
+        <field name="account_id" search="[('code', '=', '9000/611'), ('company_id.name', '=', 'INUKA Namibia')]"/>
+        <field name="company_id" search="['|', ('name', '=', 'INUKA Namibia'), ('id', '=', 1)]"/>
+    </record>
+
+</odoo>

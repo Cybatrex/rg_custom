@@ -1,0 +1,23 @@
+.pos .product .category_pv {
+    position: absolute;
+    bottom: 11px;
+    right: 2px;
+    vertical-align: bottom;
+    color: white;
+    line-height: 12px;
+    background: #E63A40;
+    padding: 2px 4px;
+    border-radius: 2px;
+}
+
+.pos .order .orderline_category_pv {
+	background: #E63A40;
+	color: white;
+    border-radius: 2px;
+    padding: 3px 3px;
+    line-height: 12px;
+}
+
+.pos .order .total_pv_line {
+	color: #E63A40;
+}

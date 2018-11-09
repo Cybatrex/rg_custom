@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_inuka_web_service,access_inuka_web_service,model_inuka_web_service,,1,1,1,1
+access_favourite_members,access_favourite_members,model_favourite_members,,1,1,1,1

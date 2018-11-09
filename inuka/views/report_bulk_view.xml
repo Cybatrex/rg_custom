@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+
+    <template id="report_delivery_bulk_document">
+        <t t-call="web.html_container">
+            <t t-call="web.external_layout">
+                <t t-set="o" t-value="o.with_context({'lang':o.partner_id.lang})" />
+               <div class="page">
+                    <style>
+                        .whitebg{
+                            background-color:white !important;
+                        }
+                    </style>
+                    <div class="row">
+                        <div class="col-xs-7">
+                            <div><strong>Bulk Details:</strong></div>
+                            <div>For Member ID: <span t-field="o.partner_id.ref"/></div>
+                            <div>Order Date: <span t-field="o.date" t-options="{'format':'dd/MM/yyyy'}"/></div>
+                            <div>Tracking ID: <span t-field="o.waybill"/></div>
+                            <div class="mb16">Dispatch Method: <span t-field="o.carrier_id"/></div>
+                            <div>Managed By: <span t-field="o.user_id"/></div>
+                        </div>
+                        <div class="col-xs-5">
+                            <div><strong>Customer Address:</strong></div>
+                            <div t-field="o.partner_id" t-options='{"widget": "contact", "fields": ["address", "name", "phone"], "no_marker": True, "phone_icons": True}'/>
+                        </div>
+                    </div>
+
+                    <div class="mt64 mb16" style="font-size:18px;font-weight:bold;">This bulk shipment contains <span t-esc="len(o.sale_orders)"/> orders.</div>
+					
+                    <t t-if="o.state in ('draft', 'confirmed', 'ready') and not o.pack_lock">
+                        <div class="watermark"
+                            style="position:absolute;opacity:0.25;z-index:1000;transform:rotate(300deg);-webkit-transform:rotate(300deg);width:100%;text-align:center;">
+                            <p style="font-size:125px;">DRAFT</p>
+                            <p style="font-size:100px;"><span t-esc="context_timestamp(datetime.datetime.now()).strftime('%Y-%m-%d %H:%M:%S')"/></p>
+                        </div>
+                    </t>
+                    <table class="table table-striped">
+                        <thead>
+                            <tr style="color: #68465f !important;">
+                                <th>Member</th>
+                                <th>Mobile</th>
+                                <th>Order</th>
+                                <th>Invoice</th>
+                                <th>Order Date</th>
+                                <th>Total</th>
+                                <th>PV</th>
+                                <th>Invoice Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr t-foreach="o.sale_orders" t-as="order">
+                                <td><span t-field="order.partner_id"/></td>
+                                <td><span t-field="order.partner_id.mobile"/></td>
+                                <td><span t-field="order.name"/></td>
+                                <td><span t-field="order.invoice_ids and order.invoice_ids[0].number"/></td>
+                                <td><span t-field="order.confirmation_date"/></td>
+                                <td><span t-field="order.amount_total"/></td>
+                                <td><span t-field="order.total_pv"/></td>
+                                <td><span t-field="order.state"/></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div style="font-weight:bold;text-align:justify;" class="mt16 mb16">
+                        IMPORTANT: The member receiving the bulk order must please check the following and report any discrepancies within 24 hours to the inuka orders department: 1. Please check that the number of orders received correspond with the number of orders indicated this sheet, 2) Please report any tampering with the box.
+                    </div>
+
+                    <div style="border:1px solid gray;padding:10px;">
+                        <strong>Comments:</strong>
+                        <span t-field="o.description"/>
+                    </div>
+
+                    <div class="row mt16" style="border:1px solid gray;padding:10px;margin:0;">
+                        <div class="col-xs-3">
+                            <table width="100%">
+                                <tr class="whitebg">
+                                    <td><strong>Checker<br/>1:</strong></td>
+                                    <td><br/><span t-esc="'.'*25"/></td>
+                                </tr>
+                                <tr class="whitebg">
+                                    <td><strong>Date:</strong></td>
+                                    <td><span t-esc="'.'*25"/></td>
+                                </tr>
+                                <tr class="whitebg">
+                                    <td><strong>Time:</strong></td>
+                                    <td><span t-esc="'.'*25"/></td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-xs-3">
+                            <table width="100%">
+                                <tr class="whitebg">
+                                    <td><strong>Checker<br/>2:</strong></td>
+                                    <td><br/><span t-esc="'.'*25"/></td>
+                                </tr>
+                                <tr class="whitebg">
+                                    <td><strong>Date:</strong></td>
+                                    <td><span t-esc="'.'*25"/></td>
+                                </tr>
+                                <tr class="whitebg">
+                                    <td><strong>Time:</strong></td>
+                                    <td><span t-esc="'.'*25"/></td>
+
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-xs-3">
+                            <table width="100%">
+                                <tr class="whitebg">
+                                    <td><strong>Boxer:</strong></td>
+                                    <td><span t-esc="'.'*25"/></td>
+                                </tr>
+                                <tr class="whitebg">
+                                    <td><strong>Date:</strong></td>
+                                    <td><span t-esc="'.'*25"/></td>
+                                </tr>
+                                <tr class="whitebg">
+                                    <td><strong>Time:</strong></td>
+                                    <td><span t-esc="'.'*25"/></td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-xs-3">
+                            <table width="100%">
+                                <tr class="whitebg">
+                                    <td><strong>Weight:</strong></td>
+                                    <td><span t-esc="'.'*25"/></td>
+                                </tr>
+                                <tr class="whitebg">
+                                    <td><strong>Boxes:</strong></td>
+                                    <td><span t-esc="'.'*25"/></td>
+                                </tr>
+                                <tr class="whitebg">
+                                    <td><strong>Orders packed:</strong></td>
+                                    <td><br/><span t-esc="'.'*25"/></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+               </div>
+            </t>
+         </t>
+    </template>
+
+    <template id="report_delivery_bulk">
+        <t t-foreach="docs" t-as="o">
+            <t t-call="inuka.report_delivery_bulk_document" t-lang="o.partner_id.lang"/>
+        </t>
+    </template>
+
+    <report 
+            id="action_report_delivery_bulk"
+            string="Bulk Report"
+            model="bulk.master" 
+            report_type="qweb-pdf"
+            file="inuka.report_delivery_bulk" 
+            name="inuka.report_delivery_bulk"
+        />
+
+</odoo>
